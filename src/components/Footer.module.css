@@ -1,0 +1,198 @@
+/* Footer: a soft tinted band with a hairline on top and gently rounded top
+   corners. Two asymmetric blocks: wordmark + email on the inline start,
+   socials + copyright on the inline end. Phone: wordmark and socials share a
+   row, then the email, then a ruled copyright line. Very narrow phones fall
+   back to one column. */
+
+.footer {
+  width: 100%;
+  padding: 2rem var(--page-gutter) 1.75rem;
+  border-block-start: 2px solid color-mix(in oklab, var(--softer-foreground) 55%, transparent);
+  border-start-start-radius: 1.25rem;
+  border-start-end-radius: 1.25rem;
+  background-color: color-mix(in oklab, var(--softer-foreground) 27%, transparent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "brand social"
+    "mail mail"
+    "copy copy";
+  align-items: center;
+  justify-items: start;
+  row-gap: 0.25rem;
+}
+
+/* Wordmark, with a small rounded "voxel" in the accent colour. */
+.brand {
+  grid-area: brand;
+  display: flex;
+  align-items: baseline;
+  gap: 0.2em;
+  font-family: var(--font-latin);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: var(--soft-foreground);
+}
+
+.voxel {
+  width: 0.3em;
+  height: 0.3em;
+  border-radius: 0.07em;
+  background-color: var(--secondary);
+}
+
+/* Email: the same underlined link style as <TextLink>. */
+.mail {
+  grid-area: mail;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  font-family: var(--font-latin);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--soft-foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--secondary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  transition: color var(--duration-fast) var(--ease-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Socials: outlined circles, as on the Contact page. */
+.socialList {
+  grid-area: social;
+  justify-self: end;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.socialLink {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 50%;
+  color: var(--soft-foreground);
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard),
+    scale var(--duration-fast) var(--ease-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon {
+  display: block;
+  width: 1.0625rem;
+  height: 1.0625rem;
+}
+
+.copyright {
+  grid-area: copy;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-block-start: 0.75rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--low-opacity-soft-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--high-opacity-soft-foreground);
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.6;
+}
+
+.mail:focus-visible,
+.socialLink:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.socialLink:focus-visible {
+  border-radius: 50%;
+}
+
+.socialLink:active {
+  scale: 92%;
+}
+
+@media (hover: hover) {
+  .mail:hover {
+    color: var(--secondary);
+  }
+
+  .socialLink:hover {
+    border-color: var(--secondary);
+    background-color: var(--secondary);
+    color: var(--background);
+  }
+}
+
+/* Very narrow phones: wordmark and socials no longer fit side by side. */
+@media (max-width: 22rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "brand"
+      "mail"
+      "social"
+      "copy";
+  }
+
+  .socialList {
+    justify-self: start;
+    margin-block: 0.75rem 0.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding-block: 2.25rem 1.75rem;
+    border-start-start-radius: 1.75rem;
+    border-start-end-radius: 1.75rem;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand social"
+      "mail copy";
+    align-items: center;
+    row-gap: 0.5rem;
+  }
+
+  .socialList {
+    gap: 0.625rem;
+  }
+
+  .copyright {
+    justify-self: end;
+    width: auto;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: 0;
+    font-size: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mail,
+  .socialLink {
+    transition: none;
+  }
+}

@@ -1,0 +1,29 @@
+---
+/** Small uppercase section title, followed by a hairline rule unless `rule` is false. */
+import styles from "./SectionHeading.module.css";
+
+interface Props {
+  title: string;
+  /** Less space below (1.5rem instead of 2rem). */
+  tight?: boolean;
+  /** Heading element to render. */
+  as?: "h2" | "h3";
+  /** Big display heading (case-study sections) instead of the small uppercase label. */
+  large?: boolean;
+  /** Draw the trailing hairline; without it the title stands alone, 1rem above its content. */
+  rule?: boolean;
+}
+
+const { title, tight = false, as: Tag = "h2", large = false, rule = true } = Astro.props;
+---
+
+{
+  rule ? (
+    <div class:list={[styles.heading, tight && styles.tight, large && styles.large]}>
+      <Tag class={styles.title}>{title}</Tag>
+      <div class={styles.rule} />
+    </div>
+  ) : (
+    <Tag class:list={[styles.title, styles.bare]}>{title}</Tag>
+  )
+}

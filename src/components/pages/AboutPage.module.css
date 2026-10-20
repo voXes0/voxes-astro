@@ -1,0 +1,590 @@
+/* ---------- shared pieces ---------- */
+
+/* Rounded bordered surface: sidebar, project cards, closing CTA. */
+.card {
+  border: 2px solid var(--low-opacity-soft-foreground);
+  border-radius: 1.5rem;
+  background-color: color-mix(in oklab, var(--background) 60%, transparent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  font-size: 0.95rem;
+  line-height: 1.625;
+  color: var(--high-opacity-soft-foreground);
+}
+
+.prose {
+  max-width: 48rem;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--soft-foreground);
+}
+
+.itemTitle {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--soft-foreground);
+}
+
+.muted {
+  font-size: 0.75rem;
+  line-height: 1.3333;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--high-opacity-soft-foreground);
+}
+
+.dotRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.section {
+  margin-block-end: 3.5rem;
+}
+
+/* ---------- page frame ---------- */
+
+.page {
+  padding: 7rem var(--page-gutter) 6rem;
+  overflow-x: clip;
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  gap: 3rem;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.blob {
+  position: absolute;
+  top: -6rem;
+  inset-inline-start: 50%;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  background-image: linear-gradient(135deg in oklab, var(--secondary), var(--low-opacity-secondary));
+  translate: -50% 0;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* ---------- sidebar ---------- */
+
+.aside {
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar {
+  padding: 2rem;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block-end: 2rem;
+  text-align: center;
+}
+
+.avatar {
+  position: relative;
+  margin-block-end: 1.5rem;
+}
+
+.avatarGlow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: linear-gradient(135deg in oklab, var(--secondary), var(--soft-secondary));
+  opacity: 0.7;
+  scale: 1.05;
+  animation: float 6s ease-in-out 1s infinite;
+}
+
+.photo {
+  position: relative;
+  display: block;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.name {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--soft-foreground);
+}
+
+.role,
+.location {
+  margin: 0.25rem 0 0;
+}
+
+.role {
+  color: var(--high-opacity-soft-foreground);
+}
+
+.location {
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  color: var(--mid-opacity-soft-foreground);
+}
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block-start: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--low-opacity-secondary);
+  color: var(--secondary);
+}
+
+.availabilityDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--secondary);
+}
+
+.contact {
+  margin-block-end: 2rem;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--low-opacity-soft-foreground);
+}
+
+.contactList {
+  gap: 0.75rem;
+}
+
+.contactItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactLabel {
+  font-size: 11px;
+  color: var(--mid-opacity-soft-foreground);
+}
+
+.contactValue {
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  font-weight: 500;
+  color: var(--soft-foreground);
+  text-decoration: none;
+}
+
+a.contactValue {
+  word-break: break-all;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.rtlStart {
+  text-align: start;
+}
+
+/* Layout only; look and hover come from ButtonLink. */
+.downloadCv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.downloadCv svg {
+  display: block;
+}
+
+/* ---------- main column ---------- */
+
+.main {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.header {
+  margin-block-end: 3.5rem;
+}
+
+/* ---------- experience timeline ---------- */
+
+.timeline {
+  position: relative;
+  gap: 3rem;
+}
+
+.timelineLine {
+  position: absolute;
+  inset-inline-start: 5px;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background-color: var(--low-opacity-soft-foreground);
+}
+
+.job {
+  position: relative;
+  padding-inline-start: 2.25rem;
+}
+
+.jobDot {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: var(--softer-foreground);
+  box-shadow: 0 0 0 4px var(--background);
+}
+
+.jobDotCurrent {
+  background-color: var(--secondary);
+}
+
+.jobHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-block-end: 0.75rem;
+}
+
+.period {
+  flex-shrink: 0;
+}
+
+.company {
+  margin: 0 0 1rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.companyPlace {
+  font-weight: 400;
+  color: var(--mid-opacity-soft-foreground);
+}
+
+.bullets {
+  gap: 0.5rem;
+  margin-block-end: 1.25rem;
+}
+
+.bullet {
+  position: relative;
+  padding-inline-start: 1.25rem;
+}
+
+.bulletDot {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.65em;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--softer-foreground);
+}
+
+/* ---------- projects ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.project {
+  position: relative;
+  padding: 1.5rem;
+  transition: var(--transition-standard);
+}
+
+.status {
+  display: inline-block;
+  margin-block-end: 1.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background-color: var(--low-opacity-softer-foreground);
+  color: var(--soft-foreground);
+}
+
+.projectTitle {
+  margin-block-end: 0.75rem;
+}
+
+.projectBody {
+  margin-block-end: 1.25rem;
+}
+
+.projectLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--secondary);
+  transition: var(--transition-standard);
+}
+
+/* ---------- skills / education / languages ---------- */
+
+.skills {
+  display: grid;
+  gap: 2rem;
+}
+
+.skillGroup {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  font-weight: 700;
+  color: var(--soft-foreground);
+}
+
+.twoCol {
+  display: grid;
+  gap: 3rem;
+}
+
+.education {
+  gap: 1.25rem;
+}
+
+.degree {
+  margin: 0.25rem 0 0;
+  line-height: 1.375;
+  font-weight: 700;
+  color: var(--soft-foreground);
+}
+
+.school {
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.note {
+  margin-block-start: 0.5rem;
+}
+
+.languages {
+  gap: 1rem;
+}
+
+.language {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.languageInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.languageName {
+  font-size: 0.875rem;
+  line-height: 1.4286;
+  font-weight: 500;
+  color: var(--soft-foreground);
+}
+
+.languageLevel {
+  font-size: 11px;
+  color: var(--mid-opacity-soft-foreground);
+}
+
+.score {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.scoreDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--low-opacity-soft-foreground);
+}
+
+.scoreDotOn {
+  background-color: var(--secondary);
+}
+
+/* ---------- closing CTA ---------- */
+
+.cta {
+  padding: 2rem;
+  text-align: center;
+}
+
+.ctaText {
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--soft-foreground);
+}
+
+.ctaActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.lastSection {
+  margin-block-end: 4rem;
+}
+
+/* ---------- breakpoints ---------- */
+
+@media (hover: hover) {
+  a.contactValue:hover {
+    color: var(--secondary);
+  }
+
+  .project:hover {
+    border-color: color-mix(in oklab, var(--secondary) 40%, transparent);
+    translate: 0 -0.25rem;
+  }
+
+  .projectLink:hover {
+    gap: 0.625rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .page {
+    padding-block-start: 8rem;
+  }
+
+  .section {
+    margin-block-end: 5rem;
+  }
+
+  .header {
+    margin-block-end: 4rem;
+  }
+
+  .body {
+    font-size: 1rem;
+  }
+
+  .prose {
+    font-size: 1.125rem;
+  }
+
+  .itemTitle {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  .jobHead {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .project {
+    padding: 2rem;
+  }
+
+  .skills {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .twoCol {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cta {
+    padding: 3rem;
+  }
+
+  .ctaText {
+    font-size: 1.2rem;
+    line-height: 1.3333;
+  }
+
+  .ctaActions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .lastSection {
+    margin-block-end: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .frame {
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 4rem;
+  }
+
+  .aside {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+}
+
+/* The About page doubles as a printable CV: drop the decoration. */
+@media print {
+  .page {
+    padding-block-start: 0;
+  }
+
+  .blob,
+  .downloadCv,
+  .cta {
+    display: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}

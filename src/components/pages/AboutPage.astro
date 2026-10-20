@@ -1,0 +1,293 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ButtonLink from "@/components/ButtonLink.astro";
+import { t, isRtl, type Locale } from "@/i18n";
+import { localizedHref } from "@/lib/navigation";
+import SectionHeading from "@/components/SectionHeading.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Chip from "@/components/Chip.astro";
+import styles from "./AboutPage.module.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const m = t(locale).about;
+const l = m.labels;
+const isPersian = isRtl(locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.meta.title}
+  description={m.meta.description}
+>
+  <main class={styles.page}>
+    <div class={styles.frame}>
+      <!-- Decorative blob -->
+      <div class={styles.blob}></div>
+
+      <!-- ───────── Sidebar ───────── -->
+      <aside class={styles.aside}>
+        <div class:list={[styles.card, styles.sidebar]}>
+          <!-- Identity -->
+          <div class={styles.identity}>
+            <div class={styles.avatar}>
+              <div class={styles.avatarGlow}></div>
+              <img
+                src="/images/me.avif"
+                alt={m.profile.name}
+                width="160"
+                height="160"
+                class={styles.photo}
+                loading="eager"
+              />
+            </div>
+            <h2 class={styles.name}>{m.profile.name}</h2>
+            <p class={styles.role}>{m.profile.role}</p>
+            <p class={styles.location}>{m.profile.location}</p>
+            <span class={styles.availability}>
+              <span class={styles.availabilityDot}></span>
+              {m.profile.availability}
+            </span>
+          </div>
+
+          <!-- Contact -->
+          <div class={styles.contact}>
+            <SectionHeading as="h3" rule={false} title={m.contactTitle} />
+            <ul class:list={[styles.list, styles.contactList]}>
+              {
+                m.contact.map((c) => (
+                  <li class={styles.contactItem}>
+                    <span class={styles.contactLabel}>{c.label}</span>
+                    {c.href ? (
+                      <a
+                        href={c.href}
+                        class:list={[
+                          styles.contactValue,
+                          isPersian && styles.rtlStart,
+                        ]}
+                        dir="ltr"
+                      >
+                        {c.value}
+                      </a>
+                    ) : (
+                      <span class={styles.contactValue}>{c.value}</span>
+                    )}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <ButtonLink
+            size="sm"
+            href={`/cv-${locale}-light.pdf`}
+            data-cv-base={`/cv-${locale}`}
+            onclick="this.href = this.dataset.cvBase + (document.documentElement.classList.contains('dark') ? '-dark' : '-light') + '.pdf'"
+            download={`Taha-Haghighi-CV-${locale}.pdf`}
+            class={styles.downloadCv}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path>
+            </svg>
+            {m.profile.downloadCv}
+          </ButtonLink>
+        </div>
+      </aside>
+
+      <!-- ───────── Main column ───────── -->
+      <div class={styles.main}>
+        <!-- Header -->
+        <div class={styles.header}>
+          <PageHeader
+            size="lg"
+            flush
+            eyebrow={m.eyebrow}
+            title={`${m.title1}${m.title2}`}
+            intro={m.intro}
+          />
+        </div>
+
+        <!-- Summary -->
+        <section class={styles.section}>
+          <SectionHeading title={l.summary} tight />
+          <p class={styles.prose}>{m.summary}</p>
+        </section>
+
+        <!-- Experience -->
+        <section class={styles.section}>
+          <SectionHeading title={l.experience} />
+          <ol class:list={[styles.list, styles.timeline]}>
+            <div class={styles.timelineLine} aria-hidden="true"></div>
+            {
+              m.experience.map((job, i) => (
+                <li class={styles.job}>
+                  <span
+                    class:list={[
+                      styles.jobDot,
+                      i === 0 && styles.jobDotCurrent,
+                    ]}
+                    aria-hidden="true"
+                  />
+                  <div class={styles.jobHead}>
+                    <h3 class={styles.itemTitle}>{job.role}</h3>
+                    <span class:list={[styles.muted, styles.period]}>
+                      {job.period}
+                    </span>
+                  </div>
+                  {/*<p class={styles.company}> additional detail I may want later, about the project's client and location
+                    {job.company}
+                    <span class={styles.companyPlace}>
+                      {" · "}
+                      {job.location}
+                    </span>
+                  </p>*/}
+                  <ul class:list={[styles.list, styles.bullets]}>
+                    {job.bullets.map((b) => (
+                      <li class:list={[styles.body, styles.bullet]}>
+                        <span class={styles.bulletDot} aria-hidden="true" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  <div class={styles.dotRow}>
+                    {job.tags.map((tag) => (
+                      <Chip>{tag}</Chip>
+                    ))}
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+        {
+          /* alternative way to display projects, maybe I'll use it later
+        <!-- Projects -->
+        <section class={styles.section}>
+          <SectionHeading title={l.projects} />
+          <div class={styles.cards}>
+            {
+              m.cards.map((card) => (
+                <div class:list={[styles.card, styles.project]}>
+                  {card.status && <span class={styles.status}>{card.status}</span>}
+                  <h3 class:list={[styles.itemTitle, styles.projectTitle]}>{card.title}</h3>
+                  <p class:list={[styles.body, styles.projectBody]}>{card.description}</p>
+                  {card.href && card.linkText && (
+                    <a href={localizedHref(card.href, locale)} class={styles.projectLink}>
+                      {card.linkText}
+                      <span aria-hidden="true">{isPersian ? "←" : "→"}</span>
+                    </a>
+                  )}
+                </div>
+              ))
+            }
+          </div>
+        </section>
+        */
+        }
+
+        <!-- Skills -->
+        <section class={styles.section}>
+          <SectionHeading title={l.skills} />
+          <div class={styles.skills}>
+            {
+              m.skills.map((group) => (
+                <div>
+                  <p class={styles.skillGroup}>{group.group}</p>
+                  <div class={styles.dotRow}>
+                    {group.items.map((item) => (
+                      <Chip>{item}</Chip>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- Education + Languages -->
+        <section class:list={[styles.section, styles.twoCol]}>
+          <div>
+            <SectionHeading title={l.education} tight />
+            <ul class:list={[styles.list, styles.education]}>
+              {
+                m.education.map((ed) => (
+                  <li>
+                    <span class={styles.muted}>{ed.period}</span>
+                    <p class={styles.degree}>{ed.degree}</p>
+                    <p class={styles.school}>{ed.school}</p>
+                    {ed.note && (
+                      <p class:list={[styles.body, styles.note]}>{ed.note}</p>
+                    )}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div>
+            <SectionHeading title={l.languages} tight />
+            <ul class:list={[styles.list, styles.languages]}>
+              {
+                m.languages.map((lang) => (
+                  <li class={styles.language}>
+                    <div class={styles.languageInfo}>
+                      <span class={styles.languageName}>{lang.name}</span>
+                      <span class={styles.languageLevel}>{lang.level}</span>
+                    </div>
+                    <div class={styles.score} aria-hidden="true">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <span
+                          class:list={[
+                            styles.scoreDot,
+                            n <= lang.score && styles.scoreDotOn,
+                          ]}
+                        />
+                      ))}
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </section>
+
+        <!-- Interests -->
+        <section class={styles.lastSection}>
+          <SectionHeading title={l.interests} tight />
+          <p class={styles.prose}>{m.personal}</p>
+        </section>
+
+        <!-- Closing CTA -->
+        <section class:list={[styles.card, styles.cta]}>
+          <p class={styles.ctaText}>{m.ctaText}</p>
+          <div class={styles.ctaActions}>
+            <ButtonLink
+              variant="primary"
+              href={localizedHref("/works", locale)}
+            >
+              {m.cta1}
+            </ButtonLink>
+            <ButtonLink
+              variant="secondary"
+              href={localizedHref("/contact", locale)}
+            >
+              {m.cta2}
+            </ButtonLink>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

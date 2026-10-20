@@ -1,0 +1,77 @@
+---
+import "@/styles/global.css";
+import styles from "./BaseLayout.module.css";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer.astro";
+import { isRtl, locales, type Locale } from "@/i18n";
+import { localizedHref, stripLocale } from "@/lib/navigation";
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+}
+
+const { locale, title, description } = Astro.props;
+const dir = isRtl(locale) ? "rtl" : "ltr";
+
+const unprefixedPath = stripLocale(Astro.url.pathname);
+const canonicalUrl = new URL(localizedHref(unprefixedPath, locale), Astro.site);
+---
+
+<html lang={locale} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {
+      locales.map((altLocale) => (
+        <link
+          rel="alternate"
+          hreflang={altLocale}
+          href={new URL(localizedHref(unprefixedPath, altLocale), Astro.site)}
+        />
+      ))
+    }
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(unprefixedPath, Astro.site)}
+    />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+          ).matches;
+          var isDark = stored === "dark" || (!stored && prefersDark);
+          document.documentElement.classList.toggle("dark", isDark);
+          document.cookie =
+            "theme=" +
+            (isDark ? "dark" : "light") +
+            ";path=/;max-age=31536000;SameSite=Lax";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class={styles.header}>
+      <Nav
+        locale={locale}
+        pathname={Astro.url.pathname}
+        client:load
+      />
+    </header>
+    <div id="app-content">
+      <slot />
+      <Footer locale={locale} />
+    </div>
+    <script src="@/lib/router.ts"></script>
+    <script src="@/fab/autoMount.ts"></script>
+    <script src="@/flappy/autoMount.ts"></script>
+  </body>
+</html>

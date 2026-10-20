@@ -1,0 +1,16 @@
+---
+/** A wrapping row of <Chip>s, for tech stacks and tags. */
+import Chip from "./Chip.astro";
+import styles from "./ChipList.module.css";
+
+interface Props {
+  items: string[];
+  dir?: "ltr" | "rtl" | "auto";
+}
+
+const { items, dir } = Astro.props;
+---
+
+<ul class={styles.list} role="list">
+  {items.map((item) => <li><Chip dir={dir}>{item}</Chip></li>)}
+</ul>

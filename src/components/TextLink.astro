@@ -1,0 +1,14 @@
+---
+/** Underlined inline link: back links and external project links. */
+import type { HTMLAttributes } from "astro/types";
+import styles from "./TextLink.module.css";
+
+type Props = Omit<HTMLAttributes<"a">, "class"> & {
+  /** Taller hit area for rows of links on touch screens. */
+  touch?: boolean;
+};
+
+const { touch = false, ...attrs } = Astro.props;
+---
+
+<a class:list={[styles.link, touch && styles.touch]} {...attrs}><slot /></a>

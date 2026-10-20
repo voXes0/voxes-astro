@@ -1,0 +1,8 @@
+/* Raised above a stretched link (see global.css) so these stay clickable. */
+.links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+}

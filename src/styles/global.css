@@ -1,0 +1,210 @@
+@import "@fontsource-variable/google-sans-flex";
+@import "@fontsource-variable/vazirmatn";
+
+/* Minimal reset (replaces Tailwind's preflight). In a layer so any
+   component CSS, which is unlayered, always wins over it. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+
+  html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+  }
+
+  body {
+    line-height: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    vertical-align: middle;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+:root {
+  --background: oklch(0.9588 0.0127 86.83);
+  --foreground: oklch(0.244 0.0457 70);
+  --soft-foreground: oklch(0.304 0.0557 70);
+  --low-opacity-soft-foreground: oklch(0.304 0.0557 70 / 20%);
+  --mid-opacity-soft-foreground: color-mix(in oklab, var(--soft-foreground) 60%, transparent);
+  --high-opacity-soft-foreground: color-mix(in oklab, var(--soft-foreground) 80%, transparent);
+  --softer-foreground: oklch(0.75 0.07 77);
+  --low-opacity-softer-foreground: oklch(0.75 0.07 75 / 20%);
+  --secondary: oklch(0.5963 0.0844 150);
+  --low-opacity-secondary: oklch(0.5963 0.0844 150 / 30%);
+  --soft-secondary: oklch(0.7601 0.0794 150);
+
+  --font-latin: "Google Sans Flex Variable", sans-serif;
+  --font-persian: "Vazirmatn Variable", sans-serif;
+
+  /* Shared by buttons, chips, pills, the nav and hover transitions. */
+  --radius-pill: calc(infinity * 1px);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --transition-standard: all var(--duration-base) var(--ease-standard);
+}
+
+/* Horizontal page margin shared by the nav, footer and page frames. */
+:root {
+  --page-gutter: 2rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --page-gutter: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-gutter: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-gutter: 5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --page-gutter: 6rem;
+  }
+}
+
+.dark {
+  --background: oklch(0.204 0.0257 70);
+  --foreground: oklch(0.9588 0.0127 86.83);
+  --soft-foreground: oklch(0.8788 0.0327 86.83);
+  --low-opacity-soft-foreground: oklch(0.8788 0.0327 86.83 / 20%);
+  --softer-foreground: oklch(0.61 0.07 147.5);
+  --low-opacity-softer-foreground: oklch(0% 0 0 / 0.2);
+  --secondary: oklch(0.8 0.075 77);
+  --low-opacity-secondary: oklch(0.735 0.068 75 / 20%);
+  --soft-secondary: oklch(0.67 0.075 77);
+}
+
+/* The font follows <html lang>, which router.ts keeps in sync. */
+body {
+  font-family: var(--font-latin);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+html:lang(fa) body {
+  font-family: var(--font-persian);
+}
+
+/* Persian is a connected script, so it is never letter-spaced. The leading
+   `html` makes this out-rank component class rules that set tracking. */
+html:lang(fa),
+html :lang(fa) {
+  letter-spacing: 0;
+}
+
+/* Let the About page double as a printable CV: drop site chrome. */
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
+
+/* Short pages (<PageShell>): stretch the content wrapper to the viewport so
+   the footer sits at the bottom instead of floating mid-screen. */
+#app-content:has(> [data-short-page]) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Visually hidden, still read by screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Stretched link: the anchor's ::after covers its positioned ancestor, so the
+   whole card opens it without nesting anchors. Put it on the card's title link. */
+.stretched-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+}
+
+.stretched-link:focus-visible {
+  outline: none;
+}
+
+.stretched-link:focus-visible::after {
+  outline: 2px solid var(--secondary);
+  outline-offset: -4px;
+}

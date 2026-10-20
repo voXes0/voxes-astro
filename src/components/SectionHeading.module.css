@@ -1,0 +1,43 @@
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block-end: 2rem;
+}
+
+.tight {
+  margin-block-end: 1.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.3333;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary);
+}
+
+.bare {
+  margin-block-end: 1rem;
+}
+
+.rule {
+  flex: 1;
+  height: 1px;
+  background-color: var(--low-opacity-soft-foreground);
+}
+
+.large {
+  gap: 1.25rem;
+}
+
+.large .title {
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  line-height: 1.15;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--soft-foreground);
+}

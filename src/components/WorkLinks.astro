@@ -1,0 +1,33 @@
+---
+/** A work's "Source" / "Site" links; renders nothing when it has neither. */
+import { t, type Locale } from "@/i18n";
+import type { Work } from "@/lib/works";
+import TextLink from "./TextLink.astro";
+import styles from "./WorkLinks.module.css";
+
+interface Props {
+  locale: Locale;
+  work: Pick<Work, "repo" | "site">;
+  touch?: boolean;
+}
+
+const { locale, work, touch = false } = Astro.props;
+const m = t(locale).works.links;
+---
+
+{
+  (work.repo || work.site) && (
+    <p class={styles.links}>
+      {work.repo && (
+        <TextLink href={work.repo} touch={touch} target="_blank" rel="noopener noreferrer">
+          {m.source}
+        </TextLink>
+      )}
+      {work.site && (
+        <TextLink href={work.site} touch={touch} target="_blank" rel="noopener noreferrer">
+          {m.site}
+        </TextLink>
+      )}
+    </p>
+  )
+}

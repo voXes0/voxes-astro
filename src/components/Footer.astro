@@ -1,0 +1,58 @@
+---
+import { t, type Locale } from "@/i18n";
+import SocialIcon from "@/components/icons/SocialIcon.astro";
+import { socials, type SocialIconName } from "@/lib/socials";
+import styles from "./Footer.module.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const messages = t(locale);
+const email = "voXes.007@outlook.com";
+// Footer shows a subset of lib/socials.ts, in this order.
+const footerIds: SocialIconName[] = ["x", "instagram", "linkedin", "github"];
+const footerSocials = footerIds.map((id) => socials.find((s) => s.id === id)!);
+
+// Static build: the year is the build year. Digits follow the locale.
+const year = new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en", {
+  useGrouping: false,
+}).format(new Date().getFullYear());
+---
+
+<footer class={styles.footer}>
+  <div class={styles.grid}>
+    <p class={styles.brand} dir="ltr">
+      voXes<span class={styles.voxel} aria-hidden="true"></span>
+    </p>
+
+    <a href={`mailto:${email}`} class={styles.mail} dir="ltr">{email}</a>
+
+    <ul class={styles.socialList}>
+      {
+        footerSocials.map((s) => (
+          <li>
+            <a
+              href={s.href}
+              class={styles.socialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SocialIcon name={s.id} class={styles.icon} />
+              <span class="sr-only">
+                {s.label} {messages.contact.newTab}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class={styles.copyright}>
+      <span>&copy; {year}</span>
+      <span class={styles.dot} aria-hidden="true"></span>
+      <span>{messages.footer.copyright}</span>
+    </p>
+  </div>
+</footer>

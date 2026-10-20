@@ -1,0 +1,30 @@
+/* Page frame <main>. Short pages (Contact, 404) stretch to the viewport so the
+   footer sits at the bottom (the matching #app-content rule is in global.css). */
+.shell {
+  flex: 1;
+  /* `clip`, not `hidden`, which would break `position: sticky` on any ancestor. */
+  overflow-x: clip;
+  /* Top padding clears the fixed nav (about 6.25rem tall from md up). */
+  padding: 7rem var(--page-gutter) 3rem;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .shell {
+    padding-block: 8rem 3.5rem;
+  }
+}
+
+.long {
+  padding-block-end: 6rem;
+}
+
+@media (min-width: 640px) {
+  .long {
+    padding-block-end: 6rem;
+  }
+}

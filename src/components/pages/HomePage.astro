@@ -1,0 +1,57 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ButtonLink from "@/components/ButtonLink.astro";
+import Fabricator from "@/components/Fabricator.astro";
+import { isRtl, t, type Locale } from "@/i18n";
+import { localizedHref } from "@/lib/navigation";
+import styles from "./HomePage.module.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const isPersian = isRtl(locale);
+const m = t(locale).home;
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.meta.title}
+  description={m.meta.description}
+>
+  <main class:list={[styles.main, isPersian && styles.fa]}>
+    <!-- Left: the "laser fabrication" stage. Sizing/background live here;
+         what it draws lives in src/fab/pieces/. -->
+    <div class={styles.stage}>
+      <!-- Navbar spacer: keeps the fixed nav from covering the top of the fabricator. -->
+      <div class={styles.navSpacer} aria-hidden="true"></div>
+      <div class={styles.fab}>
+        <Fabricator />
+      </div>
+    </div>
+
+    <!-- Right: content -->
+    <div class={styles.content}>
+      <div class={styles.inner}>
+        <p class={styles.eyebrow}>{m.eyebrow}</p>
+
+        <h1 class={styles.title}>{m.title}</h1>
+
+        <p class={styles.lead}>{m.lead}</p>
+
+        <div class={styles.actions}>
+          <ButtonLink variant="primary" href={localizedHref("/works", locale)}>
+            {m.cta1}
+          </ButtonLink>
+          <ButtonLink
+            variant="secondary"
+            href={localizedHref("/contact", locale)}
+          >
+            {m.cta2}
+          </ButtonLink>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

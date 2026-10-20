@@ -1,0 +1,71 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ButtonLink from "@/components/ButtonLink.astro";
+import FlappyBird from "@/components/FlappyBird.astro";
+import PageShell from "@/components/PageShell.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import { t, type Locale } from "@/i18n";
+import { localizedHref } from "@/lib/navigation";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const m = t(locale).notFound;
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.title}
+  description={m.description}
+>
+  <PageShell center data-not-found={locale}>
+    <div class="shell">
+      <PageHeader
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+        flush
+        titleSize="clamp(2.2rem, 5.5vw, 3.2rem)"
+        introMax="30rem"
+      >
+        <div class="actions">
+          <ButtonLink variant="primary" href={localizedHref("/", locale)}>
+            {m.home}
+          </ButtonLink>
+          <ButtonLink variant="secondary" href={localizedHref("/works", locale)}>
+            {m.works}
+          </ButtonLink>
+        </div>
+      </PageHeader>
+
+      <div class="game">
+        <FlappyBird locale={locale} />
+      </div>
+    </div>
+  </PageShell>
+</BaseLayout>
+
+<style>
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+  @media (min-width: 960px) {
+    .shell {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 3.5rem;
+    }
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+</style>

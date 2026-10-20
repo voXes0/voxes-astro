@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>طاها حقیقی — رزومه</title>
+<!--
+  Persian CV (RTL). Same design as cv.tex: warm brown ink, sage-green accent
+  (gold in dark mode), eyebrow + hairline headings, timeline, cards, chips.
+
+  To make the PDF: open this file in Chrome → Print (Ctrl+P) →
+    Destination: Save as PDF · Paper: A4 · Margins: None · Background graphics: ON
+  Save as  public/cv-fa-light.pdf.  For the dark one, open  cv-fa.html?theme=dark
+  and save as  public/cv-fa-dark.pdf.
+
+  Font: Vazirmatn must be installed on the machine that prints, or its font file
+  placed in cv/fonts/ (Vazirmatn[wght].ttf). Check the preview before saving:
+  if the letters look like plain Tahoma/DejaVu, the font isn't being picked up.
+-->
+<style>
+  /* Vazirmatn: use an installed copy (static or variable), or a font file placed
+     in cv/fonts/ next to this HTML. Weight range covers the variable font. */
+  @font-face {
+    font-family: "VazirCV";
+    font-weight: 100 900;
+    src: local("Vazirmatn"), local("Vazirmatn Variable"), local("Vazirmatn UI"),
+         local("Vazirmatn Regular"), local("Vazirmatn Thin"), local("Vazirmatn-Regular"), local("Vazirmatn-Thin"),
+         url("fonts/Vazirmatn[wght].ttf"), url("fonts/Vazirmatn-Variable.ttf"),
+         url("fonts/Vazirmatn-Regular.ttf");
+  }
+  :root {
+    --bg: #ffffff;  --ink: #41290B;  --muted: #7A6A55;
+    --accent: #598D64;  --accent-text: #3F7350;  --tan: #C7A97C;
+    --hair: #DDD3C2;  --chip: #F0E8D8;  --pill: #DCE9DD;  --card: #ffffff;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1E150A;  --ink: #E0D6BF;  --muted: #968D7A;
+    --accent: #D9B887;  --accent-text: #D9B887;  --tan: #AF8F60;
+    --hair: #453C2E;  --chip: #31281C;  --pill: #473926;  --card: #271E12;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "VazirCV", Vazirmatn, "Vazirmatn UI", Tahoma, "DejaVu Sans", sans-serif;
+    font-size: 9.6pt; line-height: 1.75;
+  }
+  .page { width: 210mm; height: 297mm; padding: 11mm 16mm 10mm; overflow: hidden; background: var(--bg); }
+  #fontcheck { display: none; }
+  @media screen { #fontcheck { display: block; position: sticky; top: 0; z-index: 9; font: 13px/1.5 sans-serif; padding: 8px 12px; background: #fff3cd; color: #333; direction: ltr; text-align: left; } #fontcheck.ok { background: #d4edda; } }
+  @media print { #fontcheck { display: none !important; } }
+  @media screen { body { background: #888; } .page { margin: 8mm auto; } }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; font-family: "Google Sans Flex", "Helvetica Neue", Arial, "Liberation Sans", sans-serif; }
+
+  /* header */
+  header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pill { display: inline-block; background: var(--pill); color: var(--accent-text); font-size: 7pt; font-weight: 700; padding: 0 9px; border-radius: 99px; line-height: 1.9; }
+  h1 { font-size: 27pt; line-height: 1.5; font-weight: 800; margin-top: 2mm; }
+  .role { color: var(--accent-text); font-size: 12pt; line-height: 1.5; }
+  .bar { width: 12mm; height: 1.4pt; background: var(--accent); margin: 2.6mm 0 2mm; }
+  .avail { color: var(--muted); font-size: 8pt; display: flex; align-items: center; gap: 1.4mm; }
+  .dot { width: 1.8mm; height: 1.8mm; border-radius: 50%; background: var(--accent); }
+  .contact { font-size: 8.5pt; line-height: 1.55; padding-top: 1mm; }
+  .contact div { display: flex; gap: 2.6mm; align-items: baseline; margin-bottom: 1mm; }
+  .contact span.l { color: var(--muted); font-size: 6.8pt; min-width: 14mm; }
+
+  /* sections */
+  h2 { display: flex; align-items: center; gap: 3mm; font-size: 8pt; font-weight: 700; color: var(--accent-text); margin: 4.6mm 0 2.4mm; line-height: 1.4; }
+  h2::after { content: ""; flex: 1; height: 0.5pt; background: var(--hair); }
+  p.body { font-size: 9.6pt; }
+  .muted { color: var(--muted); }
+
+  /* timeline */
+  .timeline { position: relative; padding-inline-start: 5.4mm; border-inline-start: 0.7pt solid var(--hair); }
+  .job { position: relative; margin-bottom: 2.6mm; }
+  .job::before { content: ""; position: absolute; inset-inline-start: calc(-5.4mm - 1.6mm - 0.35pt); top: 2mm; width: 3.2mm; height: 3.2mm; border-radius: 50%; background: var(--accent); }
+  .job::after  { content: ""; position: absolute; inset-inline-start: calc(-5.4mm - 0.6mm - 0.35pt); top: 3mm; width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--bg); }
+  .job .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .job h3 { font-size: 10.6pt; font-weight: 700; line-height: 1.6; }
+  .job .period { font-size: 8pt; color: var(--muted); }
+  .job .who { color: var(--accent-text); font-weight: 700; font-size: 9pt; line-height: 1.5; }
+  .job .who span { color: var(--muted); font-weight: 400; }
+  ul.b { list-style: none; margin: 0.8mm 0 1.2mm; }
+  ul.b li { position: relative; padding-inline-start: 4.2mm; font-size: 9pt; line-height: 1.7; }
+  ul.b li::before { content: ""; position: absolute; inset-inline-start: 0.4mm; top: 0.62em; width: 1.5mm; height: 1.5mm; border-radius: 50%; background: var(--accent); }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.4mm; }
+  .chip { background: var(--chip); font-size: 7.2pt; line-height: 1; padding: 1.2mm 1.7mm; border-radius: 1mm; }
+
+  /* cards, columns */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .card { border: 0.7pt solid var(--hair); background: var(--card); border-radius: 3mm; padding: 2.6mm 3.4mm; }
+  .card .lab { color: var(--muted); font-size: 6.8pt; font-weight: 700; }
+  .card h3 { font-size: 10pt; font-weight: 700; line-height: 1.7; }
+  .card p { font-size: 8.8pt; line-height: 1.7; opacity: .88; }
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .cols3 h3 { font-size: 9pt; font-weight: 700; margin-bottom: 1.2mm; }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; }
+  .cols2 h2 { margin-top: 4.6mm; }
+  .edu .yr { font-size: 7.6pt; color: var(--muted); }
+  .edu b { display: block; font-size: 9.6pt; }
+  .edu .sch { color: var(--accent-text); font-weight: 700; font-size: 9pt; }
+  .lang { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4mm; }
+  .lang b { font-size: 9pt; } .lang small { color: var(--muted); font-size: 7.6pt; margin-inline-start: 1.6mm; }
+  .dots { display: flex; gap: 0.9mm; }
+  .dots i { width: 1.56mm; height: 1.56mm; border-radius: 50%; background: var(--hair); }
+  .dots i.on { background: var(--accent); }
+</style>
+<script>
+  // ?theme=dark → dark version (for printing the dark PDF)
+  if (new URLSearchParams(location.search).get("theme") === "dark")
+    document.documentElement.dataset.theme = "dark";
+</script>
+</head>
+<body>
+<div id="fontcheck"></div>
+<script>
+  // Screen-only helper: tells you which Vazirmatn name Chrome can actually see.
+  document.fonts.ready.then(function () {
+    var c = document.createElement("canvas").getContext("2d"), t = "فارسی ۱۲۳ abc";
+    function w(f) { c.font = "40px " + f; return c.measureText(t).width; }
+    function has(name) { return w('"' + name + '", monospace') !== w("monospace") || w('"' + name + '", serif') !== w("serif"); }
+    var names = ["Vazirmatn", "Vazirmatn Variable", "Vazirmatn UI", "Vazirmatn Thin", "Vazirmatn Medium", "Vazir"];
+    var found = names.filter(has), box = document.getElementById("fontcheck");
+    var css = has("VazirCV");
+    box.className = found.length || css ? "ok" : "";
+    box.textContent = found.length || css
+      ? "Font OK — installed names found: " + (found.join(", ") || "(via @font-face)") + (css ? " · @font-face loaded" : "")
+      : "Vazirmatn NOT found by Chrome. Put the .ttf in cv/fonts/ (named Vazirmatn[wght].ttf) or install it, then reload.";
+  });
+</script>
+<div class="page">
+
+  <header>
+    <div>
+      <span class="pill">رزومه</span>
+      <h1>طاها حقیقی</h1>
+      <div class="role">توسعه‌دهنده فول‌استک و سیستم</div>
+      <div class="bar"></div>
+      <div class="avail"><span class="dot"></span>آماده همکاری در پروژه‌های جدید</div>
+    </div>
+    <div class="contact">
+      <div><span class="l">ایمیل</span><span class="ltr">hello@example.com</span></div>
+      <div><span class="l">وب‌سایت</span><span class="ltr">voxes.example</span></div>
+      <div><span class="l">گیت‌هاب</span><span class="ltr">github.com/username</span></div>
+      <div><span class="l">لینکدین</span><span class="ltr">in/username</span></div>
+      <div><span class="l">محل</span><span>شهر، کشور</span></div>
+    </div>
+  </header>
+
+  <h2>خلاصه</h2>
+  <p class="body">توسعه‌دهنده‌ای با چند سال تجربه در ساخت اپلیکیشن‌های وب و ابزارهای سطح پایین، با سابقه کار مستقل برای کارفرمایان. این یک متن نمونه است: لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+
+  <h2>کارهای فریلنسری</h2>
+  <div class="timeline">
+    <div class="job">
+      <div class="top"><h3>نام پروژه یا محصول</h3><span class="period">۱۴۰۲ — اکنون</span></div>
+      <div class="who">نام کارفرما <span>· دورکاری</span></div>
+      <ul class="b">
+        <li>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان است.</li>
+        <li>چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</li>
+        <li>کتابهای زیادی در شصت و سه درصد گذشته حال و آینده شناخت فراوان جامعه.</li>
+      </ul>
+      <div class="chips"><span class="chip ltr">Next.js</span><span class="chip ltr">TypeScript</span><span class="chip ltr">PostgreSQL</span></div>
+    </div>
+    <div class="job">
+      <div class="top"><h3>نام پروژه دیگر</h3><span class="period">۱۴۰۱ — ۱۴۰۲</span></div>
+      <div class="who">کارفرمای دیگر <span>· دورکاری</span></div>
+      <ul class="b">
+        <li>در این صورت می‌توان امید داشت که تمام و دشواری موجود در ارائه راهکارها.</li>
+        <li>و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی.</li>
+      </ul>
+      <div class="chips"><span class="chip ltr">React</span><span class="chip ltr">Node.js</span><span class="chip ltr">Docker</span></div>
+    </div>
+    <div class="job">
+      <div class="top"><h3>نام پروژه قبلی</h3><span class="period">۱۳۹۹ — ۱۴۰۱</span></div>
+      <div class="who">کارفرما یا شخصی <span>· دورکاری</span></div>
+      <ul class="b"><li>تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می‌باشد.</li></ul>
+      <div class="chips"><span class="chip ltr">HTML/CSS</span><span class="chip ltr">JavaScript</span><span class="chip ltr">WordPress</span></div>
+    </div>
+  </div>
+
+  <h2>پروژه‌های منتخب</h2>
+  <div class="cards">
+    <div class="card"><div class="lab">در حال ساخت</div><h3>یک موتور شبیه‌سازی سیالات، از پایه</h3>
+      <p>شبیه‌سازی هیدرودینامیک ذرات هموار (<span class="ltr">SPH</span>) با <span class="ltr">Rust</span>، از پایه و از اصول اولیه نوشته شده است.</p></div>
+    <div class="card"><div class="lab">منتشر شده</div><h3>کاژه — هتلی بوتیک، آنلاین</h3>
+      <p>وب‌سایت رزرو دوزبانه با <span class="ltr">Next.js</span> برای یک هتل بوتیک؛ چیزی واقعی که باید برای مهمان‌ها درست کار کند.</p></div>
+  </div>
+
+  <h2>مهارت‌ها</h2>
+  <div class="cols3">
+    <div><h3>زبان‌ها</h3><div class="chips"><span class="chip ltr">TypeScript</span><span class="chip ltr">Rust</span><span class="chip ltr">C#</span><span class="chip ltr">Python</span></div></div>
+    <div><h3>فرانت‌اند</h3><div class="chips"><span class="chip ltr">Next.js</span><span class="chip ltr">Astro</span><span class="chip ltr">Solid</span><span class="chip ltr">Tailwind</span></div></div>
+    <div><h3>بک‌اند و ابزار</h3><div class="chips"><span class="chip ltr">Node.js</span><span class="chip ltr">PostgreSQL</span><span class="chip ltr">Docker</span><span class="chip ltr">Git</span></div></div>
+  </div>
+
+  <div class="cols2">
+    <div class="edu"><h2>تحصیلات</h2>
+      <div class="yr">۱۳۹۰ — ۱۳۹۴</div><b>دیپلم ریاضی فیزیک</b><div class="sch">نام دبیرستان</div></div>
+    <div><h2>زبان‌ها</h2>
+      <div class="lang"><span><b>فارسی</b><small>زبان مادری</small></span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+      <div class="lang"><span><b>انگلیسی</b><small>مسلط</small></span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+      <div class="lang"><span><b>آلمانی</b><small>مبتدی</small></span><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+    </div>
+  </div>
+
+  <h2>خارج از کار</h2>
+  <p class="body" style="font-size:9pt;opacity:.88">نگهداری از خزنده‌ها، فلزیاب در آخر هفته‌ها، و مادسازی بازی‌های قدیمی تا کاری بکنند که هیچ‌وقت قرار نبوده.</p>
+
+</div>
+</body>
+</html>

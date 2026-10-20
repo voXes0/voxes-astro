@@ -1,0 +1,41 @@
+.link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--soft-foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--secondary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  transition: color var(--duration-fast) var(--ease-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--secondary);
+  }
+}
+
+.touch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+@media (min-width: 640px) {
+  .touch {
+    min-height: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}

@@ -1,0 +1,79 @@
+/* One button for the whole site: <ButtonLink variant="primary|secondary">.
+   Renders an <a> with href, otherwise a <button>. */
+.button {
+  /* Colour of the hover glow; each variant sets it. */
+  --glow: var(--soft-foreground);
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transform-origin: center;
+}
+
+.sm {
+  padding: 0.75rem 2rem;
+}
+
+.button:active {
+  scale: 95%;
+}
+
+/* Filled. */
+.primary {
+  background-color: var(--soft-foreground);
+  color: var(--background);
+  transition: var(--transition-standard);
+}
+
+/* Outlined; a growing circle fills it on hover. */
+.secondary {
+  --glow: var(--softer-foreground);
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  outline: 2.5px solid var(--softer-foreground);
+  outline-offset: -3px;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  transition: all 0.4s ease;
+}
+
+.secondary::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--softer-foreground);
+  translate: -50% -50%;
+  scale: 0;
+  transition: scale 0.4s ease;
+}
+
+@media (hover: hover) {
+  .button:hover {
+    translate: 0 -0.1875rem;
+    box-shadow:
+      0 10px 15px -3px color-mix(in oklab, var(--glow) 35%, transparent),
+      0 4px 6px -4px color-mix(in oklab, var(--glow) 35%, transparent);
+  }
+
+  .primary:hover {
+    background-color: color-mix(in oklab, var(--soft-foreground) 92.5%, transparent);
+  }
+
+  .secondary:hover {
+    color: var(--background);
+    translate: 0 -2px;
+  }
+
+  .secondary:hover::before {
+    scale: 1.5;
+  }
+}

@@ -1,0 +1,38 @@
+---
+/** Shared page header: eyebrow pill, h1, intro and an optional actions slot. */
+import styles from "./PageHeader.module.css";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  size?: "md" | "lg";
+  /** Drop the space below (when the parent already spaces it). */
+  flush?: boolean;
+  /** Override the h1 font-size (CSS value). */
+  titleSize?: string;
+  /** Override the intro max-width (CSS value). */
+  introMax?: string;
+}
+
+const { eyebrow, title, intro, size = "md", flush = false, titleSize, introMax } = Astro.props;
+const vars = [
+  titleSize && `--ph-title-size: ${titleSize}`,
+  introMax && `--ph-intro-max: ${introMax}`,
+]
+  .filter(Boolean)
+  .join(";");
+---
+
+<header class:list={[styles.head, styles[size], flush && styles.flush]} style={vars || undefined}>
+  <span class={styles.pill}>{eyebrow}</span>
+  <h1 class={styles.title}>{title}</h1>
+  <p class={styles.intro}>{intro}</p>
+  {
+    Astro.slots.has("default") && (
+      <div class={styles.actions}>
+        <slot />
+      </div>
+    )
+  }
+</header>

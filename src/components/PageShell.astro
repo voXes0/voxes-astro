@@ -1,0 +1,21 @@
+---
+import styles from "./PageShell.module.css";
+
+interface Props {
+  /** Vertically centre the content (404). */
+  center?: boolean;
+  /** Long page: more bottom padding, and no stretching to the viewport height. */
+  long?: boolean;
+  [attr: `data-${string}`]: string | undefined;
+}
+
+const { center = false, long = false, ...attrs } = Astro.props;
+---
+
+<main
+  class:list={[styles.shell, center && styles.center, long && styles.long]}
+  {...(long ? {} : { "data-short-page": true })}
+  {...attrs}
+>
+  <slot />
+</main>

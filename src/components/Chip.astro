@@ -1,0 +1,12 @@
+---
+/** Small pill for tech / skill tags. LTR by default: tags are Latin names. */
+import styles from "./Chip.module.css";
+
+interface Props {
+  dir?: "ltr" | "rtl" | "auto";
+}
+
+const { dir = "ltr" } = Astro.props;
+---
+
+<span class={styles.chip} dir={dir}><slot /></span>

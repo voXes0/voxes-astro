@@ -1,0 +1,130 @@
+---
+/**
+ * The "laser fabrication" stage: a faint baseplate grid with an empty SVG
+ * stage on top. Markup only — what gets drawn lives in src/fab/pieces/, how it
+ * is drawn in src/fab/engine.ts, and src/fab/autoMount.ts (loaded by
+ * BaseLayout) brings it to life. Fills its nearest positioned ancestor, so the
+ * parent decides size, background and clipping.
+ *
+ * Everything inside #fab-stage is in stage units (300x300 viewBox).
+ */
+import styles from "./Fabricator.module.css";
+---
+
+<div class={styles.root}>
+  <!-- faint baseplate grid, sells the "fabrication bed" framing -->
+  <svg class={styles.grid} aria-hidden="true">
+    <defs>
+      <pattern
+        id="fabgrid"
+        width="28"
+        height="28"
+        patternUnits="userSpaceOnUse"
+      >
+        <path d="M28 0H0V28" fill="none" stroke="currentColor" stroke-width="1"
+        ></path>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#fabgrid)"></rect>
+  </svg>
+
+  <svg
+    id="fab-stage"
+    viewBox="0 0 300 300"
+    class={styles.stage}
+    aria-hidden="true"
+  >
+    <defs>
+      <!-- glow for the head, in stage units -->
+      <filter id="fab-glow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur stdDeviation="0.76" result="blur"></feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+      <!-- Strokes get their own glow filter per piece: the engine creates it with the
+           piece (the blur has to be rescaled to the piece's size) and removes it after. -->
+
+      <!-- The camera's window: the world fades out over its last few units instead of
+           ending in a hard cut. White = visible; the black-to-clear ramps hide the rim. -->
+      <linearGradient id="fab-fade-x" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#000"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="fab-fade-x2" x1="1" x2="0" y1="0" y2="0">
+        <stop offset="0" stop-color="#000"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="fab-fade-y" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="#000"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="fab-fade-y2" x1="0" x2="0" y1="1" y2="0">
+        <stop offset="0" stop-color="#000"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </linearGradient>
+      <mask
+        id="fab-view-mask"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="300"
+        height="300"
+      >
+        <rect width="300" height="300" fill="#fff"></rect>
+        <rect x="0" y="0" width="8" height="300" fill="url(#fab-fade-x)"></rect>
+        <rect x="292" y="0" width="8" height="300" fill="url(#fab-fade-x2)"
+        ></rect>
+        <rect x="0" y="0" width="300" height="8" fill="url(#fab-fade-y)"></rect>
+        <rect x="0" y="292" width="300" height="8" fill="url(#fab-fade-y2)"
+        ></rect>
+      </mask>
+
+      <!-- the sun's bloom, in the scene's own colour (src/fab/pieces/sun.ts fills a circle with it) -->
+      <radialGradient id="fab-sun-bloom">
+        <stop
+          offset="0"
+          style="stop-color: var(--secondary)"
+          stop-opacity="0.45"></stop>
+        <stop
+          offset="0.35"
+          style="stop-color: var(--secondary)"
+          stop-opacity="0.2"></stop>
+        <stop
+          offset="0.7"
+          style="stop-color: var(--secondary)"
+          stop-opacity="0.05"></stop>
+        <stop offset="1" style="stop-color: var(--secondary)" stop-opacity="0"
+        ></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- Head first, so strokes paint over it (as it always has). A triangle
+         spins around the dot; position and spin never fight over one attribute. -->
+    <g id="fab-head-group" class={styles.headGroup}>
+      <polygon
+        id="fab-head-triangle"
+        points="0,-12.41 10.74,6.21 -10.74,6.21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.76"
+        stroke-linejoin="round"
+        class={styles.headTrail}
+        filter="url(#fab-glow)"></polygon>
+      <circle
+        id="fab-head"
+        r="2.5"
+        class={styles.headDot}
+        filter="url(#fab-glow)"></circle>
+    </g>
+    <!-- one <g> per piece is created here while it is on stage (piece sequencer) -->
+    <g id="fab-layer"></g>
+    <!-- camera chapters: the world, panned by src/fab/camera.ts, seen through the faded window -->
+    <g id="fab-view" mask="url(#fab-view-mask)">
+      <g id="fab-world"></g>
+    </g>
+    <!-- non-stroke extras acts add (e.g. the wordmark), in stage space -->
+    <g id="fab-overlay"></g>
+  </svg>
+</div>

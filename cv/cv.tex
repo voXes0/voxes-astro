@@ -1,0 +1,267 @@
+% ─────────────────────────────────────────────────────────────────────────────
+%  CV — built from scratch, no template.
+%  Design cues taken from the website's About page: warm brown ink, sage-green
+%  accent, "eyebrow + hairline" section headings, a timeline for work history,
+%  rounded cards and chips.
+%
+%  Compile with XeLaTeX or LuaLaTeX (NOT pdfLaTeX), twice (card heights).
+%    Overleaf: Menu → Compiler → XeLaTeX
+%    Local:    sh cv/build.sh      (builds light + dark into public/)
+%  Single build by hand, from inside cv/ (dark = 1, light = 0):
+%    xelatex "\def\cvdark{1}\input{cv.tex}"
+%
+%  Layout is one column, text is real selectable text, and decorations
+%  (dots, lines, chips) are drawn graphics, so applicant-tracking software
+%  reads it in the correct order.
+%  The Persian version is cv-fa.html (see the note at its top).
+% ─────────────────────────────────────────────────────────────────────────────
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[a4paper,left=16mm,right=16mm,top=11mm,bottom=10mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+% ── Switches ────────────────────────────────────────────────────────────────
+\ifdefined\cvdark\else\def\cvdark{0}\fi
+\newif\ifdark  \ifnum\cvdark=1 \darktrue\fi
+
+% Cream page background for the LIGHT version (like the website). Looks nice
+% on screen, wastes ink when printed. Set to \creamtrue to enable.
+\newif\ifcream
+\creamfalse
+
+% ── Colours (converted from the site's CSS tokens) ──────────────────────────
+\ifdark
+  \definecolor{pagebg}{HTML}{1E150A}     % --background (dark)
+  \definecolor{ink}{HTML}{E0D6BF}        % --soft-foreground (dark)
+  \definecolor{muted}{HTML}{968D7A}
+  \definecolor{accent}{HTML}{D9B887}     % --secondary (dark)
+  \definecolor{accenttext}{HTML}{D9B887}
+  \definecolor{tan}{HTML}{AF8F60}
+  \definecolor{hair}{HTML}{453C2E}
+  \definecolor{chipfill}{HTML}{31281C}
+  \definecolor{pillfill}{HTML}{473926}
+  \definecolor{cardbg}{HTML}{271E12}
+  \pagecolor{pagebg}
+\else
+  \definecolor{ink}{HTML}{41290B}        % --soft-foreground
+  \definecolor{muted}{HTML}{7A6A55}
+  \definecolor{accent}{HTML}{598D64}     % --secondary
+  \definecolor{accenttext}{HTML}{3F7350} % darkened for small text on paper
+  \definecolor{tan}{HTML}{C7A97C}        % --softer-foreground
+  \definecolor{hair}{HTML}{DDD3C2}
+  \definecolor{chipfill}{HTML}{F0E8D8}
+  \definecolor{pillfill}{HTML}{DCE9DD}
+  \definecolor{cardbg}{HTML}{FFFFFF}
+  \ifcream
+    \definecolor{pagebg}{HTML}{F5F1E8}
+    \pagecolor{pagebg}
+  \else
+    \definecolor{pagebg}{HTML}{FFFFFF}
+  \fi
+\fi
+\color{ink}
+
+% ── Fonts ───────────────────────────────────────────────────────────────────
+% Uses the site's font (Google Sans Flex) if it's installed, otherwise falls
+% back to TeX Gyre Heros, which ships with every TeX distribution.
+\IfFontExistsTF{Google Sans Flex}
+  {\setmainfont{Google Sans Flex}}
+  {\setmainfont{TeX Gyre Heros}}
+\setsansfont{TeX Gyre Heros}
+\renewcommand{\familydefault}{\rmdefault}
+
+\hypersetup{
+  hidelinks,
+  pdftitle={Taha Haghighi — CV},
+  pdfauthor={Taha Haghighi},
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.08}
+\pagestyle{empty}
+\raggedbottom
+
+% ── Building blocks ─────────────────────────────────────────────────────────
+
+% Small rounded label, e.g. the "Curriculum Vitae" pill above the name.
+\newcommand{\cvpill}[1]{%
+  \tikz[baseline=(p.base)]\node[fill=pillfill,rounded corners=5pt,
+    inner xsep=7pt,inner ysep=3pt,text=accenttext,font=\fontsize{7}{8}\selectfont\bfseries] (p)
+    {\addfontfeatures{LetterSpace=8}\MakeUppercase{#1}};}
+
+% Tag chip (technologies, skills).
+\newcommand{\cvchip}[1]{%
+  \tikz[baseline=(c.base)]\node[fill=chipfill,rounded corners=2.5pt,
+    inner xsep=4.2pt,inner ysep=2.2pt,text=ink,font=\fontsize{7.4}{8.5}\selectfont] (c){#1};\hspace{1.4mm}}
+
+% Section heading: tracked caps in accent colour + hairline running to margin.
+\newcommand{\cvsection}[1]{%
+  \par\vspace{4mm}\noindent
+  {\color{accenttext}\fontsize{7.6}{9}\selectfont\bfseries
+   \addfontfeatures{LetterSpace=10}\MakeUppercase{#1}}%
+  \hspace{3mm}{\color{hair}\leaders\hrule height 3pt depth -2.5pt\hfill}%
+  \par\vspace{2.2mm}\nobreak}
+
+% Proficiency dots, 1–5.
+\newcommand{\cvdots}[1]{%
+  \tikz[baseline=-0.6ex]{%
+    \foreach \i in {1,...,5}{%
+      \ifnum\i>#1 \fill[hair] (\i*2.7mm,0) circle (0.78mm);%
+      \else \fill[accent] (\i*2.7mm,0) circle (0.78mm);\fi}}}
+
+% Bullet list used inside job entries.
+\newlist{cvbullets}{itemize}{1}
+\setlist[cvbullets]{
+  label={\tikz[baseline=-0.34ex]\fill[accent] (0.7mm,0) circle (1.05pt);},
+  leftmargin=4.2mm, labelsep=0mm, itemsep=1.2pt, topsep=1.6pt, parsep=0pt, partopsep=0pt,
+  font=\small}
+
+% Timeline container: a vertical line down the left edge.
+\newtcolorbox{cvtimeline}{coltext=ink,
+  enhanced, breakable, frame hidden, interior hidden, boxrule=0pt,
+  sharp corners, boxsep=0pt, top=0pt, bottom=0pt, right=0pt, left=5.4mm,
+  borderline west={0.7pt}{0pt}{hair}}
+
+% One freelance/job entry.
+%   #1 title  #2 client/company · place  #3 period
+\newenvironment{cvjob}[3]{%
+  \par\vspace{0.6mm}\noindent
+  \tikz[overlay,baseline]\fill[accent] (-5.4mm,0.85ex) circle (1.6mm);%
+  \tikz[overlay,baseline]\fill[pagebg] (-5.4mm,0.85ex) circle (0.6mm);%
+  {\bfseries\fontsize{10.6}{12}\selectfont #1}\hfill
+  {\footnotesize\color{muted}#3}\par
+  {\small\color{accenttext}\bfseries #2}\par\vspace{0.4mm}%
+}{\par\vspace{2.4mm}}
+
+% Project card.
+\tcbset{cvcardstyle/.style={coltext=ink, enhanced, colback=cardbg, colframe=hair,
+  boxrule=0.7pt, arc=3mm, left=3.4mm, right=3.4mm, top=2.6mm, bottom=2.6mm,
+  equal height group=projects}}
+\newtcolorbox{cvcard}[1]{cvcardstyle,
+  before upper={{\color{muted}\fontsize{6.8}{8}\selectfont\bfseries
+    \addfontfeatures{LetterSpace=8}\MakeUppercase{#1}}\par\vspace{1mm}}}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+% ─────────────────────────────────────────────────────────────────────────────
+
+% ── Header ──────────────────────────────────────────────────────────────────
+\begin{minipage}[t]{0.60\linewidth}
+  \cvpill{Curriculum Vitae}\par\vspace{3.2mm}
+  {\fontsize{29}{31}\selectfont\bfseries Taha Haghighi}\par\vspace{1.4mm}
+  {\fontsize{12}{14}\selectfont\color{accenttext}Full-stack \& systems developer}\par\vspace{2.6mm}
+  {\color{accent}\rule{12mm}{1.4pt}}\par\vspace{2.4mm}
+  {\footnotesize\color{muted}
+   \tikz[baseline=-0.5ex]\fill[accent] (0,0) circle (0.9mm);\hspace{1.4mm}Open to new projects}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.36\linewidth}
+  \raggedleft\small\vspace{1.2mm}
+  \def\row#1#2#3{{\color{muted}\scriptsize #1}\hspace{2.6mm}\href{#3}{#2}\par\vspace{1.6mm}}
+  \row{Email}{hello@example.com}{mailto:hello@example.com}
+  \row{Web}{voxes.example}{https://example.com}
+  \row{GitHub}{github.com/username}{https://github.com/username}
+  \row{LinkedIn}{in/username}{https://linkedin.com/in/username}
+  {\color{muted}\scriptsize Location}\hspace{2.6mm}City, Country
+\end{minipage}
+
+% ── Summary ─────────────────────────────────────────────────────────────────
+\cvsection{Summary}
+Developer with several years of experience shipping web applications and
+low-level tooling, working independently with clients. Lorem ipsum dolor sit
+amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+et dolore magna aliqua, ut enim ad minim veniam.
+
+% ── Freelance work ──────────────────────────────────────────────────────────
+\cvsection{Freelance work}
+\begin{cvtimeline}
+\begin{cvjob}{Project or Product Name}{Client Name \textcolor{muted}{\textmd{· Remote}}}{2024 — Present}
+  \begin{cvbullets}
+    \item Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+    \item Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+    \item Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.
+  \end{cvbullets}\vspace{1.2mm}
+  \cvchip{Next.js}\cvchip{TypeScript}\cvchip{PostgreSQL}
+\end{cvjob}
+
+\begin{cvjob}{Another Project Name}{Another Client \textcolor{muted}{\textmd{· Remote}}}{2023 — 2024}
+  \begin{cvbullets}
+    \item Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.
+    \item Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.
+  \end{cvbullets}\vspace{1.2mm}
+  \cvchip{React}\cvchip{Node.js}\cvchip{Docker}
+\end{cvjob}
+
+\begin{cvjob}{Earlier Project Name}{Client or Personal \textcolor{muted}{\textmd{· Remote}}}{2021 — 2023}
+  \begin{cvbullets}
+    \item Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+  \end{cvbullets}\vspace{1.2mm}
+  \cvchip{HTML/CSS}\cvchip{JavaScript}\cvchip{WordPress}
+\end{cvjob}
+\end{cvtimeline}
+
+% ── Selected projects ───────────────────────────────────────────────────────
+\vspace{-1.5mm}
+\cvsection{Selected projects}
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+\begin{cvcard}{In progress}
+  {\bfseries\fontsize{10}{12}\selectfont A fluid engine, built from scratch}\par\vspace{0.8mm}
+  {\small\color{ink!85}A smoothed-particle hydrodynamics simulation in Rust, written
+  from first principles. Multithreading and a compute-shader backend are next.}
+\end{cvcard}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.485\linewidth}
+\begin{cvcard}{Shipped}
+  {\bfseries\fontsize{10}{12}\selectfont Kazheh --- a boutique hotel, online}\par\vspace{0.8mm}
+  {\small\color{ink!85}A bilingual booking site built in Next.js for a boutique hotel:
+  something real that has to just work for actual guests.}
+\end{cvcard}
+\end{minipage}
+
+% ── Skills ──────────────────────────────────────────────────────────────────
+\cvsection{Skills}
+\noindent
+\begin{minipage}[t]{0.31\linewidth}
+  {\small\bfseries Languages}\par\vspace{1.4mm}
+  \cvchip{TypeScript}\cvchip{Rust}\cvchip{C\#}\cvchip{Python}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.31\linewidth}
+  {\small\bfseries Frontend}\par\vspace{1.4mm}
+  \cvchip{Next.js}\cvchip{Astro}\cvchip{Solid}\cvchip{Tailwind}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.31\linewidth}
+  {\small\bfseries Backend \& tools}\par\vspace{1.4mm}
+  \cvchip{Node.js}\cvchip{PostgreSQL}\cvchip{Docker}\cvchip{Git}
+\end{minipage}
+
+% ── Education + Languages ───────────────────────────────────────────────────
+\vspace{0.5mm}
+\noindent
+\begin{minipage}[t]{0.47\linewidth}
+  \cvsection{Education}
+  {\footnotesize\color{muted}2011 — 2015}\par
+  {\bfseries Diploma in Mathematics \& Physics}\par
+  {\small\color{accenttext}\bfseries High School Name}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.47\linewidth}
+  \cvsection{Languages}
+  \def\lang#1#2#3{{\small\bfseries #1}\hspace{1.6mm}{\footnotesize\color{muted}#2}\hfill\cvdots{#3}\par\vspace{1.3mm}}
+  \lang{Persian}{Native}{5}
+  \lang{English}{Fluent}{4}
+  \lang{German}{Beginner}{1}
+\end{minipage}
+
+% ── Beyond work ─────────────────────────────────────────────────────────────
+\cvsection{Beyond work}
+{\small\color{ink!85}Reptile keeping, metal detecting on weekends, and modding old
+games until they do something they were never meant to.}
+
+\end{document}

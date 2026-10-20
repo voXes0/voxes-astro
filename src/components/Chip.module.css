@@ -1,0 +1,10 @@
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  line-height: 1.3333;
+  font-weight: 500;
+  background-color: var(--low-opacity-softer-foreground);
+  color: var(--soft-foreground);
+}
