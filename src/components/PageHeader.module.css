@@ -24,7 +24,7 @@
 .title {
   margin-block-end: 0.75rem;
   font-size: var(--ph-title-size, clamp(2rem, 5vw, 2.8rem));
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -1px;
   color: var(--soft-foreground);

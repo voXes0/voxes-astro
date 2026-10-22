@@ -33,7 +33,9 @@ const study = getCaseStudy(slug, locale);
       <PageShell long>
         <div class="shell">
           <div class="back">
-            <TextLink href={localizedHref("/works", locale)}>{m.detail.back}</TextLink>
+            <TextLink href={localizedHref("/works", locale)}>
+              {m.detail.back}
+            </TextLink>
           </div>
           <h1 class="title">{work.title}</h1>
           <p class="desc">{work.description}</p>
@@ -55,7 +57,7 @@ const study = getCaseStudy(slug, locale);
   .title {
     margin-block-end: 1rem;
     font-size: clamp(2.4rem, 6vw, 3.6rem);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.1;
     color: var(--soft-foreground);
   }

@@ -12,10 +12,14 @@ export function joinCopy<K extends string, D extends Record<K, string>, C extend
   copies: readonly C[],
   locale: Locale,
 ): D & C {
-  const copy = copies.find((item) => item[key] === data[key]);
+  const wanted: string = data[key];
+  const copy = copies.find((item) => {
+    const candidate: string = item[key];
+    return candidate === wanted;
+  });
   if (!copy) {
     throw new Error(
-      `${registry}: missing "${locale}" copy for ${key} "${data[key]}" in src/i18n/messages/${locale}.ts`,
+      `${registry}: missing "${locale}" copy for ${key} "${wanted}" in src/i18n/messages/${locale}.ts`,
     );
   }
   return { ...data, ...copy };

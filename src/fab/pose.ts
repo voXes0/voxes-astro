@@ -1,3 +1,4 @@
+import { PATH_TOKEN as TOKEN, round3 } from "./util";
 /**
  * Blending a stroke between its poses.
  *
@@ -6,7 +7,6 @@
  * Blending is therefore a per-number interpolation — no path parsing beyond
  * splitting the string into commands and numbers.
  */
-const TOKEN = /[a-zA-Z]|[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi;
 const isNumber = (t: string) => /^[-+.\d]/.test(t);
 
 interface Tokens {
@@ -25,7 +25,7 @@ function tokenize(d: string): Tokens {
   };
 }
 
-const fmt = (n: number) => String(Math.round(n * 1000) / 1000);
+const fmt = round3;
 
 /**
  * `base` is pose 0; `poses` are the others (`at` is their position on the

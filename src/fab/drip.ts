@@ -1,27 +1,25 @@
 import { type Rain, type Surface, extentOf, placeOn, surfaceAt, turnOf } from "./rain";
-import { abortError } from "./timing";
+import { frames } from "./timing";
 import type { Point } from "./types";
+import { CONFIG, SVG_NS as NS } from "./config";
+import { clamp01, round3 } from "./util";
 
 /**
  * One raindrop, followed from the cloud to the water.
  *
- *   fall     a raindrop falls onto a petal: one of the rain's own streaks, a little heavier
- *            (`rain.fall`), so it looks like the rest and lands like them: it knocks the petal
- *            (and the stem under it) and throws a few droplets;
- *   bead     what is left spreads into a small bead of water that swells where it landed;
- *   slide    it creeps down the petal's upper edge: gravity along the surface against the
- *            water's grip on the petal (viscous drag, and it will not move at all on a
- *            surface that is too flat), so it starts slowly and gathers pace toward the tip;
- *   hang     at the tip it rolls round the point to hang beneath it, swelling and sagging into a
- *            pendant drop; its weight holds the petal a little down (the petal is a spring:
- *            rain.ts `Spring.setRest`);
- *   drop     it lets go. The petal, unloaded, rings back up and gives the drop a little push
- *            sideways; from there it is a free body under gravity (an exact parabola) that
- *            lands in the water at the chosen place.
+ *   fall   a raindrop falls onto a petal: one of the rain's own streaks, a little heavier, so it
+ *          looks like the rest; it knocks the petal (and the stem) and throws droplets;
+ *   bead   what is left swells into a small bead of water where it landed;
+ *   slide  it creeps down the petal's upper edge: gravity along the surface against the water's grip
+ *          (viscous drag; it will not move at all on a surface too flat), slow at first, quicker
+ *          toward the tip;
+ *   hang   at the tip it rolls round the point to hang beneath it as a pendant drop; its weight
+ *          holds the petal a little down (`Spring.setRest`);
+ *   drop   it lets go. The petal rings back up and nudges it sideways; then it is a free body under
+ *          gravity (an exact parabola) that lands in the water at the chosen place.
  *
- * Everything the bead does sits ON the petal, so it is carried with it (turned by the petal's
- * spring about its hinge, then moved with the leaning stem) while the rain rocks the plant.
- * `onFrame` reports where the drop is so the camera can follow it.
+ * The bead sits ON the petal, so it is carried with it (turned by the petal's spring, moved with
+ * the leaning stem). `onFrame` reports where the drop is so the camera can follow it.
  */
 
 export type DripPhase = "bead" | "slide" | "hang" | "drop";
@@ -57,14 +55,12 @@ export interface DripOptions {
   onFrame?(f: DripFrame): void;
 }
 
-const NS = "http://www.w3.org/2000/svg";
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
 
 /** A drop's outline at its own origin: a circle of radius `r`, with a tail of `tail`*r above it (0 = a plain circle). */
 function dropPath(r: number, tail: number): string {
-  const f = (v: number) => (Math.round(v * 1000) / 1000).toString();
+  const f = round3;
   if (tail < 0.03) return `M${f(-r)} 0 A${f(r)} ${f(r)} 0 1 1 ${f(r)} 0 A${f(r)} ${f(r)} 0 1 1 ${f(-r)} 0 Z`;
   const T = r * (1 + tail);
   const phi = Math.acos(r / T);
@@ -77,27 +73,11 @@ function dropPath(r: number, tail: number): string {
 
 /** A short reflection along the upper-left inside of the drop. */
 function glint(r: number): string {
-  const f = (v: number) => (Math.round(v * 1000) / 1000).toString();
+  const f = round3;
   const k = 0.58 * r;
   const a1 = (-150 * Math.PI) / 180;
   const a2 = (-102 * Math.PI) / 180;
   return `M${f(k * Math.cos(a1))} ${f(k * Math.sin(a1))} A${f(k)} ${f(k)} 0 0 1 ${f(k * Math.cos(a2))} ${f(k * Math.sin(a2))}`;
-}
-
-/** Run `step` every frame until it returns true. */
-function frames(signal: AbortSignal, step: (dt: number, t: number) => boolean | void): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const t0 = performance.now();
-    let last = t0;
-    const tick = (now: number) => {
-      if (signal.aborted) return reject(abortError());
-      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
-      last = now;
-      if (step(dt, (now - t0) / 1000) === true) return resolve();
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  });
 }
 
 export async function dripOnPetal(o: DripOptions): Promise<{ x: number; y: number; speed: number; radius: number }> {
@@ -126,7 +106,7 @@ export async function dripOnPetal(o: DripOptions): Promise<{ x: number; y: numbe
   let weighedAt = 0;
   const reweigh = () => {
     const z = o.zoom();
-    if (Math.abs(z / (weighedAt || z) - 1) < 0.002 && weighedAt) return;
+    if (weighedAt && Math.abs(z / weighedAt - 1) < CONFIG.zoomTolerance) return;
     weighedAt = z;
     outline.setAttribute("stroke-width", String(1 / z));
     shine.setAttribute("stroke-width", String(0.7 / z));

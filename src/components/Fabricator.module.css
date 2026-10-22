@@ -1,11 +1,7 @@
 .root {
   position: absolute;
   inset: 0;
-  /* lets the stage size itself from the room it has (cqw / cqh below) */
-  container-type: size;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
 }
 
 /* Faint baseplate grid. */
@@ -19,16 +15,26 @@
   color: var(--low-opacity-softer-foreground);
 }
 
+/* Fills the component; viewport.ts matches the viewBox to it. */
 .stage {
   display: block;
-  position: relative;
-  /* As large as fits: nearly the whole component, but never bigger than it is tall, so a
-     very wide, very tall or very short box still shows the whole square view. */
-  width: 65%;
-  width: min(96cqw, 96cqh, 64rem);
-  height: auto;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   color: var(--secondary);
-  overflow: visible;
+  overflow: hidden;
+  /* Fades the picture out at the edge (width set by viewport.ts). A CSS mask is applied by the
+     compositor; an SVG mask re-painted the whole world on every camera move. */
+  --fab-fade: 8px;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 var(--fab-fade), #000 calc(100% - var(--fab-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--fab-fade), #000 calc(100% - var(--fab-fade)), transparent);
+  mask-image:
+    linear-gradient(to right, transparent, #000 var(--fab-fade), #000 calc(100% - var(--fab-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--fab-fade), #000 calc(100% - var(--fab-fade)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* Revealed by src/fab/head.ts via inline style/attributes. */

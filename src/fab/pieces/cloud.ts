@@ -1,16 +1,15 @@
+import { round3 as n3 } from "../util";
 import type { Piece } from "../types";
 
 /**
- * The rain cloud. It is not in the Inkscape art: its outline is generated here from a
- * few overlapping circles ("lobes") sitting on a flat underside, so it can be placed
- * from a single number (where the rain starts).
+ * The rain cloud, generated (not in the Inkscape art) from a few overlapping circles ("lobes") on a
+ * flat underside, so it is placed from one number: where the rain starts.
  *
- *   - The underside is flat; the rain falls from it, between `rainFrom` and `rainTo`.
- *   - The two end lobes are tangent to the underside, so the outline starts and ends
- *     there; the laser draws it clockwise from the bottom left: up round the left end,
- *     over the top, down the right end, then back along the underside.
- *   - `rainFrom` is the leftmost point of the underside that rains. The cloud's own
- *     left edge is one end lobe's radius further left.
+ *   - The rain falls from the flat underside, between `rainFrom` and `rainTo`.
+ *   - The two end lobes are tangent to the underside, so the outline starts and ends there; the laser
+ *     draws it clockwise from the bottom left: up the left end, over the top, down the right end, back
+ *     along the underside.
+ *   - `rainFrom` is the leftmost raining point; the cloud's left edge is one end-lobe radius further left.
  */
 
 /** One lobe: where its centre is along the underside (from `rainFrom`), its radius; its centre sits `r` * `lift` above the underside. */
@@ -43,7 +42,6 @@ export interface CloudSpec {
   top: number;
 }
 
-const n3 = (v: number) => String(Math.round(v * 1000) / 1000);
 
 /** The upper (smaller y) intersection of two circles. */
 function upperCrossing(a: { x: number; y: number; r: number }, b: { x: number; y: number; r: number }) {

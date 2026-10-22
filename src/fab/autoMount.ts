@@ -1,15 +1,22 @@
 import { mountOnNavigate } from "@/lib/autoMount";
+import { fitViewport } from "./viewport";
+import { pauseWhenNotWatched } from "./timing";
 
-// The heavy modules are imported lazily, so pages without a fabricator never download them.
+// Imported lazily, so pages without a fabricator never download any of it.
 mountOnNavigate(async (isStale) => {
   const stage = document.querySelector<SVGSVGElement>("#fab-stage");
   if (!stage) return;
 
-  const [{ mountFabricator }, { mountChapters }, { chapters, pieces }] = await Promise.all([
-    import("./sequencer"),
-    import("./director"),
-    import("./pieces"),
-  ]);
+  const [{ mountChapters }, { chapters }] = await Promise.all([import("./director"), import("./pieces")]);
   if (isStale() || !stage.isConnected) return;
-  return chapters.length > 0 ? mountChapters(stage, chapters) : mountFabricator(stage, pieces);
+
+  const fit = new AbortController();
+  fitViewport(stage, fit.signal);
+  const stop = mountChapters(stage, chapters);
+  const unwatch = pauseWhenNotWatched(stage.parentElement ?? stage);
+  return () => {
+    stop();
+    unwatch(); // after stop(): loops frozen by it can then see the abort and unwind
+    fit.abort();
+  };
 });

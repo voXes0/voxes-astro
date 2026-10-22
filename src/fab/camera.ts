@@ -1,23 +1,18 @@
 import { STAGE_SIZE } from "./config";
+import { stageSize, VIEWPORT_EVENT } from "./viewport";
 import type { LayerView } from "./engine";
-import { abortError, easeInOutCubic } from "./timing";
+import { abortError, easeInOutCubic, frameNow, nextFrame } from "./timing";
 import type { Point } from "./types";
 
 /**
- * The camera: a window onto a *world* that is bigger than the stage.
+ * The camera: a window onto a *world* bigger than the stage. Pieces live in world coordinates
+ * (their `fit` places them there); the camera maps the world onto the stage:
  *
- * Pieces placed in a chapter live in world coordinates (their `fit` is world
- * placement). The camera maps the world onto the 300x300 stage:
+ *   stage = (world - centre) * zoom + (middle of the stage)
  *
- *   stage = (world - centre) * zoom + (150, 150)
- *
- * A chapter picks the zoom at the start (`setView`) and can push in or pull out later
- * (`moveTo`, `frame`). Strokes keep the same weight on screen however far in the camera
- * is: layers listen to `onZoom` and re-weigh their lines and glow (see engine.ts).
- * "Zoom" effects that belong to the objects (a bird that shrinks as it flies away)
- * are still the objects' business.
- *
- * Only the camera moves the world group; nothing else may touch its transform.
+ * The stage can be any shape (viewport.ts); zoom stays relative to the 300-unit home square.
+ * Strokes keep their on-screen weight at any zoom: layers listen to `onZoom` and re-weigh (engine.ts).
+ * Only the camera touches the world group's transform.
  */
 export interface Camera {
   /** The group everything in the world is drawn into. */
@@ -37,46 +32,36 @@ export interface Camera {
   setAcross(across: number): void;
   /** Put the camera at `x`, `y` with `across` world units in view, at once (zero velocity). */
   frame(x: number, y: number, across: number): void;
-  /**
-   * Glide to `x`, `y`, `across` over `ms`: one smooth ease for the position and for the zoom
-   * (the zoom runs in log space, so pushing in feels even). Resolves when it has arrived.
-   */
+  /** Glide to `x`, `y`, `across` over `ms`: one ease for position and zoom (zoom runs in log space, so pushing in feels even). */
   moveTo(to: { x: number; y: number; across: number }, ms: number, ease?: (u: number) => number): Promise<void>;
   /** Put the camera somewhere (no motion). */
   set(x: number, y: number): void;
-  /**
-   * One step of a critically damped chase: the camera accelerates toward `target`
-   * and settles on it without overshooting, like an operator tracking a subject.
-   * `omega` is how eager it is (rad/s; ~3 settles in about a second and a half).
-   */
+  /** One step of a critically damped chase: accelerates toward `target`, settles without overshoot. `omega` = eagerness (rad/s; ~3 settles in ~1.5 s). */
   chase(target: Point, dtSeconds: number, omega?: number): void;
-  /**
-   * Let the frame drift a little around where the camera is (a slow, never-repeating sway
-   * of `amplitude` world units), so even a camera at rest feels held rather than locked.
-   * Eases in and out; 0 stops it. Does not affect `chase`/`settled`.
-   */
+  /** A slow, never-repeating sway of `amplitude` world units, so a camera at rest feels held, not locked. Eases in/out; 0 stops it. Ignored by `chase`/`settled`. */
   drift(amplitude: number): void;
   /** Has the camera come to rest (on `target`, if given)? */
   settled(target?: Point, eps?: number): boolean;
   /** World -> stage. */
   project(p: Point): Point;
-  /** The part of the world in frame right now. */
-  visible(): { x: number; y: number; width: number; height: number };
 }
 
 export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera {
   const host = stage.querySelector<SVGGElement>("#fab-world");
   if (!host) throw new Error("fab: world markup missing");
-  const half = STAGE_SIZE / 2;
+  const middle = () => {
+    const { width, height } = stageSize(stage);
+    return { x: width / 2, y: height / 2 };
+  };
   let zoom = 1;
-  /** The zoom of the first `setView`: the drift is sized for it, and kept the same size on screen when zoomed. */
+  /** The zoom of the first `setView`: the drift is sized for it and kept the same size on screen. */
   let homeZoom = 0;
   const listeners = new Set<() => void>();
   let x = 0;
   let y = 0;
   let vx = 0;
   let vy = 0;
-  // drift: an offset on top of the camera's position, from two slow waves that never line up
+  // drift: an offset on the camera's position, from two slow waves that never line up
   let driftTarget = 0;
   let driftAmp = 0;
   let dx = 0;
@@ -89,24 +74,31 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
     for (const l of listeners) l();
   }
 
-  const project = (p: Point): Point => ({
-    x: (p.x - (x + dx)) * zoom + half,
-    y: (p.y - (y + dy)) * zoom + half,
-  });
-  const apply = () =>
-    host.setAttribute("transform", `translate(${half} ${half}) scale(${zoom}) translate(${-(x + dx)} ${-(y + dy)})`);
+  const project = (p: Point): Point => {
+    const m = middle();
+    return { x: (p.x - (x + dx)) * zoom + m.x, y: (p.y - (y + dy)) * zoom + m.y };
+  };
+  let written = "";
+  const apply = () => {
+    const m = middle();
+    const t = `translate(${m.x} ${m.y}) scale(${zoom}) translate(${-(x + dx)} ${-(y + dy)})`;
+    if (t === written) return; // the drift loop and a move often land on the same frame
+    written = t;
+    host.setAttribute("transform", t);
+  };
+  stage.addEventListener(VIEWPORT_EVENT, apply, { signal });
 
   function driftLoop() {
     if (driftRunning) return;
     driftRunning = true;
-    let last = performance.now();
+    let last = frameNow();
     const tick = (now: number) => {
       if (signal.aborted) return;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       driftAmp += (driftTarget - driftAmp) * (1 - Math.exp(-dt * 0.9));
       const T = now / 1000;
-      const k = homeZoom / zoom; // the same sway on screen whatever the zoom
+      const k = homeZoom / zoom; // same sway on screen at any zoom
       dx = k * driftAmp * (0.65 * Math.sin(T * 0.43 + 0.4) + 0.35 * Math.sin(T * 0.97 + 2.1));
       dy = k * driftAmp * 0.7 * (0.6 * Math.sin(T * 0.37 + 1.7) + 0.4 * Math.sin(T * 0.83));
       apply();
@@ -116,14 +108,13 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
         driftRunning = false;
         return;
       }
-      requestAnimationFrame(tick);
+      nextFrame(tick);
     };
-    requestAnimationFrame(tick);
+    nextFrame(tick);
   }
 
   const camera: Camera = {
     host,
-    // `zoom` is read when a layer is created, so the view is a live object
     view: {
       host,
       get zoom() {
@@ -170,7 +161,7 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
       vx = 0;
       vy = 0;
       await new Promise<void>((resolve, reject) => {
-        const t0 = performance.now();
+        const t0 = frameNow();
         const tick = (now: number) => {
           if (signal.aborted) return reject(abortError());
           const u = Math.min(1, Math.max(0, (now - t0) / ms));
@@ -179,10 +170,10 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
           y = from.y + (to.y - from.y) * e;
           setZoom(Math.exp(from.lz + (lz1 - from.lz) * e));
           apply();
-          if (u < 1) requestAnimationFrame(tick);
+          if (u < 1) nextFrame(tick);
           else resolve();
         };
-        requestAnimationFrame(tick);
+        nextFrame(tick);
       });
     },
     set(nx, ny) {
@@ -193,7 +184,7 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
       apply();
     },
     chase(target, dt, omega = 3) {
-      // semi-implicit Euler in small steps: stable however long a frame took
+      // semi-implicit Euler in small steps: stable however long the frame took
       const steps = Math.max(1, Math.ceil(dt / 0.008));
       const h = dt / steps;
       for (let i = 0; i < steps; i++) {
@@ -213,10 +204,6 @@ export function createCamera(stage: SVGSVGElement, signal: AbortSignal): Camera 
       return near && Math.hypot(vx, vy) < eps;
     },
     project,
-    visible() {
-      const w = STAGE_SIZE / zoom;
-      return { x: x + dx - w / 2, y: y + dy - w / 2, width: w, height: w };
-    },
   };
   return camera;
 }

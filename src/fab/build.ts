@@ -5,8 +5,7 @@ import type { FabStroke, Piece, Point } from "./types";
 /**
  * The laser's build loop for ONE piece: creates its strokes in stacking order and
  * draws them in drawing order, fading fills in after each outline. It is the one
- * place that knows `drawOrder`, `FabStroke.draw` and `FabStroke.hidden`, shared by the
- * piece sequencer (sequencer.ts) and the camera chapters (director.ts).
+ * place that knows `drawOrder`, `FabStroke.draw` and `FabStroke.hidden` (used by director.ts).
  * (`Piece.headOnTop` is the caller's to apply: it spans more than the build.)
  *
  * `els` is filled with every stroke's outline element by id (what `scene.stroke` reads).
@@ -50,7 +49,7 @@ export async function buildPiece(
     for (const stroke of piece.strokes) {
       if (stroke.hidden) {
         els.set(stroke.id, layer.createStatic(stroke));
-        continue; // never drawn; an act shows it later
+        continue; // never drawn; the scene shows it later
       }
       const el = layer.createStroke(stroke);
       els.set(stroke.id, el);

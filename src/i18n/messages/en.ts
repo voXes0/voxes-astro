@@ -31,7 +31,12 @@ export interface Messages {
       availability: string;
       downloadCv: string;
     };
-    contact: { label: string; value: string; href?: string }[];
+    contact: {
+      email: string;
+      website: string;
+      github: string;
+      linkedin: string;
+    };
     labels: {
       summary: string;
       experience: string;
@@ -163,10 +168,10 @@ export default {
   },
   home: {
     meta: {
-      title: 'Taha "voXes" Haghighi - Homepage',
-      description: "Homepage of Taha Haghighi, also known as voXes.",
+      title: 'Taha "Voxes" Haghighi - Homepage',
+      description: "Homepage of Taha Haghighi, also known as Voxes. I'm an Iranian software developer.",
     },
-    eyebrow: 'Taha "voXes" Haghighi',
+    eyebrow: 'Taha "Voxes" Haghighi',
     title: "Building a Living World",
     lead: "I'm a self-taught developer who enjoys building anything interactive.",
     cta1: "See my work",
@@ -174,8 +179,8 @@ export default {
   },
   about: {
     meta: {
-      title: 'Taha "voXes" Haghighi - About me',
-      description: 'Learn about Taha Haghighi, AKA "voXes", a software developer from Rasht, Iran.',
+      title: 'Taha "Voxes" Haghighi - About me',
+      description: 'Learn about Taha Haghighi, AKA "Voxes", a software developer from Rasht, Iran.',
     },
     eyebrow: "About Me",
     title1: "I enjoy building things that can be ",
@@ -189,12 +194,12 @@ export default {
       availability: "Open to new projects",
       downloadCv: "Download CV",
     },
-    contact: [
-      { label: "Email", value: "voxes.007@outlook.com", href: "mailto:voxes.007@outlook.com" },
-      { label: "Website", value: "voxes.ir", href: "https://voxes.ir" },
-      { label: "GitHub", value: "github.com/voXes0", href: "https://github.com/voXes0" },
-      { label: "LinkedIn", value: "linkedin.com/in/voxes0", href: "https://linkedin.com/in/voxes0" },
-    ],
+    contact: {
+      email: "Email",
+      website: "Website" ,
+      github: "GitHub",
+      linkedin: "LinkedIn",
+    },
     labels: {
       summary: "Summary",
       experience: "Selected works",
@@ -287,15 +292,14 @@ export default {
   },
   works: {
     meta: {
-      title: "Voxes - Works",
-      description: "Selected works by Voxes, also known as Taha Haghighi.",
+      title: 'Taha "Voxes" Haghighi - My Works',
+      description: "Selected works by Voxes, also known as Taha Haghighi. Find out what I've worked on.",
     },
-    // TODO: placeholder copy — replace with real project text.
-    eyebrow: "Works",
+    eyebrow: "My Works",
     title1: "Things I've ",
     title2: "built.",
     intro:
-      "Placeholder intro: client sites, open-source experiments and deep-dive side projects, with whatever I could show publicly.",
+      "Here are my most prominent works. They range from personal practical projects, to client sites and open source libraries.",
     filterLabel: "Filter by source",
     filters: { all: "All", open: "Open source", closed: "Closed source" },
     kind: { open: "Open source", closed: "Closed source" },
@@ -348,15 +352,15 @@ export default {
   },
   blog: {
     meta: {
-      title: "Voxes - Blog",
-      description: "Writing by Voxes, also known as Taha Haghighi.",
+      title: 'Taha "Voxes" Haghighi - Blog',
+      description: "Taha Haghighi, also known as Voxes writes on various topics such as technical problems, frameworks and alghoritms, as well as personal workflow.",
     },
     // TODO: placeholder copy — replace with real posts.
     eyebrow: "Blog",
     title1: "Notes on ",
     title2: "how things work.",
     intro:
-      "Placeholder intro: short technical reads on algorithms, frameworks, how they compare, and whatever else I felt like writing down. Five to fifteen minutes each.",
+      "Short technical reads on topics such as frameworks, particular technical problems, my personal workflow and whatever else I felt would be worth writing about.",
     filterLabel: "Filter by topic",
     filters: { all: "All" },
     topics: {
@@ -407,35 +411,33 @@ export default {
   },
   contact: {
     meta: {
-      title: "Voxes - Contact",
-      description: "Get in touch with Voxes, also known as Taha Haghighi.",
+      title: 'Taha "Voxes" Haghighi - Blog',
+      description: "Get in touch with Taha Haghighi, also known as Voxes. Links to his various channels of communication.",
     },
-    // TODO: placeholder copy; the one-liners are guesses at how each account
-    // will be used.
     eyebrow: "Contact",
-    title1: "Let's ",
-    title2: "talk.",
+    title1: "Ways to reach ",
+    title2: "me.",
     intro:
-      "The best way to reach me depends on what you need. Pick whichever channel suits you.",
+      "The best way to contact me depends on what you need.",
     newTab: "(opens in a new tab)",
     items: [
       {
         id: "linkedin",
         description:
-          "My professional background, and the best place for formal enquiries.",
+          "My professional background.",
       },
       {
         id: "github",
         description:
-          "Code for my open-source work, including the Rust fluid simulation.",
+          "Code for my open-source work.",
       },
       {
         id: "telegram",
-        description: "A direct line for quick questions and project chats.",
+        description: "Quickly and conveniently message me.",
       },
       {
         id: "instagram",
-        description: "A look at life away from the keyboard.",
+        description: "Personal updates on life.",
       },
       {
         id: "x",
@@ -443,7 +445,7 @@ export default {
       },
       {
         id: "discord",
-        description: "Come say hi, or chat about code and games.",
+        description: "We can chat about code and games.",
       },
     ],
   },
@@ -452,14 +454,14 @@ export default {
   },
   notFound: {
     description: "This page could not be found.",
-    title: "Voxes - Page not found",
+    title: 'Taha "Voxes" Haghighi - Page not found',
     eyebrow: "Error 404",
     title1: "This page ",
     title2: "flew away.",
     intro:
-      "The page you were looking for does not exist, or it has moved. While you are here, why not help this bird through a few gates?",
+      "The page you were looking for does not exist, or it has moved. While you are here, why not help this bird get to its home?",
     home: "Back to home",
-    works: "See the work",
+    works: "See my work",
   },
   flappy: {
     label: "Flappy bird mini-game",
@@ -473,7 +475,7 @@ export default {
       hint: "Press Space or tap to continue.",
     },
     lost: {
-      title: "Crashed!",
+      title: "Crashed:(",
       body: "You cleared {passed} of {total} gates.",
       action: "Try again",
     },

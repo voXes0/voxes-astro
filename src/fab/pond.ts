@@ -1,19 +1,20 @@
 import splash from "../../art/splash.json";
-import { abortError } from "./timing";
+import { abortError, frameNow, nextFrame } from "./timing";
+import { SVG_NS as NS } from "./config";
+import { clamp01, smooth } from "./util";
 
 /**
- * Plays the baked drop-splash (art/splash.json, made by scripts/splash-sim.mjs) on the scene's
- * water: a SIDE view, so the pond is a line and the ripples are that line moving.
+ * Plays the baked drop-splash (art/splash.json, from scripts/splash-sim.mjs) on the scene's water.
+ * It is a SIDE view: the pond is a line and the ripples are that line moving.
  *
  *   - The surface profile h(|x|, t) reshapes the real water line (and the water body under it).
- *   - The crown, the central jet and the flying droplets are drawn on top, in the preview's way
- *     (art/splash-preview.html, `svgFor`), at the true scale of the data: lengths there are in
- *     drop radii `a`, here `a` world units.
- *   - Where the water meets the wall the profile eases to zero, so the line stays joined to the
- *     hill instead of leaving the picture (the waves are cut off there; the data's field is 40 a).
+ *   - The crown, central jet and flying droplets are drawn on top as the preview does
+ *     (art/splash-preview.html, `svgFor`), at the data's true scale: its lengths are in drop radii
+ *     `a`, here `a` world units.
+ *   - Near the wall the profile eases to zero, so the line stays joined to the hill (the waves are
+ *     cut off there; the data's field is 40 a).
  *
- * The data's own frame rate and slow-motion are part of the file (`fps`): playback runs at the
- * speed the preview shows.
+ * Playback runs at the data's own frame rate and slow motion (`fps`), as the preview shows it.
  */
 
 interface Frame {
@@ -31,10 +32,7 @@ const D = splash as unknown as {
   frames: Frame[];
 };
 
-const NS = "http://www.w3.org/2000/svg";
 const dx = D.field / (D.points - 1);
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const smooth = (x: number) => x * x * (3 - 2 * x);
 
 /** Surface height (in drop radii) at distance `r` from the impact, from one frame's samples. */
 function hAt(h: number[], r: number): number {
@@ -54,7 +52,6 @@ function frameAt(t: number): Frame {
   return { ...a, h: a.h.map((v, k) => v * (1 - f) + b.h[k] * f) };
 }
 
-export const splashSeconds = D.duration;
 
 export interface PondOptions {
   /** World group the crown, jet and droplets are drawn into. */
@@ -116,7 +113,7 @@ export function createPond(o: PondOptions) {
 
     try {
       await new Promise<void>((resolve, reject) => {
-        const t0 = performance.now();
+        const t0 = frameNow();
         let weighed = 0;
         const tick = (now: number) => {
           if (o.signal.aborted) return reject(abortError());
@@ -209,9 +206,9 @@ export function createPond(o: PondOptions) {
             c.setAttribute("fill-opacity", String(d[3]));
           });
 
-          requestAnimationFrame(tick);
+          nextFrame(tick);
         };
-        requestAnimationFrame(tick);
+        nextFrame(tick);
       });
     } finally {
       finish();

@@ -1,38 +1,32 @@
 import type { Layer } from "./engine";
 import { createPoseBlender } from "./pose";
 import { abortError, animateValue, isAbort, linear, wait } from "./timing";
-import type { OverlaySpec, Piece, Scene } from "./types";
+import type { Piece, Scene } from "./types";
+import { SVG_NS as NS } from "./config";
 
-const NS = "http://www.w3.org/2000/svg";
 let maskSeq = 0;
+const asList = <T>(x: T | T[]): T[] => (Array.isArray(x) ? x : [x]);
 
 /**
- * The toolbox handed to a piece's `act`. It tracks everything an act creates or
- * changes (animations, overlays, reshaped strokes, clips) so `dispose()` can
- * undo it all when the piece is torn down — acts never have to clean up.
+ * The toolbox handed to a piece's `act`. It tracks what an act creates or changes (animations,
+ * reshaped strokes, masks) so `dispose()` can undo it all: acts never clean up.
  */
 export function createScene(
-  stage: SVGSVGElement,
   piece: Piece,
   strokeEls: Map<string, SVGPathElement>,
   layer: Layer,
   appSignal: AbortSignal,
 ): Scene & { dispose(): void } {
-  // The scene's own signal: aborted when the whole fabricator stops OR when this
-  // piece is torn down, so background tasks (spawn) never outlive their piece.
+  // Aborted when the fabricator stops or this piece is torn down, so spawned tasks never outlive it.
   const ac = new AbortController();
   const signal = ac.signal;
   const stopWithApp = () => ac.abort();
   appSignal.addEventListener("abort", stopWithApp, { once: true });
 
-  const overlayHost = stage.querySelector<SVGGElement>("#fab-overlay");
-  if (!overlayHost) throw new Error("fab: overlay markup missing");
-
   const animations: Animation[] = [];
-  const overlays: SVGElement[] = [];
   const masks: { mask: SVGElement; targets: Element[] }[] = [];
   const blenders = new Map<string, (amount: number) => string>();
-  /** Rest state of every stroke whose shape an act changed. */
+  /** Rest state of every stroke an act reshaped. */
   const reshaped = new Map<
     SVGPathElement,
     { d: string; dash: string | null; offset: string | null }
@@ -44,11 +38,11 @@ export function createScene(
     return el;
   }
 
-  /** A stroke's outline path stands for the whole stroke (fill + outline). */
+  /** The outline path stands for the whole stroke: its wrapper holds fill and outline. */
   const unit = (target: Element): Element =>
     target instanceof SVGPathElement ? layer.wrapperOf(target) ?? target : target;
 
-  /** Change the shape of a stroke (outline and fill together). */
+  /** Change the shape of a stroke, outline and fill together. */
   function setShape(el: SVGPathElement, d: string) {
     if (!reshaped.has(el)) {
       reshaped.set(el, {
@@ -57,12 +51,14 @@ export function createScene(
         offset: el.getAttribute("stroke-dashoffset"),
       });
     }
-    // The dash was sized to the drawn shape; a new shape can be longer.
-    el.removeAttribute("stroke-dasharray");
+    el.removeAttribute("stroke-dasharray"); // sized to the drawn shape; a new one can be longer
     el.removeAttribute("stroke-dashoffset");
+    writeShape(el, d);
+  }
+  const writeShape = (el: SVGPathElement, d: string) => {
     el.setAttribute("d", d);
     layer.fillOf(el)?.setAttribute("d", d);
-  }
+  };
 
   function play(
     target: Element,
@@ -91,7 +87,7 @@ export function createScene(
       setShape(el, blend(amount));
     },
     show(ids, fadeMs = 0) {
-      for (const id of Array.isArray(ids) ? ids : [ids]) {
+      for (const id of asList(ids)) {
         const el = stroke(id);
         const w = layer.wrapperOf(el);
         layer.reveal(el);
@@ -109,7 +105,7 @@ export function createScene(
       layer.limit(stroke(id), range);
     },
     async hide(ids, fadeMs = 0) {
-      const els = (Array.isArray(ids) ? ids : [ids]).map(stroke);
+      const els = asList(ids).map(stroke);
       if (fadeMs > 0) {
         const fades = els.map((el) =>
           play(el, [{ opacity: 1 }, { opacity: 0 }], { duration: fadeMs, easing: "ease-in-out" }),
@@ -119,29 +115,30 @@ export function createScene(
         } catch {
           if (signal.aborted) throw abortError();
         }
-        for (const a of fades) a.cancel(); // else it would keep it at opacity 0 for the next show()
+        for (const a of fades) a.cancel(); // else it would hold opacity 0 for the next show()
       }
       for (const el of els) layer.conceal(el);
     },
     setPath(id, d) {
-      setShape(stroke(id), d);
+      const el = stroke(id);
+      layer.widen(el); // it can go anywhere now: its glow needs the piece-wide region
+      setShape(el, d);
     },
     hideBehind(ids, behindId, fadeMs = 0) {
       const behind = stroke(behindId);
-      const host = behind.parentElement?.parentElement; // the fitted group
+      const host = behind.parentElement?.parentElement as SVGGElement | null | undefined; // the fitted group
       if (!host) return;
-      // A luminance mask: white everywhere, with the shape painted black on top.
-      // Fading the black shape in fades the hiding in (a hard clip would pop).
+      // Luminance mask: white everywhere, the shape black on top. Fading the black in fades the hiding in.
       const mask = document.createElementNS(NS, "mask");
       mask.id = `fab-mask-${++maskSeq}`;
       mask.setAttribute("maskUnits", "userSpaceOnUse");
-      for (const [k, v] of [["x", -5000], ["y", -5000], ["width", 10000], ["height", 10000]] as const) {
-        mask.setAttribute(k, String(v));
-      }
+      // Only the piece's own box: a big region makes every masked group costly to paint.
+      const box = host.getBBox();
+      const pad = 20;
+      const region = { x: box.x - pad, y: box.y - pad, width: box.width + 2 * pad, height: box.height + 2 * pad };
+      for (const [k, v] of Object.entries(region)) mask.setAttribute(k, String(v));
       const all = document.createElementNS(NS, "rect");
-      for (const [k, v] of [["x", "-5000"], ["y", "-5000"], ["width", "10000"], ["height", "10000"], ["fill", "white"]]) {
-        all.setAttribute(k, v);
-      }
+      for (const [k, v] of Object.entries({ ...region, fill: "white" })) all.setAttribute(k, String(v));
       const cut = document.createElementNS(NS, "path");
       cut.setAttribute("d", behind.getAttribute("d") ?? "");
       cut.setAttribute("fill", "black");
@@ -162,16 +159,9 @@ export function createScene(
         if (!isAbort(e)) console.error(e);
       });
     },
-    stage,
     tween: (ms, onFrame, ease = linear) =>
       animateValue(0, 1, ms, onFrame, signal, ease),
-    pivot(name) {
-      const p = piece.pivots?.[name];
-      if (!p) throw new Error(`fab: piece "${piece.id}" has no pivot "${name}"`);
-      return p;
-    },
     wait: (ms) => wait(ms, signal),
-    play,
     async animate(target, keyframes, options) {
       const a = play(target, keyframes, options);
       const onAbort = () => a.cancel();
@@ -185,26 +175,9 @@ export function createScene(
         signal.removeEventListener("abort", onAbort);
       }
     },
-    overlay(spec: OverlaySpec) {
-      const outer = document.createElementNS(NS, "g");
-      if (spec.transform) outer.setAttribute("transform", spec.transform);
-      const inner = document.createElementNS(NS, "g");
-      // Scale/rotate about the shape's own center, as the original wordmark did.
-      inner.style.transformBox = "fill-box";
-      inner.style.transformOrigin = "center";
-      const path = document.createElementNS(NS, "path");
-      path.setAttribute("d", spec.d);
-      path.setAttribute("fill", spec.fill ?? "currentColor");
-      inner.appendChild(path);
-      outer.appendChild(inner);
-      overlayHost.appendChild(outer);
-      overlays.push(outer);
-      return inner;
-    },
     dispose() {
       for (const [el, rest] of reshaped) {
-        el.setAttribute("d", rest.d);
-        layer.fillOf(el)?.setAttribute("d", rest.d);
+        writeShape(el, rest.d);
         if (rest.dash !== null) el.setAttribute("stroke-dasharray", rest.dash);
         if (rest.offset !== null) el.setAttribute("stroke-dashoffset", rest.offset);
       }
@@ -217,9 +190,7 @@ export function createScene(
       ac.abort(); // stops spawned tasks and anything still awaiting this scene
       appSignal.removeEventListener("abort", stopWithApp);
       for (const a of animations) a.cancel();
-      for (const o of overlays) o.remove();
       animations.length = 0;
-      overlays.length = 0;
     },
   };
 }

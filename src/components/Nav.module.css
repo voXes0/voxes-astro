@@ -183,13 +183,6 @@
   opacity: 1;
 }
 
-/* Current page: the same outline ring as hover, but held steady (no flash). */
-.mobile-menu-links a[aria-current="page"]::before,
-.mobile-menu-links a[aria-current="page"]:hover::before {
-  animation: none;
-  opacity: 1;
-}
-
 /* Mobile-menu controls: placed over the menu artwork, hidden until it opens. */
 .localization-button,
 .theme-button {

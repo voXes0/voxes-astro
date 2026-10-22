@@ -1,32 +1,26 @@
-import { abortError } from "./timing";
+import { samplePath } from "./morph";
+import { abortError, frameNow, nextFrame } from "./timing";
 import type { Point } from "./types";
+import { CONFIG, SVG_NS as NS } from "./config";
+import { clamp01, smooth } from "./util";
 
 /**
- * Rain that is generated, not drawn: nothing here comes from the Inkscape art.
+ * Rain that is generated, not drawn.
  *
- *   - `Surface`s are what a drop can land on: a silhouette taken from real path data
- *     (the open petals, the leaves, the hill). A drop falls straight down from the
- *     cloud's underside and stops at the first surface under its column.
- *   - A `Spring` is a body that can be knocked: a petal or a leaf, hinged at its base.
- *     A drop hands it momentum, it is pushed down about the hinge, overshoots back up,
- *     and rings out (an underdamped torsion spring), so a second drop landing on it
- *     while it still moves simply adds to what it is already doing.
- *   - Each landing throws a small splash: a few droplets on ballistic arcs (real
- *     gravity, in world units), and on the ground also a flat ripple arc.
+ *   - A `Surface` is what a drop can land on: a silhouette from real path data (petals, leaves, hill).
+ *     A drop falls straight down and stops at the first surface under its column.
+ *   - A `Spring` is a body a drop can knock (a petal or leaf, hinged at its base): an underdamped
+ *     torsion spring, so a drop landing while it still rings adds to its motion.
+ *   - Each landing throws droplets on ballistic arcs, and on the ground a flat ripple arc.
  *
- * Everything lives in one SVG group of the world (the camera pans it with the scenery),
- * runs from a single frame loop and is removed by `stop()`. Rain is time-stretched for
- * the eye: real drops cross this frame in a few hundredths of a second. The ratios
- * (a drop outruns every splash droplet; a petal rings several times a second) are kept.
+ * Everything lives in one SVG group, runs from one frame loop and is removed by `stop()`. Time is
+ * stretched for the eye, but the ratios hold: a drop outruns every droplet, a petal rings several times a second.
  */
 
-const NS = "http://www.w3.org/2000/svg";
-
-/** Droplet gravity, world units per second squared (the splashes' scale; see the note above). */
+/** Droplet gravity, world units per second squared (the splashes' scale). */
 const GRAVITY = 320;
 
-// ---------------------------------------------------------------------------------
-// surfaces
+// ── surfaces ──
 
 export interface Surface {
   id: string;
@@ -73,18 +67,9 @@ export interface Hit {
   surface: Surface;
 }
 
-/** Sample a path's outline into points, shifted by `offset`. Works on a detached element. */
+/** Sample a path's outline into points, shifted by `offset`. */
 export function outlineOf(d: string, offset: Point = { x: 0, y: 0 }, step = 0.3): Point[] {
-  const path = document.createElementNS(NS, "path");
-  path.setAttribute("d", d);
-  const len = path.getTotalLength();
-  const n = Math.max(8, Math.ceil(len / step));
-  const pts: Point[] = [];
-  for (let i = 0; i <= n; i++) {
-    const q = path.getPointAtLength((len * i) / n);
-    pts.push({ x: q.x + offset.x, y: q.y + offset.y });
-  }
-  return pts;
+  return samplePath(d, step).pts.map(([x, y]) => ({ x: x + offset.x, y: y + offset.y }));
 }
 
 export function extentOf(pts: Point[]) {
@@ -98,11 +83,32 @@ export function extentOf(pts: Point[]) {
   return { x0, y0, x1, y1, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 };
 }
 
+/** Segment indices per 2-unit column, so a lookup scans a handful of segments, not the whole outline. */
+const CELL = 2;
+const columns = new WeakMap<Surface, Map<number, number[]>>();
+function columnsOf(s: Surface) {
+  let m = columns.get(s);
+  if (!m) {
+    m = new Map();
+    for (let i = 0; i < s.pts.length - 1; i++) {
+      const a = s.pts[i].x;
+      const b = s.pts[i + 1].x;
+      for (let c = Math.floor(Math.min(a, b) / CELL); c <= Math.floor(Math.max(a, b) / CELL); c++) {
+        const list = m.get(c);
+        if (list) list.push(i);
+        else m.set(c, [i]);
+      }
+    }
+    columns.set(s, m);
+  }
+  return m;
+}
+
 /** The topmost point of a surface on the vertical line `x`, with its normal; null if x misses it. */
 function topAt(s: Surface, x: number): Omit<Hit, "surface"> | null {
   let best: Omit<Hit, "surface"> | null = null;
   const pts = s.pts;
-  for (let i = 0; i < pts.length - 1; i++) {
+  for (const i of columnsOf(s).get(Math.floor(x / CELL)) ?? []) {
     const a = pts[i];
     const b = pts[i + 1];
     if ((a.x - x) * (b.x - x) > 0 || Math.abs(b.x - a.x) < 1e-9) continue;
@@ -138,8 +144,7 @@ export function surfaceAt(surfaces: Surface[], x: number): Hit | null {
   return best;
 }
 
-// ---------------------------------------------------------------------------------
-// springs
+// ── springs ──
 
 export interface SpringOptions {
   /** The groups that turn together (a leaf and its vein). */
@@ -250,14 +255,13 @@ export function createSpring(o: SpringOptions): Spring {
   };
 }
 
-// ---------------------------------------------------------------------------------
-// rain
+// ── rain ──
 
 export interface RainOptions {
   /** The world group to draw into (a layer's `group`, placed at the world's origin). */
   host: SVGGElement;
   signal: AbortSignal;
-  /** Stage units per world unit *now* (the camera can zoom), to keep lines the same weight as the rest of the drawing. */
+  /** Stage units per world unit *now* (the camera can zoom): keeps lines as heavy as the rest of the drawing. */
   zoom: () => number;
   /** The cloud's underside: rain falls only between x `from` and `to`, starting at height `y`. */
   from: number;
@@ -271,13 +275,11 @@ export interface RainOptions {
   rampMs?: number;
   /** Colour of drops and splashes (any CSS colour). */
   color?: string;
-  /** Called every frame after the bodies have moved (to redraw whatever follows them, like a bending stem). */
+  /** Called every frame after the bodies have moved (redraw whatever follows them, like a bending stem). */
   onStep?: () => void;
 }
 
 const RIPPLE_WEIGHT = 0.38;
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const smooth = (x: number) => x * x * (3 - 2 * x);
 
 function rng(seed: number) {
   let a = seed >>> 0;
@@ -291,7 +293,7 @@ function rng(seed: number) {
 }
 
 interface Drop {
-  el: SVGLineElement;
+  el: SVGPathElement;
   /** Line weight on screen, stage units. */
   weight: number;
   x: number;
@@ -369,42 +371,45 @@ export function startRain(o: RainOptions): Rain {
   const drops: Drop[] = [];
   const droplets: Droplet[] = [];
   const ripples: Ripple[] = [];
-  const freeLines: SVGLineElement[] = [];
-  const freeDots: SVGCircleElement[] = [];
-  const freeArcs: SVGPathElement[] = [];
   const springs = new Set<Spring>();
   for (const s of o.surfaces) {
     if (s.body) springs.add(s.body);
     for (const sp of s.also ?? []) springs.add(sp);
   }
 
-  const line = (): SVGLineElement => {
-    const el = freeLines.pop() ?? document.createElementNS(NS, "line");
-    el.style.display = "";
-    if (!el.parentNode) g.appendChild(el);
-    return el;
+  /** Elements are recycled (hidden, not removed) so a busy shower creates no DOM after the first seconds. */
+  const pool = <T extends SVGElement>(tag: string, init?: (el: T) => void) => {
+    const free: T[] = [];
+    return {
+      take(): T {
+        let el = free.pop();
+        if (!el) {
+          el = document.createElementNS(NS, tag) as T;
+          init?.(el);
+          g.appendChild(el);
+        }
+        el.style.display = "";
+        return el;
+      },
+      give(el: T) {
+        el.style.display = "none";
+        free.push(el);
+      },
+    };
   };
-  const dot = (): SVGCircleElement => {
-    const el = freeDots.pop() ?? document.createElementNS(NS, "circle");
+  const lines = pool<SVGPathElement>("path");
+  const dots = pool<SVGCircleElement>("circle", (el) => {
     el.setAttribute("fill", color);
     el.setAttribute("stroke", "none");
-    el.style.display = "";
-    if (!el.parentNode) g.appendChild(el);
-    return el;
-  };
-  const arc = (): SVGPathElement => {
-    const el = freeArcs.pop() ?? document.createElementNS(NS, "path");
-    el.style.display = "";
-    if (!el.parentNode) g.appendChild(el);
-    return el;
-  };
+  });
+  const arcs = pool<SVGPathElement>("path");
 
   /** Where a drop lands right now: the surface at rest, moved by how far its body has turned and its carrier has leaned. */
   const landingY = (d: Drop) => {
     const h = d.hit!;
     const s = h.surface;
     if (!s.body && !s.carry) return h.y;
-    // find the point of the surface that is under the drop's column now (a few steps are plenty: it moves a little)
+    // the surface point now under the drop's column (it has only moved a little: a few steps are plenty)
     let rx = d.x;
     for (let i = 0; i < 3; i++) {
       const t = topAt(s, rx);
@@ -432,7 +437,7 @@ export function startRain(o: RainOptions): Rain {
       const u = n === 1 ? 0 : (i / (n - 1)) * 2 - 1; // -1 .. 1 across the fan
       const ang = base + u * spread + (rand() - 0.5) * 0.35;
       const sp = (big ? 40 + rand() * 28 : 24 + rand() * 20) * (1 - 0.22 * Math.abs(u)) * Math.sqrt(d.size);
-      const el = dot();
+      const el = dots.take();
       const r = (big ? 0.5 : 0.38) * (0.7 + 0.6 * rand()) * d.size;
       el.setAttribute("r", r.toFixed(3));
       droplets.push({
@@ -448,8 +453,8 @@ export function startRain(o: RainOptions): Rain {
       });
     }
     if (big && rand() < 0.5) {
-      // a shallow crown spreading along the surface; half the hits get one, or the ground would be all arcs
-      const el = arc();
+      // a shallow crown along the surface; only half the hits get one, or the ground would be all arcs
+      const el = arcs.take();
       el.setAttribute("stroke-width", String(lw(RIPPLE_WEIGHT)));
       ripples.push({
         el,
@@ -470,7 +475,7 @@ export function startRain(o: RainOptions): Rain {
     const vTerm = one ? fall : fall * (0.92 + 0.16 * rand());
     const hit = one ? one.hit : surfaceAt(o.surfaces, x);
     if (!one && hit && dry !== null && hit.surface.id === dry) return; // this column is being kept dry
-    const el = line();
+    const el = lines.take();
     const weight = 0.62 + 0.4 * (size - 0.75);
     el.setAttribute("stroke-width", String(lw(weight)));
     el.setAttribute("stroke-opacity", "0");
@@ -484,8 +489,8 @@ export function startRain(o: RainOptions): Rain {
   let weighedAt = z0;
   function frame(dt: number, ramp: number, acc: { n: number }) {
     const z = o.zoom();
-    if (Math.abs(z / weighedAt - 1) > 0.002) {
-      // the camera zoomed: keep streaks and ripples the same weight on screen
+    if (Math.abs(z / weighedAt - 1) > CONFIG.zoomTolerance) {
+      // keep streaks and ripples the same weight on screen
       weighedAt = z;
       for (const d of drops) d.el.setAttribute("stroke-width", String(lw(d.weight)));
       for (const r of ripples) r.el.setAttribute("stroke-width", String(lw(RIPPLE_WEIGHT)));
@@ -513,17 +518,13 @@ export function startRain(o: RainOptions): Rain {
       }
       const tail = Math.max(o.y, d.head - d.len);
       if ((d.landed && tail >= front - 0.05) || (!d.hit && d.head - d.len > o.y + 400)) {
-        d.el.style.display = "none";
-        freeLines.push(d.el);
+        lines.give(d.el);
         drops.splice(i, 1);
         continue;
       }
-      d.el.setAttribute("x1", d.x.toFixed(2));
-      d.el.setAttribute("x2", d.x.toFixed(2));
-      d.el.setAttribute("y1", tail.toFixed(2));
-      d.el.setAttribute("y2", front.toFixed(2));
-      // it comes out of the cloud: fully there once the streak has grown to its length
-      // (stroke-/fill-opacity, not opacity: no separate transparency group for every streak and droplet)
+      d.el.setAttribute("d", `M${d.x.toFixed(2)} ${tail.toFixed(2)}V${front.toFixed(2)}`);
+      // fades in out of the cloud as the streak grows to its length
+      // (stroke-opacity, not opacity: no transparency group per streak)
       d.el.setAttribute("stroke-opacity", String(0.35 + 0.65 * clamp01((d.head - o.y) / 6)));
     }
 
@@ -539,8 +540,7 @@ export function startRain(o: RainOptions): Rain {
         if (h && p.y >= h.y) dead = true; // back on the ground
       }
       if (dead) {
-        p.el.style.display = "none";
-        freeDots.push(p.el);
+        dots.give(p.el);
         droplets.splice(i, 1);
         continue;
       }
@@ -556,8 +556,7 @@ export function startRain(o: RainOptions): Rain {
       const r = ripples[i];
       r.age += dt;
       if (r.age >= r.life) {
-        r.el.style.display = "none";
-        freeArcs.push(r.el);
+        arcs.give(r.el);
         ripples.splice(i, 1);
         continue;
       }
@@ -577,21 +576,21 @@ export function startRain(o: RainOptions): Rain {
     o.onStep?.();
   }
 
-  let raf = 0;
+  let cancelFrame = () => {};
   const acc = { n: 0 };
-  const t0 = performance.now();
+  const t0 = frameNow();
   let last = t0;
   const tick = (now: number) => {
     if (o.signal.aborted) return;
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
     last = now;
     frame(dt, smooth(clamp01((now - t0) / rampMs)), acc);
-    raf = requestAnimationFrame(tick);
+    cancelFrame = nextFrame(tick);
   };
-  raf = requestAnimationFrame(tick);
+  cancelFrame = nextFrame(tick);
 
   const stop = () => {
-    cancelAnimationFrame(raf);
+    cancelFrame();
     for (const s of springs) s.reset();
     g.remove();
   };

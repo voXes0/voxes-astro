@@ -1,20 +1,16 @@
+import { PATH_TOKEN as TOKEN, round3 } from "./util";
 /**
  * Matching two outlines so one can turn into the other.
  *
- * `scene.pose()` blends two shapes number by number, which only works when both
- * have the same node structure. A bud petal and its open petal never do (they
- * were drawn separately, with different numbers of nodes), so `matchShapes`
- * rebuilds both as the same sequence of cubic Béziers WITHOUT changing either
- * shape: every original curve is only split (de Casteljau), never refitted.
- *
- * How the two are lined up:
- *  - each outline is closed, turned to run clockwise (on screen) and cut open at
- *    the BASE (the point where the petal meets the flower);
- *  - the TIP is the point farthest from the base; it splits the outline into two
- *    arcs: A (base -> tip, the petal's left side as you look from the base) and
- *    B (tip -> base, its right side);
- *  - each arc is split into the same number of pieces, so base maps to base, tip
- *    to tip, left edge to left edge.
+ * `scene.pose()` blends shapes number by number, which needs the same node structure. A bud petal and
+ * its open petal never have it (drawn separately), so `matchShapes` rebuilds both as the same
+ * sequence of cubic Béziers WITHOUT changing either shape: every original curve is only split
+ * (de Casteljau), never refitted. To line them up:
+ *  - each outline is closed, made clockwise (on screen) and cut open at the BASE (where the petal
+ *    meets the flower);
+ *  - the TIP (farthest point from the base) splits it into arc A (base -> tip, the left side seen
+ *    from the base) and arc B (tip -> base, the right side);
+ *  - each arc is split into the same number of pieces, so base maps to base, tip to tip, edge to edge.
  *
  * Pure geometry, no DOM: usable at module load.
  */
@@ -23,7 +19,6 @@ export type Pt = [number, number];
 /** A cubic Bézier: start, two handles, end. */
 export type Cubic = [Pt, Pt, Pt, Pt];
 
-const TOKEN = /[a-zA-Z]|[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi;
 
 /** Path data -> cubics. Supports M L H V C Z (either case), one sub-path. */
 export function parsePath(d: string): Cubic[] {
@@ -147,7 +142,7 @@ function table(c: Cubic): number[] {
   return acc;
 }
 
-export const cubicLength = (c: Cubic): number => table(c)[STEPS];
+const cubicLength = (c: Cubic): number => table(c)[STEPS];
 const arcLength = (segs: Cubic[]): number => segs.reduce((s, c) => s + cubicLength(c), 0);
 
 /** Parameter t at which a curve has run `len` of its length. */
@@ -262,7 +257,7 @@ export function outlineOf(segs: Cubic[], base: Pt): Outline {
   return { b: cut.slice(0, k), a: cut.slice(k) };
 }
 
-const num = (n: number) => String(Math.round(n * 1000) / 1000);
+const num = round3;
 const p = (q: Pt) => `${num(q[0])} ${num(q[1])}`;
 
 function toPath(parts: Cubic[]): string {
@@ -321,4 +316,34 @@ export function boundsOf(segs: Cubic[]): { x0: number; y0: number; x1: number; y
     }
   }
   return { x0, y0, x1, y1 };
+}
+
+/**
+ * Points spaced evenly by arc length along a path (M L H V C Z only), `n + 1` of them with
+ * `n = max(8, ceil(length / step))`. Pure geometry: sampling with `getPointAtLength` on a
+ * detached <path> costs ~0.6 ms per call on a long path, which froze the page for ~400 ms.
+ */
+export function samplePath(d: string, step: number): { pts: Pt[]; length: number } {
+  const FLAT = 24; // polyline pieces per cubic: error far below a pixel
+  const poly: Pt[] = [];
+  const cum: number[] = [];
+  let total = 0;
+  for (const c of parsePath(d)) {
+    for (let k = poly.length ? 1 : 0; k <= FLAT; k++) {
+      const p = at(c, k / FLAT);
+      if (poly.length) total += Math.hypot(p[0] - poly[poly.length - 1][0], p[1] - poly[poly.length - 1][1]);
+      poly.push(p);
+      cum.push(total);
+    }
+  }
+  const n = Math.max(8, Math.ceil(total / step));
+  const pts: Pt[] = [];
+  for (let i = 0, j = 0; i <= n; i++) {
+    const target = (total * i) / n;
+    while (j < cum.length - 2 && cum[j + 1] < target) j++;
+    const span = cum[j + 1] - cum[j] || 1;
+    const f = Math.min(1, Math.max(0, (target - cum[j]) / span));
+    pts.push(lerp(poly[j], poly[j + 1], f));
+  }
+  return { pts, length: total };
 }

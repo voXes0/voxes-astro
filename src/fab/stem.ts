@@ -2,20 +2,15 @@ import { createSpring, type Spring } from "./rain";
 import type { Point } from "./types";
 
 /**
- * A stem that gives when the rain hits what grows on it.
+ * A stem that gives when the rain hits what grows on it: a cantilever, fixed at the foot, free at the
+ * top. A drop on a petal pushes the whole plant (the petal's knock, about the stem's foot); the stem
+ * bends and rings (slow, lightly damped: a flower on a thin stem sways, it does not snap back).
  *
- * The stem is a cantilever: fixed at its foot, free at the top. A drop that lands on a petal
- * pushes the whole plant (the same knock the petal gets, about the stem's foot), the stem bends
- * and rings (a slow, lightly damped spring: a flower on a thin stem sways, it does not snap back),
- * and the next drop adds to whatever it is already doing.
+ * If the top has moved sideways by `tip`, a point a fraction `u` up has moved by tip * (3u^2 - u^3) / 2
+ * (a beam loaded at its end) and the stem there is turned by tip * (6u - 3u^2) / (2H), H = its
+ * height: the foot stays put, the stem stays smooth, the top tilts by 1.5 tip / H.
  *
- * How it bends: if the top has moved sideways by `tip`, a point a fraction `u` of the way up has
- * moved by  tip * (3u^2 - u^3) / 2  (the deflection of a beam loaded at its end), and the stem there
- * is turned by  tip * (6u - 3u^2) / (2 H)  where H is its height. So the foot stays put, the stem
- * stays smooth, and the top (with the flower on it) tilts by 1.5 tip / H.
- *
- * This module only does the mechanics; scene.ts moves the drawing (the stem's path, the flower,
- * the leaves) to follow.
+ * Only the mechanics are here; scene.ts moves the drawing (stem path, flower, leaves) to follow.
  */
 
 export interface StemOptions {

@@ -78,7 +78,9 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
           {
             study.sections.map((s) => (
               <li>
-                <a href={`#${s.id}`} style={`animation-timeline: ${spy(s.id)}`}>{s.title}</a>
+                <a href={`#${s.id}`} style={`animation-timeline: ${spy(s.id)}`}>
+                  {s.title}
+                </a>
               </li>
             ))
           }
@@ -88,21 +90,39 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
       <div class="content">
         {
           study.sections.map((s) => (
-            <section id={s.id} class="section" style={`view-timeline-name: ${spy(s.id)}`}>
+            <section
+              id={s.id}
+              class="section"
+              style={`view-timeline-name: ${spy(s.id)}`}
+            >
               <SectionHeading large tight title={s.title} />
               {s.intro && <p class="intro">{s.intro}</p>}
 
               {s.kind === "brief" && (
                 <div class="brief">
-                  <div class="prose">{s.body.map((p) => <p>{p}</p>)}</div>
+                  <div class="prose">
+                    {s.body.map((p) => (
+                      <p>{p}</p>
+                    ))}
+                  </div>
                   <aside class="asks">
                     <h3>{s.asksLabel}</h3>
-                    <ul role="list">{s.asks.map((a) => <li>{a}</li>)}</ul>
+                    <ul role="list">
+                      {s.asks.map((a) => (
+                        <li>{a}</li>
+                      ))}
+                    </ul>
                   </aside>
                 </div>
               )}
 
-              {s.kind === "prose" && <div class="prose">{s.body.map((p) => <p>{p}</p>)}</div>}
+              {s.kind === "prose" && (
+                <div class="prose">
+                  {s.body.map((p) => (
+                    <p>{p}</p>
+                  ))}
+                </div>
+              )}
 
               {s.kind === "timeline" && (
                 <ol class="timeline" role="list">
@@ -113,7 +133,10 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
                       <p class="prose-p">{phase.body}</p>
                       {phase.figure && (
                         <div class="block-fig">
-                          <WorkFigure figure={phase.figure} placeholderLabel={ph} />
+                          <WorkFigure
+                            figure={phase.figure}
+                            placeholderLabel={ph}
+                          />
                         </div>
                       )}
                     </li>
@@ -136,7 +159,8 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
                         <p class="prose-p">{it.why}</p>
                         {it.considered.length > 0 && (
                           <p class="considered">
-                            <span>{d.considered}:</span> {it.considered.join(d.listSeparator)}
+                            <span>{d.considered}:</span>{" "}
+                            {it.considered.join(d.listSeparator)}
                           </p>
                         )}
                       </div>
@@ -181,7 +205,11 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
                           <h3>{item.title}</h3>
                           <p class="prose-p">{item.body}</p>
                         </div>
-                        <ul class="points" role="list">{item.points.map((p) => <li>{p}</li>)}</ul>
+                        <ul class="points" role="list">
+                          {item.points.map((p) => (
+                            <li>{p}</li>
+                          ))}
+                        </ul>
                       </div>
                     </article>
                   ))}
@@ -212,7 +240,10 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
         }
 
         <div class="end">
-          <ButtonLink variant="secondary" href={localizedHref("/works", locale)}>
+          <ButtonLink
+            variant="secondary"
+            href={localizedHref("/works", locale)}
+          >
             {d.back}
           </ButtonLink>
         </div>
@@ -243,7 +274,7 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
   .title {
     margin-block-end: 1.5rem;
     font-size: clamp(2.8rem, 8vw, 4.75rem);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.02;
     letter-spacing: -2px;
     color: var(--soft-foreground);
@@ -353,7 +384,7 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
   }
   h3 {
     font-size: 1.3rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.25;
     color: var(--soft-foreground);
   }

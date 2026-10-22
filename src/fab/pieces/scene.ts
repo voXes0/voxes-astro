@@ -1,13 +1,14 @@
-import { flapPoses, lookAround, tuckLegs } from "../acts";
+import { flapPoses, lookAround, prepareTuck } from "../acts";
 import type { Actor, Chapter, Director } from "../director";
 import { dripOnPetal, type DripFrame } from "../drip";
 import { fly } from "../flight";
-import { createPond } from "../pond";
 import { createSpring, extentOf, outlineOf, startRain, type Surface } from "../rain";
 import { bendPath, createStem, type Stem } from "../stem";
-import { abortError } from "../timing";
+import { frameNow, frames as runFrames } from "../timing";
+import { stageSize } from "../viewport";
 import type { FabStroke, Piece, Point } from "../types";
-import { pivots as birdPivots, strokes as birdStrokes } from "./bird.strokes";
+import { clamp } from "../util";
+import { strokes as birdStrokes } from "./bird.strokes";
 import { cloudAt, cloudPiece } from "./cloud";
 import { flowerBase, flowerBounds, flowerDrawOrder, flowerStrokes, unfurlFlower } from "./flower";
 import {
@@ -22,34 +23,28 @@ import {
 import { igniteSun, sun } from "./sun";
 
 /**
- * Chapter 1: the bird, the flower and the sun. One continuous shot.
+ * Chapter 1: the bird, the flower and the sun, in one continuous shot.
  *
  *   1. Ground and puddle are simply there. The laser draws the bird.
- *   2. The bird glances about, folds its legs and takes off, flapping, along the drawn
- *      path (roughly: see flight.ts). The camera follows it; as it heads for the far
- *      flower it shrinks into the picture, and the camera eases to a stop where the
- *      flower is going to be. The bird flies on, out of frame.
- *   3. The laser head appears at the foot of the stem and draws the stem, the leaves and the
- *      bud. Then it draws the sun in the top left of the frame.
- *   4. The sun lights up (rays, spinning halo, bloom). While it runs, the bud unfurls.
- *   5. 1.2 s after the flower has fully opened the laser draws a cloud above it, its rain
- *      starting right above the middle of the left petal. When the cloud is drawn it rains
- *      (src/fab/rain.ts): drops fall only under the cloud; on the ground, the petals and the
- *      leaves they splash, and a petal or leaf they hit dips and rings back up.
- *   6. 2.4 s into the rain the camera glides in on the left petal (zooming). One raindrop
- *      lands on it, forms a bead that slides down the petal, hangs from its tip and lets go
- *      (src/fab/drip.ts); the camera follows it down, pulling back, to the water, where it
- *      makes the baked splash of art/splash.json (src/fab/pond.ts).
- *   7. 1.5 s after the splash the camera pans slowly back to the start while the sun, cloud,
- *      plant and flower fade and the rain stops. Then it all plays again: the ground and the
- *      water stay; everything else is drawn again.
+ *   2. The bird glances about, folds its legs and flies off along the drawn path (flight.ts) with
+ *      the camera after it. Far away it shrinks into the picture while the camera eases to a stop
+ *      where the flower will be; the bird flies on, out of frame.
+ *   3. The laser draws the stem, leaves and bud at the foot of the stem, then the sun.
+ *   4. The sun lights up; meanwhile the bud unfurls.
+ *   5. Once the flower is open a cloud is drawn above it and it rains (rain.ts): on the ground, the
+ *      petals and leaves; whatever a drop hits dips and rings back up.
+ *   6. The camera glides in on the left petal. One drop lands there, forms a bead that slides to the
+ *      tip and lets go (drip.ts); the camera follows it down to the water for the baked splash
+ *      (art/splash.json, pond.ts).
+ *   7. The sun and cloud fade as the drop hits the water; the camera pans back while the plant and flower fade. Then it all plays again:
+ *      ground and water stay, everything else is drawn again.
  *
  * The plant stands a little left of where it was drawn (`PLANT_SHIFT`) so the drop that rolls off
- * the left petal falls clear of the hill. The stem is not rigid: drops landing on the petals and
- * leaves bend it (src/fab/stem.ts), and the flower and leaves lean with it.
+ * the left petal falls clear of the hill. The stem is not rigid: drops bend it (stem.ts) and the
+ * flower and leaves lean with it.
  *
- * Everything is in the drawing's own coordinates (scene.strokes.ts, generated from
- * art/scene-1.svg by `pnpm fab:scene`); the flower is placed with `flowerOffset`.
+ * Coordinates are the drawing's own (scene.strokes.ts, generated from art/scene-1.svg by
+ * `pnpm fab:scene`); the flower is placed with `flowerOffset`.
  */
 
 /** Camera framing. `view` is how many world units fit across the stage. */
@@ -65,8 +60,9 @@ const HALT: Point = { x: 197, y: 58 }; // the flower mid-frame, the sun in the t
  * the hill's wall. (`y` keeps its foot on the ground: the hill is steep there.)
  */
 const PLANT_SHIFT: Point = { x: -6, y: 2.2 };
-/** Where the flower's own drawing sits in the world. */
+/** Where the flower's own drawing sits in the world, and where its petals hinge (the top of the stem). */
 const FLOWER_AT: Point = { x: flowerOffset.x + PLANT_SHIFT.x, y: flowerOffset.y + PLANT_SHIFT.y };
+const HINGE: Point = { x: FLOWER_AT.x + flowerBase.x, y: FLOWER_AT.y + flowerBase.y };
 /** The stem, in the world: its foot on the hill, and its top (where the petals meet). */
 const STEM_FOOT: Point = { x: 220.416 + PLANT_SHIFT.x, y: 93.216 + PLANT_SHIFT.y };
 const STEM_TOP: Point = { x: 212.274 + PLANT_SHIFT.x, y: 59.065 + PLANT_SHIFT.y };
@@ -132,8 +128,7 @@ const puddle: Piece = {
 const bird: Piece = {
   id: "bird",
   fit: { x: birdOrigin.x + BIRD_SHIFT.x, y: birdOrigin.y + BIRD_SHIFT.y, scale: 1 },
-  // The legs are drawn from the foot up (reversed drawing; the path data is untouched)
-  // The body's outline starts (and ends) at the node nearest the left leg.
+  // Legs are drawn from the foot up; the body outline starts (and ends) at the node nearest the left leg.
   strokes: birdStrokes.map((st) =>
     st.id.startsWith("leg-line")
       ? { ...st, reverse: true }
@@ -141,17 +136,15 @@ const bird: Piece = {
         ? { ...st, d: startClosedPathNear(st.d, firstPoint(birdStrokes.find((q) => q.id === "leg-line-1")!.d)) }
         : st,
   ),
-  // Drawn feet-first: the left foot, the left leg, the right foot, the right leg, the body, then
-  // the rest. (The stacking order stays the drawing's: the body is behind the legs.)
+  // Drawn feet-first; stacking stays the drawing's (the body is behind the legs).
   drawOrder: [
     "feet-line-1", "feet-line-2", "feet-line-3", "leg-line-1",
     "feet-line-4", "feet-line-5", "feet-line-6", "leg-line-2",
     "body", "eye", "pupil", "tail-line-2", "tail-line-1", "wing",
   ],
-  pivots: birdPivots,
   glow: 0.35,
   line: 0.8,
-  pace: "original", // the bird is drawn at the first, quicker pace; the rest of the scene is calmer
+  pace: "original", // drawn quicker; the rest of the scene is calmer
 };
 
 const plant: Piece = {
@@ -231,11 +224,9 @@ async function fadeIn(actor: Actor, ms: number) {
   }
 }
 
-const clamp = (x: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, x));
 /** Smooth minimum: like Math.min, but rounds the corner over about `k` units (a camera that eases to a halt). */
 const softMin = (a: number, b: number, k: number) => -k * Math.log(Math.exp(-a / k) + Math.exp(-b / k));
 
-/** Run `step` every frame until it returns true (or `maxMs` pass). */
 /** Fade an actor out, then remove it. */
 async function fadeOut(actor: Actor, ms: number) {
   const el = actor.layer.wrapper;
@@ -247,20 +238,37 @@ async function fadeOut(actor: Actor, ms: number) {
   }
 }
 
-function frames(d: Director, step: (dt: number) => boolean, maxMs = 4000): Promise<void> {
-  return new Promise((resolve, reject) => {
-    let last = performance.now();
-    const t0 = last;
-    const tick = (now: number) => {
-      if (d.signal.aborted) return reject(abortError());
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      if (step(dt) || now - t0 > maxMs) return resolve();
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  });
+/**
+ * Hide pieces while the camera can't see them: their glow is costly when zoomed in.
+ * Returns a function that stops this and shows them again.
+ */
+function cullOffscreen(d: Director, actors: Actor[]) {
+  const boxes = actors.map((a) => a.layer.wrapper.getBBox()); // world units; measured while shown
+  const pad = 20; // glow and bloom
+  const shown = actors.map(() => true);
+  let on = true;
+  runFrames(d.signal, () => {
+    if (!on) return true;
+    const { width, height } = stageSize(d.stage);
+    const hw = width / 2 / d.camera.zoom + pad;
+    const hh = height / 2 / d.camera.zoom + pad;
+    const { x, y } = d.camera;
+    actors.forEach((a, i) => {
+      const b = boxes[i];
+      const seen = b.x < x + hw && b.x + b.width > x - hw && b.y < y + hh && b.y + b.height > y - hh;
+      if (seen === shown[i]) return;
+      shown[i] = seen;
+      a.layer.wrapper.style.display = seen ? "" : "none";
+    });
+  }).catch(() => {});
+  return () => {
+    on = false;
+    for (const a of actors) a.layer.wrapper.style.display = "";
+  };
 }
+
+/** Run `step` every frame until it returns true (or `maxMs` pass). */
+const frames = (d: Director, step: (dt: number) => boolean, maxMs = 4000) => runFrames(d.signal, step, maxMs);
 
 /**
  * What the rain can land on, from the real shapes: the five open petals and the two leaves
@@ -270,6 +278,21 @@ function frames(d: Director, step: (dt: number) => boolean, maxMs = 4000): Promi
  * Petals and leaves grow on the stem, which gives: a drop that knocks one bends the stem too
  * (`also`), and where the surface really is depends on how far the stem has leaned (`carry`).
  */
+/** The art is fixed: each outline is sampled once per page, not once per round. */
+const outlines = new Map<string, Point[]>();
+function outlineCached(key: string, make: () => Point[]): Point[] {
+  let pts = outlines.get(key);
+  if (!pts) outlines.set(key, (pts = make()));
+  return pts;
+}
+const hillOutline = () => outlineCached("hill", () => outlineOf(groundStrokes[0].d, { x: 0, y: 0 }, 0.5));
+
+/** The splash and its data (art/splash.json) load lazily, started early so the splash never waits. */
+let pondModule: Promise<typeof import("../pond")> | undefined;
+const loadPond = () => (pondModule ??= import("../pond"));
+
+let cloudMade: { cloud: ReturnType<typeof cloudAt>; piece: Piece } | undefined;
+
 function rainSurfaces(flowerActor: Actor, plantActor: Actor, stem: Stem): Surface[] {
   const out: Surface[] = [];
   const reachOf = (pts: Point[], p: Point) => Math.max(...pts.map((q) => Math.hypot(q.x - p.x, q.y - p.y)));
@@ -284,24 +307,22 @@ function rainSurfaces(flowerActor: Actor, plantActor: Actor, stem: Stem): Surfac
     return { x: q.x + stem.shiftAt(at.y), y: q.y };
   };
 
-  // petals: all hinged at the top of the stem
-  const hinge = { x: FLOWER_AT.x + flowerBase.x, y: FLOWER_AT.y + flowerBase.y };
   for (const st of flowerStrokes) {
     if (!/^flower-petal-\d$/.test(st.id)) continue;
-    const pts = outlineOf(openShape(st), FLOWER_AT);
+    const pts = outlineCached(st.id, () => outlineOf(openShape(st), FLOWER_AT));
     const wrapper = flowerActor.scene.stroke(st.id).parentElement!;
     out.push({
       id: st.id,
       kind: "petal",
       pts,
       also: [stem.spring],
-      carry: leaning(hinge),
-      carryTurn: () => stem.turnAt(hinge.y),
+      carry: leaning(HINGE),
+      carryTurn: () => stem.turnAt(HINGE.y),
       body: createSpring({
         targets: [wrapper],
-        pivot: hinge,
+        pivot: HINGE,
         pivotLocal: flowerBase,
-        reach: reachOf(pts, hinge),
+        reach: reachOf(pts, HINGE),
         freqHz: 3.4, // a light petal on a stiff base: a few quick swings
         zeta: 0.24, // the first dip is followed by a rebound about half as big, then a smaller one
       }),
@@ -312,7 +333,7 @@ function rainSurfaces(flowerActor: Actor, plantActor: Actor, stem: Stem): Surfac
   for (const [id, base] of Object.entries(LEAF_BASES)) {
     const st = plantStrokes.find((q) => q.id === id)!;
     const at = { x: base.x + PLANT_SHIFT.x, y: base.y + PLANT_SHIFT.y };
-    const pts = outlineOf(st.d, PLANT_SHIFT);
+    const pts = outlineCached(id, () => outlineOf(st.d, PLANT_SHIFT));
     out.push({
       id,
       kind: "leaf",
@@ -335,7 +356,7 @@ function rainSurfaces(flowerActor: Actor, plantActor: Actor, stem: Stem): Surfac
     });
   }
 
-  out.push({ id: "ground", kind: "ground", pts: outlineOf(groundStrokes[0].d, { x: 0, y: 0 }, 0.5) });
+  out.push({ id: "ground", kind: "ground", pts: hillOutline() });
   return out;
 }
 
@@ -357,9 +378,10 @@ export const birdToFlower: Chapter = {
     void Promise.all([fadeIn(water, SET_FADE_MS), fadeIn(land, SET_FADE_MS)]).catch(() => {});
     await d.wait(START_DELAY_MS);
 
-    // for the drop: the water's body as drawn (the splash reshapes it) and the hill's wall above the water
+    // for the drop: the water's body as drawn (the splash reshapes it) and the hill's wall above it
     const fillBase = puddleStrokes.find((st) => st.id === "puddle-fill")!.d.replace(/\s*Z\s*$/, "");
-    const hill = outlineOf(groundStrokes[0].d, { x: 0, y: 0 }, 0.5);
+    const hill = hillOutline();
+    void loadPond().catch(() => {});
     const wallAt = (y: number) => {
       let best = Infinity;
       for (let i = 0; i < hill.length - 1; i++) {
@@ -377,18 +399,10 @@ export const birdToFlower: Chapter = {
       d.state("building");
       d.beat("draw-bird");
       await birdActor.build(null);
-
-      // 2. a look round, then take off
-      d.state("acting");
-      d.beat("take-off");
+      // Everything that measures shapes happens now, while nothing moves: it would stall the
+      // take-off and the flight to the flower.
       const b = birdActor.scene;
-      await lookAround(b, "pupil", "eye", [
-        { x: -1, y: -0.25, holdMs: 300 },
-        { x: 1, y: 0.05, holdMs: 0 },
-      ]);
-      const wings = { startedAt: performance.now(), periodMs: 380 };
-      b.spawn(() => flapPoses(b, "wing", { flaps: Infinity, periodMs: wings.periodMs }));
-      const legsUp = tuckLegs(
+      const startTuck = prepareTuck(
         b,
         [
           { leg: "leg-line-1", feet: ["feet-line-1", "feet-line-2", "feet-line-3"] },
@@ -396,6 +410,20 @@ export const birdToFlower: Chapter = {
         ],
         { behind: "body" },
       );
+      const plantActor = d.add(plant);
+      const flowerActor = d.add(flower);
+      const sunActor = d.add(sun);
+
+      // 2. a look round, then take off
+      d.state("acting");
+      d.beat("take-off");
+      await lookAround(b, "pupil", "eye", [
+        { x: -1, y: -0.25, holdMs: 300 },
+        { x: 1, y: 0.05, holdMs: 0 },
+      ]);
+      const wings = { startedAt: frameNow(), periodMs: 380 };
+      b.spawn(() => flapPoses(b, "wing", { flaps: Infinity, periodMs: wings.periodMs }));
+      const legsUp = startTuck();
 
       // the camera chases a point just ahead of and below the bird, and eases to a halt at the flower
       const follow = (p: Point): Point => ({
@@ -438,12 +466,9 @@ export const birdToFlower: Chapter = {
       await Promise.race([plantGo, flightTask]);
       d.state("building");
       d.beat("draw-flower");
-      const plantActor = d.add(plant);
       let at: Point | null = await plantActor.build(null);
-      const flowerActor = d.add(flower);
       at = await flowerActor.build(at);
       d.beat("draw-sun");
-      const sunActor = d.add(sun);
       await sunActor.build(at);
       await flightTask; // long done, but nothing may be left running
 
@@ -458,29 +483,29 @@ export const birdToFlower: Chapter = {
       // 5. a cloud over the flower, then rain. Its rain starts a hair left of the middle of petal 2.
       await d.wait(CLOUD_DELAY_MS);
       const petal2Shape = flowerStrokes.find((st) => st.id === "flower-petal-2")!;
-      const rainFrom = extentOf(outlineOf(openShape(petal2Shape), FLOWER_AT)).cx - CLOUD_NUDGE_LEFT;
-      const cloud = cloudAt(rainFrom, CLOUD_BASE_Y);
+      const rainFrom = extentOf(outlineCached(petal2Shape.id, () => outlineOf(openShape(petal2Shape), FLOWER_AT))).cx - CLOUD_NUDGE_LEFT;
+      cloudMade ??= (() => { const c = cloudAt(rainFrom, CLOUD_BASE_Y); return { cloud: c, piece: cloudPiece(c) }; })();
+      const { cloud, piece: cloudShape } = cloudMade;
       d.beat("draw-cloud");
       d.state("building");
-      const cloudActor = d.add(cloudPiece(cloud));
+      const cloudActor = d.add(cloudShape);
       await cloudActor.build(null);
 
       d.state("acting");
       d.beat("rain");
       const fx = d.add(rainLayer);
 
-      // the stem: it gives when the drops hit what grows on it. Its path is redrawn, and the flower
-      // (and the leaves, through their springs) are moved with it, as it bends.
+      // The stem gives when drops hit what grows on it: its path is redrawn, and the flower (and,
+      // through their springs, the leaves) move with it.
       const stem = createStem({ foot: STEM_FOOT, top: STEM_TOP, freqHz: 1.8, zeta: 0.3, gain: 0.035, maxTip: 1.6 });
       const stemPath = plantStrokes.find((st) => st.id === "stem")!.d;
-      const hinge = { x: FLOWER_AT.x + flowerBase.x, y: FLOWER_AT.y + flowerBase.y };
       let leant = 0;
       const lean = (force = false) => {
         if (!force && Math.abs(stem.tip - leant) < 1e-3) return;
         leant = stem.tip;
         plantActor.scene.setPath("stem", bendPath(stemPath, (y) => stem.shiftAt(y + PLANT_SHIFT.y)));
-        const turn = (stem.turnAt(hinge.y) * 180) / Math.PI;
-        flowerActor.layer.wrapper.setAttribute("transform", `translate(${stem.shiftAt(hinge.y).toFixed(3)} 0) rotate(${turn.toFixed(3)} ${hinge.x} ${hinge.y})`);
+        const turn = (stem.turnAt(HINGE.y) * 180) / Math.PI;
+        flowerActor.layer.wrapper.setAttribute("transform", `translate(${stem.shiftAt(HINGE.y).toFixed(3)} 0) rotate(${turn.toFixed(3)} ${HINGE.x} ${HINGE.y})`);
       };
       const straighten = () => {
         stem.spring.reset();
@@ -502,15 +527,14 @@ export const birdToFlower: Chapter = {
         surfaces,
       });
 
-      // 6. 2.4 s into the rain the camera glides in on the left petal ...
+      // 6. the camera glides in on the left petal. The sun and cloud are hidden as soon as the
+      //    zoom takes them out of shot (measured now, while nothing moves fast): their glow is the
+      //    costliest thing to repaint during the push-in.
+      const stopCull = cullOffscreen(d, [sunActor, cloudActor]);
       await d.wait(ZOOM_AFTER_RAIN_MS);
       d.beat("zoom-petal");
       rain.avoid("flower-petal-2"); // the one drop that matters gets the petal to itself
       await camera.moveTo(PETAL_SHOT, PETAL_SHOT_MS);
-      // The sun and the cloud are out of the shot now; not drawing them keeps the close-up smooth
-      // (their glow is the costliest thing in the picture once the camera is this far in).
-      sunActor.layer.wrapper.style.display = "none";
-      cloudActor.layer.wrapper.style.display = "none";
       await d.wait(250);
 
       // ... a raindrop lands on it, makes a bead, which slides down, hangs and falls to the water;
@@ -551,6 +575,7 @@ export const birdToFlower: Chapter = {
 
       // the splash (art/splash.json) on the real water line
       d.beat("splash");
+      const { createPond } = await loadPond();
       const pond = createPond({
         host: fx.layer.group,
         signal: fx.scene.signal,
@@ -563,6 +588,9 @@ export const birdToFlower: Chapter = {
       });
       const splashed = pond.splash(landing.x, landing.radius);
       splashed.catch(() => {});
+      // the drop has hit the water: the sky clears and the rain stops with the cloud
+      rain.setRate(0);
+      const clearSky = Promise.all([fadeOut(sunActor, 1800), fadeOut(cloudActor, 1800)]).finally(stopCull);
       let held = 0;
       await frames(
         d,
@@ -576,27 +604,16 @@ export const birdToFlower: Chapter = {
 
       // 7. 1.5 s after the splash: a slow pan back to the start, while the scene resets behind it
       d.beat("pan-back");
-      sunActor.layer.wrapper.style.display = "";
-      cloudActor.layer.wrapper.style.display = "";
-      rain.setRate(0);
-      const clearSky = (async () => {
-        await d.wait(600);
-        await Promise.all([fadeOut(sunActor, 1800), fadeOut(cloudActor, 1800)]);
-      })();
+      const panBack = camera.moveTo({ x: START.x, y: START.y, across: VIEW }, PAN_BACK_MS);
       const reset = (async () => {
         await splashed; // the water is still again
         await d.wait(900);
-        straighten(); // the stem is still: put it, and everything it carries, back exactly
+        straighten(); // the stem is still: put it and what it carries back exactly
         rain.stop();
         fx.remove();
-        // the plant and the flower are erased too: the next round draws them again
         await Promise.all([fadeOut(plantActor, 1500), fadeOut(flowerActor, 1500)]);
       })();
-      await Promise.all([
-        camera.moveTo({ x: START.x, y: START.y, across: VIEW }, PAN_BACK_MS),
-        clearSky,
-        reset,
-      ]);
+      await Promise.all([panBack, clearSky, reset]);
       camera.frame(START.x, START.y, VIEW);
     }
   },

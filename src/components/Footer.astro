@@ -3,6 +3,7 @@ import { t, type Locale } from "@/i18n";
 import SocialIcon from "@/components/icons/SocialIcon.astro";
 import { socials, type SocialIconName } from "@/lib/socials";
 import styles from "./Footer.module.css";
+import { email } from "@/lib/links";
 
 interface Props {
   locale: Locale;
@@ -10,7 +11,6 @@ interface Props {
 
 const { locale } = Astro.props;
 const messages = t(locale);
-const email = "voXes.007@outlook.com";
 // Footer shows a subset of lib/socials.ts, in this order.
 const footerIds: SocialIconName[] = ["x", "instagram", "linkedin", "github"];
 const footerSocials = footerIds.map((id) => socials.find((s) => s.id === id)!);
@@ -24,7 +24,7 @@ const year = new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en", {
 <footer class={styles.footer}>
   <div class={styles.grid}>
     <p class={styles.brand} dir="ltr">
-      voXes<span class={styles.voxel} aria-hidden="true"></span>
+      Voxes<span class={styles.voxel} aria-hidden="true"></span>
     </p>
 
     <a href={`mailto:${email}`} class={styles.mail} dir="ltr">{email}</a>

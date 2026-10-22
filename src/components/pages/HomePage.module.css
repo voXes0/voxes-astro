@@ -1,23 +1,50 @@
+/* Phones (< 640px): one column. A card holds the eyebrow, the title and the
+   fabricator; the lead and the two buttons sit below it.
+   640px and up: a grid. The card dissolves, so the stage, the heading and the
+   content become grid items. */
 .main {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 }
 
-/* Left: the "laser fabrication" stage. */
+/* The phone card: full width, no border. It starts below the fixed nav (same
+   height as the nav spacer below) and holds the heading, then the stage.
+   It is at least one full screen tall (lvh: the tallest the viewport gets, so
+   it holds when the browser toolbar collapses), which keeps the lead and the
+   buttons below the fold; the stage stretches to fill what the heading leaves. */
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100lvh;
+  padding-top: 5.25rem;
+  background-color: color-mix(in oklab, var(--low-opacity-secondary) 15%, transparent);
+  animation: fade 1s ease-out;
+}
+
+.heading {
+  padding: 1rem var(--page-gutter) 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* The "laser fabrication" stage. Sizing/background live here; what it
+   draws lives in src/fab/pieces/. On phones it fills the rest of the card
+   (never shorter than 20rem, so short screens still get a decent stage). */
 .stage {
   position: relative;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  min-height: 28rem;
+  flex: 1 0 auto;
+  min-height: 20rem;
   overflow: hidden;
-  background-color: color-mix(in oklab, var(--low-opacity-secondary) 15%, transparent);
 }
 
-/* Same height as the fixed nav */
+/* On phones the card's top padding already clears the nav. */
 .navSpacer {
+  display: none;
   flex-shrink: 0;
   height: 5.25rem;
 }
@@ -28,13 +55,79 @@
   flex: 1;
 }
 
-/* Right: content. */
-.content {
-  flex: 1;
+/* Phones only: a faint cue that there is more below the stage. A line is
+   "drawn" downward by a small glowing dot (the fabricator's laser head), lands
+   in a chevron, then fades; it repeats slowly. It sits inside the card, so it
+   scrolls away with it. */
+.scrollHint {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.75rem;
+  z-index: 1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  padding: 4rem var(--page-gutter);
+  color: var(--secondary);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.hintSvg {
+  width: 1.25rem;
+  height: 2.1rem;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hintLine,
+.hintChevron,
+.hintDot {
+  animation-duration: 3.6s;
+  animation-delay: 2.5s; /* after the page has faded in */
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.hintLine {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation-name: hint-line;
+}
+
+.hintChevron {
+  opacity: 0;
+  animation-name: hint-chevron;
+}
+
+.hintDot {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px currentColor);
+  animation-name: hint-dot;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hintLine,
+  .hintChevron,
+  .hintDot {
+    animation: none;
+  }
+
+  .hintLine {
+    stroke-dashoffset: 0;
+  }
+
+  .hintChevron {
+    opacity: 1;
+  }
+}
+
+.content {
+  padding: 2rem var(--page-gutter) 3rem;
 }
 
 .inner {
@@ -44,18 +137,19 @@
 }
 
 .eyebrow {
-  margin: 0 0 1.5rem;
-  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
   line-height: 1.25rem;
   letter-spacing: 0.025em;
   text-align: center;
-  color: var(--softer-foreground);
+  color: var(--secondary);
 }
 
 .title {
-  margin: 0 0 2rem;
+  margin: 0;
   font-size: clamp(2.4rem, 6vw, 3.8rem);
-  font-weight: 800;
+  max-width: 80%;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: -1.5px;
   text-align: center;
@@ -64,18 +158,20 @@
 
 .lead {
   max-width: 30rem;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 2rem;
   font-size: clamp(0.95rem, 1.6vw, 1.1rem);
   line-height: 1.8;
   text-align: center;
   color: var(--high-opacity-soft-foreground);
 }
 
+/* Phones: both buttons span the full width. */
 .actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
+  text-align: center;
 }
 
 /* Persian: slightly smaller headline, looser lead. */
@@ -89,8 +185,67 @@
 }
 
 @media (min-width: 640px) {
+  .main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    /* stage | space | heading | content | space: the empty 1fr rows centre
+       the heading and content in whatever room the stage leaves. */
+    grid-template-rows: auto 1fr auto auto 1fr;
+  }
+
+  .card {
+    display: contents;
+    animation: none;
+  }
+
+  .stage {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 28rem;
+    background-color: color-mix(in oklab, var(--low-opacity-secondary) 15%, transparent);
+  }
+
+  .navSpacer {
+    display: block;
+  }
+
+  .scrollHint {
+    display: none;
+  }
+
+  /* Padding is part of max-width here, so add the gutters back to keep the
+     text column at 36rem. */
+  .heading {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: calc(36rem + 2 * var(--page-gutter));
+    padding: 4rem var(--page-gutter) 0;
+    animation: fade 1s ease-out;
+    display: inline;
+  }
+
+  .content {
+    grid-column: 1;
+    grid-row: 4;
+    padding: 0 var(--page-gutter) 4rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .title {
+    margin-bottom: 2rem;
+  }
+
+  .lead {
+    margin-bottom: 2.5rem;
+  }
+
   .actions {
     flex-direction: row;
+    align-items: center;
     justify-content: center;
   }
 }
@@ -103,12 +258,17 @@
 
 @media (min-width: 1024px) {
   .main {
-    flex-direction: row;
+    grid-template-columns: 44% minmax(0, 1fr);
   }
 
   .stage {
-    width: 44%;
+    grid-row: 1 / -1;
     min-height: 100vh;
+  }
+
+  .heading,
+  .content {
+    grid-column: 2;
   }
 
   .eyebrow,
@@ -135,5 +295,54 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes hint-line {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  45%,
+  80% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes hint-chevron {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  50%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hint-dot {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateY(28px);
+    opacity: 1;
+  }
+  58%,
+  100% {
+    transform: translateY(28px);
+    opacity: 0;
   }
 }

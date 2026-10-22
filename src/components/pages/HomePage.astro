@@ -21,23 +21,38 @@ const m = t(locale).home;
   description={m.meta.description}
 >
   <main class:list={[styles.main, isPersian && styles.fa]}>
-    <!-- Left: the "laser fabrication" stage. Sizing/background live here;
-         what it draws lives in src/fab/pieces/. -->
-    <div class={styles.stage}>
-      <!-- Navbar spacer: keeps the fixed nav from covering the top of the fabricator. -->
-      <div class={styles.navSpacer} aria-hidden="true"></div>
-      <div class={styles.fab}>
-        <Fabricator />
-      </div>
-    </div>
-
-    <!-- Right: content -->
-    <div class={styles.content}>
-      <div class={styles.inner}>
+    <!-- Phones: a card with the eyebrow and title above the fabricator.
+         From 640px up the card dissolves (display: contents) and the grid
+         in HomePage.module.css places its children instead. -->
+    <div class={styles.card}>
+      <div class={styles.heading}>
         <p class={styles.eyebrow}>{m.eyebrow}</p>
 
         <h1 class={styles.title}>{m.title}</h1>
+      </div>
 
+      <!-- The "laser fabrication" stage. Sizing/background live here;
+           what it draws lives in src/fab/pieces/. -->
+      <div class={styles.stage}>
+        <!-- Navbar spacer: keeps the fixed nav from covering the top of the fabricator. -->
+        <div class={styles.navSpacer} aria-hidden="true"></div>
+        <div class={styles.fab}>
+          <Fabricator />
+        </div>
+        <!-- Phones only: a faint "scroll" cue, drawn like the fabricator's laser. -->
+        <div class={styles.scrollHint} aria-hidden="true">
+          <svg viewBox="0 0 24 40" class={styles.hintSvg}>
+            <path class={styles.hintLine} d="M12 2V30" pathLength="1"></path>
+            <path class={styles.hintChevron} d="M6.5 25L12 31L17.5 25"></path>
+            <circle class={styles.hintDot} cx="12" cy="2" r="2"></circle>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lead + calls to action -->
+    <div class={styles.content}>
+      <div class={styles.inner}>
         <p class={styles.lead}>{m.lead}</p>
 
         <div class={styles.actions}>

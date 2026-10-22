@@ -22,7 +22,11 @@ const items = getSocials(locale);
 >
   <PageShell>
     <div class="shell">
-      <PageHeader eyebrow={m.eyebrow} title={`${m.title1}${m.title2}`} intro={m.intro} />
+      <PageHeader
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+      />
 
       <ul class="list" role="list">
         {
@@ -118,7 +122,7 @@ const items = getSocials(locale);
   .label {
     grid-area: label;
     font-size: 1.15rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.25;
     transition: color 0.25s ease;
   }

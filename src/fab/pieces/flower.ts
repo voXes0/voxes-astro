@@ -1,59 +1,52 @@
 import { easeInOutCubic } from "../timing";
 import { boundsOf, matchShapes, parsePath, reversed, type Cubic } from "../morph";
-import type { FabStroke, Piece, Scene } from "../types";
+import type { FabStroke, Scene } from "../types";
 
 /**
- * THE FLOWER — finished and self-contained. Nothing else in the project needs to
- * read this file or src/fab/morph.ts; see "The flower" in FABRICATOR_SVG_INSTRUCTIONS.md.
+ * THE FLOWER: finished and self-contained (see "The flower" in FABRICATOR_SVG_INSTRUCTIONS.md).
  *
- * What a scene (or the test piece below) uses:
  *   flowerStrokes     the strokes, in STACKING order, ids all start with "flower-"
  *   flowerDrawOrder   the order the laser draws them in (Piece.drawOrder)
- *   unfurlFlower(s)   bud -> open flower (~3.4 s)        call from any act
- *   foldFlower(s)     open flower -> bud again (~3.4 s)  (the unfurl, reversed)
- *   flowerBounds      bounding box of bud + open flower, in the coordinates below
- *   flower            a ready-made Piece that draws the bud and unfurls it (test piece)
- * Coordinates are those of art/scene.svg (no transform). Draw the strokes with
- * Piece.headOnTop = true: the petals have opaque fills that would hide the laser head.
+ *   unfurlFlower(s)   bud -> open flower (~3.4 s), from any act
+ *   flowerBounds      bounding box of bud + open flower
+ * Coordinates are art/scene.svg's (no transform). Draw with Piece.headOnTop = true: the petals have
+ * opaque fills that would hide the laser head.
  *
- * art/scene.svg holds two drawings of the same five petals: the hidden
- * (display:none) paths are the BUD, the visible ones the OPEN flower. Each
- * petal's bud shape turns into its open shape (src/fab/morph.ts lines the two
- * outlines up; the shapes themselves are not changed).
+ * art/scene.svg holds two drawings of the same five petals: the hidden (display:none) paths are the
+ * BUD, the visible ones the OPEN flower. morph.ts lines each pair up; the shapes are not changed.
  *
- *   petal   bud (hidden paths)                      open (visible path)
- *   1       path18        front, fully visible      path1   lower left
- *   2       path19 + path2   left, partly hidden    path4   left
- *   3       path20 + path7   right, partly hidden   path14  lower right
- *   4       path22        behind, never drawn       path15  upper left
- *   5       path23        behind, never drawn       path16  upper right
- *   center  path17        sits inside the bud       (the same)
+ *   petal   bud (hidden paths)                     open (visible path)
+ *   1       path18        front, fully visible     path1   lower left
+ *   2       path19 + path2   left, partly hidden   path4   left
+ *   3       path20 + path7   right, partly hidden  path14  lower right
+ *   4       path22        behind, never drawn      path15  upper left
+ *   5       path23        behind, never drawn      path16  upper right
+ *   center  path17        inside the bud           (the same)
  *
- * Stacking, back to front: 5, 4, center, 3, 2, 1, then a copy of the center. Every
- * petal body is filled with the page background, so what is in front hides what is
- * behind: the back petals and the center sit unseen inside the bud and only appear as
- * the front petals open, and nothing shows through. The laser draws 1, then 2, then 3.
- * Once the petals are out, the copy of the center fades in on top of them (in the art
- * the center covers the petal bases) and the one underneath is dropped.
+ * Stacking, back to front: 5, 4, center, 3, 2, 1, then a copy of the center. Petal bodies are filled
+ * with the page background, so what is in front hides what is behind: the back petals and the center
+ * sit unseen inside the bud and appear as the front petals open. The laser draws 1, 2, 3. Once the
+ * petals are out, the copy of the center fades in on top (in the art it covers the petal bases) and
+ * the one underneath is dropped.
  *
- * To change a shape: edit the path in art/scene.svg (keep its id) and run
- * `pnpm fab:flower`, which rewrites the block below.
+ * To change a shape: edit the path in art/scene.svg (keep its id) and run `pnpm fab:flower`, which
+ * rewrites the block below (the generator should pass paths through `compactPath`, see compact-path.mjs).
  */
 // <flower-src> — written by scripts/flower-from-scene.mjs, do not edit by hand
 const SRC = {
-  path18: "m 163.24378,-3.3902542 c -1.2506,4.549017 -1.67892,6.786655 2.09413,9.821884 2.24825,-3.449005 0.7433,-7.26884293 -2.09413,-9.821884 z",
-  path19: "m 163.22326,-3.6774052 c 0,0 -2.11878,2.87072907 -1.80494,5.373806 0.63583,4.482721 2.28394,3.832501 3.91959,4.735225",
-  path20: "m 163.22326,-3.6774072 c 3.40676,1.01115 4.46235,5.199794 3.81501,7.712035 -0.14157,0.710118 -0.29819,1.447585 -1.70036,2.396998",
-  path22: "m 165.33789,6.4316138 c -0.97357,-1.45233 -2.81962,-1.994847 -3.28108,-4.029726 -0.43541,-1.80405493 -0.17461,-4.109444 1.16645,-6.079293 1.68914,2.295072 0.89712,3.30791807 0.8079,5.146465 -0.0113,2.280519 1.31803,3.177883 1.30673,4.962555",
-  path23: "m 165.31599,6.4316138 c 0.97357,-1.45233 1.62003,-2.079365 1.84044,-4.581459 -0.009,-2.996982 -1.93485,-4.607809 -3.93317,-5.52756 0.24834,2.73406007 1.63477,3.09533407 1.85006,4.809295 0.11972,1.667483 0.23137,3.515053 0.24267,5.299725",
-  path2: "m 163.22326,-3.6774052 c 1.06113,1.305461 1.16401,1.59944 0.90315,5.054515 0.0405,2.08677 0.28694,3.094041 1.2115,5.054515",
-  path7: "m 163.22326,-3.6774072 c 0.33701,1.974781 0.94574,2.74343807 1.73942,5.054517 0.56976,2.290365 0.98034,3.152484 0.37523,5.054513",
-  path1: "m 159.79565,9.9026028 c 0.33203,-2.065566 1.7704,-6.726574 5.54345,-3.691345 2.24825,-3.449005 -2.70602,6.2443862 -5.54345,3.691345 z",
-  path4: "m 165.31599,6.4316138 c -0.92456,-1.960474 -3.19839,-1.689381 -5.37221,-1.063068 -2.37262,0.580289 -3.47083,0.838541 -4.80418,0.286946 0,0 1.2048,-2.430591 4.63201,-2.667846 4.42975,0.192879 3.90873,2.541245 5.54438,3.443969",
-  path14: "m 169.50142,5.2537678 c -0.73593,-0.297243 -3.6951,-0.724185 -4.18543,1.177846 1.31609,-0.576382 0.89227,0 2.9617,1.133034 1.60603,0.75948 3.06018,1.133386 4.96996,1.181105 -0.67518,-2.055887 -1.77771,-2.894358 -3.74623,-3.491985 z",
-  path15: "m 165.31599,6.4316138 c -0.99805,-1.343242 -1.45829,-2.981492 -2.87655,-4.285346 -0.85624,-0.897515 -1.98546,-1.00941 -3.44616,-1.73690893 1.9235,-0.43335 4.95241,-0.303816 5.96994,1.47127193 0.99601,1.342286 0.36407,2.766311 0.35277,4.550983",
-  path16: "m 165.33795,6.4220338 c 1.08196,-1.373479 0.20222,0.05378 1.90155,-1.772373 1.16615,-0.946532 2.61177,-1.660207 6.15501,-2.683852 -1.41567,-1.31040893 -3.86109,-1.34569693 -5.24401,-0.402913 -1.16201,0.698454 -2.31277,2.023815 -2.81255,4.859139",
-  path17: "m 166.5587,5.4354718 c -0.0253,0.383207 -0.4258,0.707685 -1.21957,0.666307 -0.79378,-0.04138 -1.24331,-0.410173 -1.21804,-0.793382 0.0253,-0.383209 0.51575,-0.635719 1.30954,-0.594338 0.79377,0.04138 1.15334,0.338206 1.12807,0.721413 z",
+  path18: "M163.24 -3.39C161.99 1.16 161.56 3.4 165.34 6.43C167.59 2.98 166.08 -0.84 163.24 -3.39Z",
+  path19: "M163.22 -3.68C163.22 -3.68 161.1 -0.81 161.42 1.7C162.05 6.18 163.7 5.53 165.34 6.43",
+  path20: "M163.22 -3.68C166.63 -2.67 167.69 1.52 167.04 4.03C166.9 4.74 166.74 5.48 165.34 6.43",
+  path22: "M165.34 6.43C164.36 4.98 162.52 4.44 162.06 2.4C161.62 0.6 161.88 -1.71 163.22 -3.68C164.91 -1.38 164.12 -0.37 164.03 1.47C164.02 3.75 165.35 4.65 165.34 6.43",
+  path23: "M165.32 6.43C166.29 4.98 166.94 4.35 167.16 1.85C167.15 -1.15 165.22 -2.76 163.22 -3.68C163.47 -0.94 164.86 -0.58 165.07 1.13C165.19 2.8 165.3 4.65 165.32 6.43",
+  path2: "M163.22 -3.68C164.28 -2.37 164.39 -2.08 164.13 1.38C164.17 3.46 164.41 4.47 165.34 6.43",
+  path7: "M163.22 -3.68C163.56 -1.7 164.17 -0.93 164.96 1.38C165.53 3.67 165.94 4.53 165.34 6.43",
+  path1: "M159.8 9.9C160.13 7.84 161.57 3.18 165.34 6.21C167.59 2.76 162.63 12.46 159.8 9.9Z",
+  path4: "M165.32 6.43C164.39 4.47 162.12 4.74 159.94 5.37C157.57 5.95 156.47 6.21 155.14 5.66C155.14 5.66 156.34 3.22 159.77 2.99C164.2 3.18 163.68 5.53 165.32 6.43",
+  path14: "M169.5 5.25C168.77 4.96 165.81 4.53 165.32 6.43C166.63 5.86 166.21 6.43 168.28 7.56C169.88 8.32 171.34 8.7 173.25 8.75C172.57 6.69 171.47 5.85 169.5 5.25Z",
+  path15: "M165.32 6.43C164.32 5.09 163.86 3.45 162.44 2.15C161.58 1.25 160.45 1.14 158.99 0.41C160.92 -0.02 163.95 0.11 164.96 1.88C165.96 3.22 165.33 4.65 165.32 6.43",
+  path16: "M165.34 6.42C166.42 5.05 165.54 6.48 167.24 4.65C168.41 3.7 169.85 2.99 173.39 1.97C171.98 0.66 169.53 0.62 168.15 1.56C166.99 2.26 165.84 3.59 165.34 6.42",
+  path17: "M166.56 5.44C166.53 5.82 166.13 6.14 165.34 6.1C164.55 6.06 164.1 5.69 164.12 5.31C164.15 4.93 164.64 4.67 165.43 4.71C166.22 4.76 166.58 5.05 166.56 5.44Z",
 };
 // </flower-src>
 type Src = keyof typeof SRC;
@@ -220,12 +213,12 @@ function growCenter(s: Scene, t: number) {
   wrapper.style.transform = `translate(${x}px, ${y}px) scale(${k}) translate(${-centerMiddle[0]}px, ${-centerMiddle[1]}px)`;
 }
 
-/** Plays the petals forward (unfurl) or backward (fold); `now` runs 0..UNFURL_MS or back. */
-function move(s: Scene, forward: boolean, onTime: (now: number) => void) {
+/** Plays the petals open; `now` runs 0..UNFURL_MS. */
+function move(s: Scene, onTime: (now: number) => void) {
   return s.tween(
     UNFURL_MS,
     (u) => {
-      const now = (forward ? u : 1 - u) * UNFURL_MS;
+      const now = u * UNFURL_MS;
       for (const [id, { at, ms }] of Object.entries(UNFURL)) {
         const k = Math.min(1, Math.max(0, (now - at) / ms));
         s.pose(id, 100 * easeInOutCubic(k));
@@ -240,7 +233,7 @@ function move(s: Scene, forward: boolean, onTime: (now: number) => void) {
 /**
  * Bud -> open flower. The center is already inside the bud (tucked in, under the
  * front petals) and shows as they move away, growing to its real size; the back
- * petals appear the moment they start to open. Safe to call again after `foldFlower`.
+ * petals appear the moment they start to open.
  */
 export async function unfurlFlower(s: Scene) {
   tucked ??= fitInsideBud(s);
@@ -248,7 +241,7 @@ export async function unfurlFlower(s: Scene) {
   s.show("flower-center"); // completely covered by the front petals
   const waiting = new Set(BACK);
   let top = false;
-  await move(s, true, (now) => {
+  await move(s, (now) => {
     for (const id of [...waiting]) {
       if (now >= UNFURL[id as keyof typeof UNFURL].at) {
         waiting.delete(id);
@@ -263,43 +256,3 @@ export async function unfurlFlower(s: Scene) {
   await s.wait(TOP_FADE_MS - (UNFURL_MS - TOP_AT));
   await s.hide("flower-center"); // the copy on top is all that is needed now
 }
-
-/** Open flower -> bud: `unfurlFlower` played backwards. */
-export async function foldFlower(s: Scene) {
-  s.show("flower-center");
-  growCenter(s, 1);
-  await s.hide("flower-center-top", TOP_FADE_MS);
-  const back = new Set<string>();
-  await move(s, false, (now) => {
-    for (const id of BACK) {
-      if (!back.has(id) && now <= UNFURL[id as keyof typeof UNFURL].at) {
-        back.add(id);
-        void s.hide(id); // tucked in again, behind the front petals
-      }
-    }
-  });
-  // back to the bud exactly as it was drawn: petals 2 and 3 show only their visible edge
-  for (const st of flowerStrokes) if (st.draw) s.limit(st.id, st.draw);
-}
-
-// ---- test piece: draw the bud, unfurl it, then leave (see src/fab/pieces/index.ts) ----
-
-const scale = Math.min(215 / flowerBounds.width, 215 / flowerBounds.height);
-
-export const flower: Piece = {
-  id: "flower",
-  fit: {
-    x: 150 - (flowerBounds.x + flowerBounds.width / 2) * scale,
-    y: 150 - (flowerBounds.y + flowerBounds.height / 2) * scale,
-    scale,
-  },
-  strokes: flowerStrokes,
-  drawOrder: flowerDrawOrder,
-  headOnTop: true,
-  glow: 0.35,
-  async act(s) {
-    await s.wait(700); // the bud, as drawn
-    await unfurlFlower(s);
-    await s.wait(300);
-  },
-};

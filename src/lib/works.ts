@@ -39,12 +39,17 @@ export interface WorkData {
 
 export const works: WorkData[] = [
   {
+    image: {
+      src: "/images/kazheh/mockup.png",
+      width: 1440,
+      height: 900,
+    },
     slug: "kazheh",
     kind: "closed",
     status: "live",
     year: 2025,
-    tech: ["Next.js", "TypeScript", "i18n"],
-    site: "https://example.com",
+    tech: ["Next.js", "TypeScript", "React", "PostgreSQL"],
+    site: "https://kazhehhouse.ir",
     pattern: 1,
   },
   {

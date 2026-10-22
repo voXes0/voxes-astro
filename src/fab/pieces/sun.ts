@@ -1,16 +1,15 @@
+import { frameNow } from "../timing";
+import { clamp01 } from "../util";
 import type { Piece, Scene } from "../types";
 import { sunDisc } from "./scene.strokes";
 
 /**
- * The sun, in world coordinates (where the drawing puts it).
+ * The sun, in world coordinates. The laser draws only the disc. The soft bloom and the rays exist
+ * from the start, hidden; `igniteSun` brings them on once the disc is there (bloom fades up, rays pop
+ * outward one by one, then turn for as long as the sun is on stage).
  *
- * The laser draws only the disc. The soft bloom behind it and the rays exist from the
- * start, hidden, and `igniteSun` brings them on once the disc is there: the bloom fades
- * up and the rays pop outward one after another, then turn slowly for as long as the
- * sun is on stage. Nothing else.
- *
- * The rays change shape every frame, so they are drawn here at their full extent: the
- * glow filter's region (sized from the strokes' outlines) already covers them.
+ * The rays change shape every frame, so they are drawn at full extent: the glow filter's region
+ * (sized from the strokes' outlines) already covers them.
  */
 const { x: CX, y: CY, r: R } = sunDisc;
 
@@ -53,7 +52,6 @@ export const sun: Piece = {
   ],
 };
 
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const easeOutBack = (x: number) => {
   const c1 = 2.2;
   const c3 = c1 + 1;
@@ -71,11 +69,11 @@ export async function igniteSun(s: Scene): Promise<void> {
   s.show(["sun-bloom"], 900);
   s.show(["sun-rays"]);
 
-  const t0 = performance.now();
+  const t0 = frameNow();
   s.spawn(() =>
     // a frame loop that lives as long as the sun does (the scene's signal ends it)
     s.tween(1e12, () => {
-      const T = (performance.now() - t0) / 1000;
+      const T = (frameNow() - t0) / 1000;
       s.setPath("sun-rays", rays(T * 0.2, (i) => easeOutBack(clamp01((T - i * 0.04) / 0.5))));
     }),
   );

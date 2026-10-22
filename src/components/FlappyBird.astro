@@ -35,7 +35,13 @@ interface Props {
   class?: string;
 }
 
-const { locale, level = defaultLevelId, keys = "visible", id = level, class: className } = Astro.props;
+const {
+  locale,
+  level = defaultLevelId,
+  keys = "visible",
+  id = level,
+  class: className,
+} = Astro.props;
 const m = t(locale).flappy;
 const dir = isRtl(locale) ? "rtl" : "ltr";
 
@@ -73,7 +79,10 @@ const { x: cx, y: cy } = BIRD.center;
         height={WORLD.grid}
         patternUnits="userSpaceOnUse"
       >
-        <path d={`M${WORLD.grid} 0H0V${WORLD.grid}`} fill="none" class="grid-line"></path>
+        <path
+          d={`M${WORLD.grid} 0H0V${WORLD.grid}`}
+          fill="none"
+          class="grid-line"></path>
       </pattern>
       <!-- The fabricator's soft glow, much subtler than the bird's 0.35. -->
       <filter id={`${uid}-glow`} x="-30%" y="-30%" width="160%" height="160%">
@@ -87,13 +96,23 @@ const { x: cx, y: cy } = BIRD.center;
 
     <!-- Baseplate grid, drifting slower than the gates (parallax). -->
     <g data-flappy-bg>
-      <rect x="-28" y="0" width={WORLD.w + 56} height={WORLD.h} fill={`url(#${uid}-grid)`}></rect>
+      <rect
+        x="-28"
+        y="0"
+        width={WORLD.w + 56}
+        height={WORLD.h}
+        fill={`url(#${uid}-grid)`}></rect>
     </g>
 
     <!-- Gates and finish line scroll here (built by game.ts). -->
     <g data-flappy-world></g>
 
-    <rect class="floor" x="0" y={WORLD.floorY} width={WORLD.w} height={WORLD.h - WORLD.floorY}></rect>
+    <rect
+      class="floor"
+      x="0"
+      y={WORLD.floorY}
+      width={WORLD.w}
+      height={WORLD.h - WORLD.floorY}></rect>
     <line
       class="ground"
       data-flappy-ground
@@ -101,8 +120,7 @@ const { x: cx, y: cy } = BIRD.center;
       y1={WORLD.floorY}
       x2={WORLD.w}
       y2={WORLD.floorY}
-      stroke-dasharray={WORLD.groundDash.join(" ")}
-    ></line>
+      stroke-dasharray={WORLD.groundDash.join(" ")}></line>
 
     <!-- game.ts places and tilts this group; the inner one centres the art on the body. -->
     <g data-flappy-bird transform={`translate(${BIRD.x} ${BIRD.startY})`}>
@@ -127,7 +145,14 @@ const { x: cx, y: cy } = BIRD.center;
           stroke-linejoin="round"
           filter={`url(#${uid}-glow)`}
         >
-          {art.map((s) => <path d={s.d} data-flappy-wing={s.id === "wing" ? "" : undefined} />)}
+          {
+            art.map((s) => (
+              <path
+                d={s.d}
+                data-flappy-wing={s.id === "wing" ? "" : undefined}
+              />
+            ))
+          }
         </g>
       </g>
     </g>
@@ -140,7 +165,12 @@ const { x: cx, y: cy } = BIRD.center;
     <span class="hud-track"><span class="hud-bar" data-flappy-bar></span></span>
   </div>
 
-  <div class="overlay overlay-hint" data-flappy-overlay="ready" dir={dir} lang={locale}>
+  <div
+    class="overlay overlay-hint"
+    data-flappy-overlay="ready"
+    dir={dir}
+    lang={locale}
+  >
     <p class="ov-title">{m.ready.title}</p>
     <p class="ov-body">{m.ready.hint}</p>
   </div>
@@ -333,7 +363,7 @@ const { x: cx, y: cy } = BIRD.center;
   }
   .ov-title {
     font-size: clamp(1.4rem, 5vw, 2rem);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.5px;
     color: var(--soft-foreground);

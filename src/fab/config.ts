@@ -1,21 +1,21 @@
-import type { TransitionName } from "./types";
-
 export const SVG_NS = "http://www.w3.org/2000/svg";
-/** Side of the square stage viewBox (matches Fabricator.astro). */
+/** Side of the square "home" view; the stage itself is any shape (viewport.ts). */
 export const STAGE_SIZE = 300;
 
 /**
- * Every tunable number, in *stage units* (the stage is a 300x300 viewBox).
+ * Every tunable number, in *stage units* (300 span the shorter side of the stage, roughly).
  * Because the engine converts each piece into stage units, a value here means
  * the same thing for every piece — a 12-unit stroke is as long on screen for
  * a bird as it is for the TV.
  */
 export const CONFIG = {
   strokeWidth: 1.52,
-  // Fabricator.astro hardcodes this value in the head's filter; keep in sync.
+  /** Fabricator.astro hardcodes this in the head's filter; keep in sync. */
   glowBlur: 0.76,
+  /** Line weights follow the camera zoom only once it has moved this fraction: 1.5% on a line is invisible, and each re-weigh costs a style pass. */
+  zoomTolerance: 0.015,
 
-  // drawing (20% quicker than the first version)
+  // drawing
   drawMsPer100: 1150,
   minDrawMs: 560,
   maxDrawMs: 2800,
@@ -35,22 +35,9 @@ export const CONFIG = {
   },
 
   fillInMs: 260,
-  // The fill is its own crisp layer (the glow only touches the outline). 0.58
-  // is the strength the old glow-doubled 0.35 fill actually showed on screen.
+  /** The fill is its own crisp layer, so this matches what the old glow-doubled 0.35 looked like. */
   accentFillOpacity: 0.58,
   overrideFillOpacity: 1, // solid surface when a stroke sets fillColor
-
-  defaultHoldMs: 1200,
-  /** Extra time every piece's finished animation stays up before it leaves. */
-  actExtraMs: 1000,
-
-  /** Default exit: "collapse" (CRT switch-off into the laser dot), "fade" or "flyout". A piece can override it. */
-  transition: "collapse" as TransitionName,
-  fadeMs: 450,
-  collapseSquashMs: 240,
-  collapseShrinkMs: 190,
-  /** "flyout": the piece accelerates away to the right and out of the component. */
-  flyOutMs: 1900,
 
   headSpinDegPerSec: 90,
   /** The laser head fades out over this long when it is not needed (it never just vanishes). */

@@ -7,22 +7,14 @@ import { abortError, isAbort, wait } from "./timing";
 import type { Piece, Point, Scene } from "./types";
 
 /**
- * Chapters: the camera engine's replacement for "one piece after another".
- *
- * A chapter is a stretch of film. Several pieces share one *world* at once (the
- * ground, a bird, a flower), a camera frames part of it, and the chapter's `run`
- * is a script: add a piece, let the laser build it (or place it finished), move
- * the bird, pan the camera, add the next. Everything the piece sequencer does
- * for a single piece is still there per piece: `drawOrder`, `FabStroke.draw`,
- * `FabStroke.hidden` and `Piece.headOnTop` all work through `Actor.build`
- * (build.ts is shared with the sequencer), and a piece's `act` toolbox is the
- * same `Scene` API.
+ * Chapters: several pieces share one *world*, a camera frames part of it, and the chapter's `run` is
+ * a script (add a piece, let the laser build it or place it finished, move the camera, add the next).
  */
 
 /** A piece that is in the world. */
 export interface Actor {
   readonly piece: Piece;
-  /** The act toolbox for this piece (strokes by id, pose, show/hide, tween...). */
+  /** The toolbox for this piece (strokes by id, pose, show/hide, tween...). */
   readonly scene: Scene;
   readonly layer: Layer;
   /** The laser builds it. Resolves with where the head ended (stage units). */
@@ -82,7 +74,7 @@ export function mountChapters(stage: SVGSVGElement, chapters: Chapter[]): () => 
       add(piece) {
         const layer = createLayer(stage, piece, head, signal, camera.view);
         const els = new Map<string, SVGPathElement>();
-        const scene = createScene(stage, piece, els, layer, signal);
+        const scene = createScene(piece, els, layer, signal);
         const actor: Actor = {
           piece,
           scene,
@@ -124,7 +116,7 @@ export function mountChapters(stage: SVGSVGElement, chapters: Chapter[]): () => 
         signal.addEventListener("abort", () => reject(abortError()), { once: true });
       });
       await wait(chapter.repeatAfterMs ?? 0, signal);
-      // fade the whole world out before the next round
+      // fade the world out before the next round
       const fade = camera.host.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600, fill: "forwards" });
       await fade.finished.catch(() => {});
       for (const a of [...actors]) a.remove();

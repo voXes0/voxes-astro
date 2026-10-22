@@ -13,7 +13,7 @@ function Morph(props: {
   value: string;
 }): JSX.Element {
   const spline =
-    props.attr === "d" ? { calcMode: "spline", keyTimes: "0;1", keySplines: "0.4 0 0.2 1" } : {};
+    props.attr === "d" ? ({ calcMode: "spline", keyTimes: "0;1", keySplines: "0.4 0 0.2 1" } as const) : {};
   return (
     <animate
       data-anim={props.to}

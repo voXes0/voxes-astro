@@ -6,7 +6,8 @@
  * BaseLayout) brings it to life. Fills its nearest positioned ancestor, so the
  * parent decides size, background and clipping.
  *
- * Everything inside #fab-stage is in stage units (300x300 viewBox).
+ * Everything inside #fab-stage is in stage units. viewport.ts resizes the viewBox
+ * to the component (300x300 here is only the first paint).
  */
 import styles from "./Fabricator.module.css";
 ---
@@ -31,6 +32,7 @@ import styles from "./Fabricator.module.css";
   <svg
     id="fab-stage"
     viewBox="0 0 300 300"
+    preserveAspectRatio="xMidYMid meet"
     class={styles.stage}
     aria-hidden="true"
   >
@@ -45,41 +47,6 @@ import styles from "./Fabricator.module.css";
       </filter>
       <!-- Strokes get their own glow filter per piece: the engine creates it with the
            piece (the blur has to be rescaled to the piece's size) and removes it after. -->
-
-      <!-- The camera's window: the world fades out over its last few units instead of
-           ending in a hard cut. White = visible; the black-to-clear ramps hide the rim. -->
-      <linearGradient id="fab-fade-x" x1="0" x2="1" y1="0" y2="0">
-        <stop offset="0" stop-color="#000"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
-      </linearGradient>
-      <linearGradient id="fab-fade-x2" x1="1" x2="0" y1="0" y2="0">
-        <stop offset="0" stop-color="#000"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
-      </linearGradient>
-      <linearGradient id="fab-fade-y" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0" stop-color="#000"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
-      </linearGradient>
-      <linearGradient id="fab-fade-y2" x1="0" x2="0" y1="1" y2="0">
-        <stop offset="0" stop-color="#000"></stop>
-        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
-      </linearGradient>
-      <mask
-        id="fab-view-mask"
-        maskUnits="userSpaceOnUse"
-        x="0"
-        y="0"
-        width="300"
-        height="300"
-      >
-        <rect width="300" height="300" fill="#fff"></rect>
-        <rect x="0" y="0" width="8" height="300" fill="url(#fab-fade-x)"></rect>
-        <rect x="292" y="0" width="8" height="300" fill="url(#fab-fade-x2)"
-        ></rect>
-        <rect x="0" y="0" width="300" height="8" fill="url(#fab-fade-y)"></rect>
-        <rect x="0" y="292" width="300" height="8" fill="url(#fab-fade-y2)"
-        ></rect>
-      </mask>
 
       <!-- the sun's bloom, in the scene's own colour (src/fab/pieces/sun.ts fills a circle with it) -->
       <radialGradient id="fab-sun-bloom">
@@ -120,8 +87,8 @@ import styles from "./Fabricator.module.css";
     </g>
     <!-- one <g> per piece is created here while it is on stage (piece sequencer) -->
     <g id="fab-layer"></g>
-    <!-- camera chapters: the world, panned by src/fab/camera.ts, seen through the faded window -->
-    <g id="fab-view" mask="url(#fab-view-mask)">
+    <!-- camera chapters: the world, panned by src/fab/camera.ts (the edge fade is CSS, on the stage) -->
+    <g id="fab-view">
       <g id="fab-world"></g>
     </g>
     <!-- non-stroke extras acts add (e.g. the wordmark), in stage space -->

@@ -128,7 +128,7 @@
 .name {
   font-size: 1.5rem;
   line-height: 1.25;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--soft-foreground);
 }
 
@@ -171,6 +171,7 @@
   margin-block-end: 2rem;
   padding-block-start: 1.5rem;
   border-block-start: 1px solid var(--low-opacity-soft-foreground);
+  text-align: left;
 }
 
 .contactList {

@@ -47,7 +47,12 @@ const filters = [
 >
   <PageShell long>
     <div class="shell">
-      <PageHeader size="lg" eyebrow={m.eyebrow} title={`${m.title1}${m.title2}`} intro={m.intro} />
+      <PageHeader
+        size="lg"
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+      />
 
       <FilterPills name="blog-filter" label={m.filterLabel} filters={filters} />
 
@@ -66,7 +71,10 @@ const filters = [
                 <div class="body">
                   <span class="topic">{m.topics[p.topic]}</span>
                   <h2 class="name">
-                    <a class="stretched-link" href={localizedHref(`/blog/${p.slug}`, locale)}>
+                    <a
+                      class="stretched-link"
+                      href={localizedHref(`/blog/${p.slug}`, locale)}
+                    >
                       {p.title}
                     </a>
                   </h2>
@@ -200,7 +208,7 @@ const filters = [
     grid-area: name;
     margin-block: 0.7rem 0.55rem;
     font-size: clamp(1.3rem, 5.6vw, 1.9rem);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.2;
     color: var(--soft-foreground);
     text-wrap: balance;

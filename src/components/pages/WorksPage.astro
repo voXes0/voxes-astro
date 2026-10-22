@@ -47,15 +47,13 @@ const filters = [
   >
     <defs>
       <clipPath id="works-arch" clipPathUnits="objectBoundingBox">
-        <path
-          d="M0,1 V0.42 C0,0.24 0.3,0.09 0.5,0 C0.7,0.09 1,0.24 1,0.42 V1 Z"
+        <path d="M0,1 V0.42 C0,0.24 0.3,0.09 0.5,0 C0.7,0.09 1,0.24 1,0.42 V1 Z"
         ></path>
       </clipPath>
       <!-- Same silhouette redrawn for a wide frame (phones), where the
            shoulders sit lower so the point doesn't read as a flat dome. -->
       <clipPath id="works-arch-wide" clipPathUnits="objectBoundingBox">
-        <path
-          d="M0,1 V0.58 C0,0.4 0.2,0.16 0.5,0 C0.8,0.16 1,0.4 1,0.58 V1 Z"
+        <path d="M0,1 V0.58 C0,0.4 0.2,0.16 0.5,0 C0.8,0.16 1,0.4 1,0.58 V1 Z"
         ></path>
       </clipPath>
     </defs>
@@ -63,9 +61,18 @@ const filters = [
 
   <PageShell long>
     <div class="shell">
-      <PageHeader size="lg" eyebrow={m.eyebrow} title={`${m.title1}${m.title2}`} intro={m.intro} />
+      <PageHeader
+        size="lg"
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+      />
 
-      <FilterPills name="works-filter" label={m.filterLabel} filters={filters} />
+      <FilterPills
+        name="works-filter"
+        label={m.filterLabel}
+        filters={filters}
+      />
 
       <ul class="list" role="list">
         {
@@ -105,7 +112,10 @@ const filters = [
                   </div>
 
                   <h2 class="name">
-                    <a class="stretched-link" href={localizedHref(`/works/${w.slug}`, locale)}>
+                    <a
+                      class="stretched-link"
+                      href={localizedHref(`/works/${w.slug}`, locale)}
+                    >
                       {w.title}
                     </a>
                   </h2>
@@ -159,7 +169,7 @@ const filters = [
   .name {
     margin-block-end: 0.6rem;
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.15;
     color: var(--soft-foreground);
     overflow-wrap: anywhere;
@@ -248,8 +258,16 @@ const filters = [
   }
   .placeholder[data-pattern="1"] {
     background-image:
-      linear-gradient(135deg, var(--low-opacity-secondary) 25%, transparent 25%),
-      linear-gradient(225deg, var(--low-opacity-secondary) 25%, transparent 25%),
+      linear-gradient(
+        135deg,
+        var(--low-opacity-secondary) 25%,
+        transparent 25%
+      ),
+      linear-gradient(
+        225deg,
+        var(--low-opacity-secondary) 25%,
+        transparent 25%
+      ),
       linear-gradient(45deg, var(--low-opacity-secondary) 25%, transparent 25%),
       linear-gradient(315deg, var(--low-opacity-secondary) 25%, transparent 25%);
     background-size: var(--tile) var(--tile);
@@ -285,7 +303,7 @@ const filters = [
     border-radius: 50%;
     background: var(--background);
     font-size: 2.4rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
     color: var(--secondary);
   }
