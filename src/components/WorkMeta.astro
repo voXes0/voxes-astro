@@ -1,6 +1,7 @@
 ---
 import { t, type Locale } from "@/i18n";
 import type { WorkKind, WorkStatus } from "@/lib/works";
+import styles from "./WorkMeta.module.css";
 
 interface Props {
   locale: Locale;
@@ -13,64 +14,14 @@ const { locale, kind, status, year } = Astro.props;
 const m = t(locale).works;
 ---
 
-<div class="meta">
-  <span class="tag kind" data-kind={kind}>
-    <span class="dot" aria-hidden="true"></span>
+<div class={styles.meta}>
+  <span class:list={[styles.tag, styles.kind]} data-kind={kind}>
+    <span class={styles.dot} aria-hidden="true"></span>
     {m.kind[kind]}
   </span>
-  <span class="tag status" data-status={status}>
-    {status === "live" && <span class="dot" aria-hidden="true" />}
+  <span class:list={[styles.tag, styles.status]} data-status={status}>
+    {status === "live" && <span class={styles.dot} aria-hidden="true" />}
     {m.status[status]}
   </span>
-  <span class="year">{year}</span>
+  <span class={styles.year}>{year}</span>
 </div>
-
-<style>
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.2rem 0.7rem;
-    border: 1px solid var(--low-opacity-soft-foreground);
-    border-radius: var(--radius-pill);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--soft-foreground);
-  }
-  .dot {
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  /* Open source: hollow ring. Closed source: solid dot. */
-  .kind[data-kind="open"] .dot {
-    background: transparent;
-    box-shadow: inset 0 0 0 1.5px currentColor;
-  }
-  .status[data-status="live"] {
-    border-color: transparent;
-    background: var(--low-opacity-secondary);
-    color: var(--secondary);
-  }
-  .status[data-status="wip"] {
-    border-style: dashed;
-  }
-  .status[data-status="archived"] {
-    border-color: transparent;
-    padding-inline: 0.25rem;
-    color: var(--mid-opacity-soft-foreground);
-  }
-  .year {
-    margin-inline-start: 0.25rem;
-    font-size: 0.8rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--mid-opacity-soft-foreground);
-  }
-</style>

@@ -76,15 +76,19 @@
 :root {
   --background: oklch(0.9588 0.0127 86.83);
   --foreground: oklch(0.244 0.0457 70);
-  --soft-foreground: oklch(0.304 0.0557 70);
+  --soft-foreground: oklch(38.796% 0.06249 69.373);
   --low-opacity-soft-foreground: oklch(0.304 0.0557 70 / 20%);
   --mid-opacity-soft-foreground: color-mix(in oklab, var(--soft-foreground) 60%, transparent);
   --high-opacity-soft-foreground: color-mix(in oklab, var(--soft-foreground) 80%, transparent);
-  --softer-foreground: oklch(0.75 0.07 77);
+  --softer-foreground: oklch(71.584% 0.0739 78.06);
   --low-opacity-softer-foreground: oklch(0.75 0.07 75 / 20%);
   --secondary: oklch(0.5963 0.0844 150);
-  --low-opacity-secondary: oklch(0.5963 0.0844 150 / 30%);
+  --low-opacity-secondary: oklch(72.131% 0.10024 150.517 / 0.24);
   --soft-secondary: oklch(0.7601 0.0794 150);
+  --glow-core: var(--secondary);
+  --glow-near: oklch(0.5963 0.0844 150 / 0.55);
+  --glow-far: oklch(0.5963 0.0844 150 / 0.3);
+
 
   --font-latin: "Google Sans Flex Variable", sans-serif;
   --font-persian: "Vazirmatn Variable", sans-serif;
@@ -136,6 +140,9 @@
   --secondary: oklch(0.8 0.075 77);
   --low-opacity-secondary: oklch(0.735 0.068 75 / 20%);
   --soft-secondary: oklch(0.67 0.075 77);
+  --glow-core: color-mix(in oklch, var(--secondary), white 70%);
+  --glow-near: var(--secondary);
+  --glow-far: oklch(0.8 0.075 77 / 0.6);
 }
 
 /* The font follows <html lang>, which router.ts keeps in sync. */

@@ -1,0 +1,310 @@
+.shell {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* ── List ── */
+.list {
+  border-block-start: 1px solid var(--low-opacity-soft-foreground);
+}
+.item {
+  border-block-end: 1px solid var(--low-opacity-soft-foreground);
+}
+
+/* Phone: .body is `display: contents`, so all parts share one grid and can be
+   ordered freely:
+      topic ............ arrow
+      title
+      description (3 lines max)
+      tags
+      date · read time                                              */
+.post {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "topic go"
+    "name name"
+    "desc desc"
+    "tags tags"
+    "meta meta";
+  column-gap: 1rem;
+  padding-block: 1.5rem;
+  padding-inline: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    padding-inline 0.3s ease,
+    background-color 0.2s ease;
+}
+.post.has-thumb {
+  grid-template-areas:
+    "thumb thumb"
+    "topic go"
+    "name name"
+    "desc desc"
+    "tags tags"
+    "meta meta";
+}
+.body,
+.aside {
+  display: contents;
+}
+
+.thumb {
+  grid-area: thumb;
+  display: block;
+  aspect-ratio: 16 / 9;
+  max-height: 15rem;
+  margin-block-end: 1.1rem;
+  overflow: hidden;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1rem;
+  background: var(--low-opacity-soft-foreground);
+}
+.thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.topic {
+  grid-area: topic;
+  align-self: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary);
+}
+
+.name {
+  grid-area: name;
+  margin-block: 0.7rem 0.55rem;
+  font-size: clamp(1.3rem, 5.6vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--soft-foreground);
+  text-wrap: balance;
+}
+.name:lang(fa) {
+  line-height: 1.45;
+}
+
+.desc {
+  grid-area: desc;
+  max-width: 38rem;
+  margin-block-end: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--high-opacity-soft-foreground);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.tags {
+  grid-area: tags;
+  margin-block-end: 1rem;
+}
+
+/* ── Meta: date · reading time ── */
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--mid-opacity-soft-foreground);
+}
+.date {
+  font-weight: 600;
+  color: var(--soft-foreground);
+}
+.read::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-inline-end: 0.6rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Arrow ── */
+.go {
+  grid-area: go;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 50%;
+  color: var(--soft-foreground);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+.go svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+:lang(fa) .go svg {
+  transform: scaleX(-1);
+}
+
+/* Press (touch) and keyboard-focus feedback. */
+.post:active .name a,
+.post:has(.name a:focus-visible) .name a {
+  color: var(--secondary);
+}
+.post:active .go,
+.post:has(.name a:focus-visible) .go {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--background);
+}
+
+/* Hover only with a real pointer, so it never sticks after a tap. */
+@media (hover: hover) {
+  .post:hover .name a {
+    color: var(--secondary);
+  }
+  .post:hover .go {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--background);
+  }
+  .post:hover .thumb img {
+    transform: scale(1.05);
+  }
+}
+
+/* ── Desktop row: meta | body | thumbnail + arrow ── */
+@media (min-width: 800px) {
+  .post,
+  .post.has-thumb {
+    grid-template-columns: 8.5rem minmax(0, 1fr) clamp(9rem, 26%, 14rem);
+    grid-template-areas: none;
+    column-gap: 2rem;
+    align-items: start;
+    padding-block: 2.25rem;
+  }
+  .body {
+    display: block;
+    min-width: 0;
+  }
+  .aside {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .has-thumb .aside {
+    display: block;
+  }
+  .thumb {
+    grid-area: auto;
+    aspect-ratio: 3 / 2;
+    max-height: none;
+    margin-block-end: 0;
+  }
+  /* With a thumbnail, the arrow badge sits on its corner. */
+  .has-thumb .go {
+    position: absolute;
+    inset-block-end: 0.5rem;
+    inset-inline-end: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-block-start: 0;
+    background: var(--background);
+  }
+  .meta {
+    grid-area: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding-block-start: 0.35rem;
+    font-size: 0.875rem;
+  }
+  .read::before {
+    display: none;
+  }
+  .topic {
+    display: inline-block;
+    margin-block-end: 0.6rem;
+  }
+  .name {
+    margin-block: 0 0.75rem;
+  }
+  .name:lang(fa) {
+    line-height: 1.35;
+  }
+  .desc {
+    margin-block-end: 1.1rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    display: block;
+    overflow: visible;
+  }
+  .tags {
+    margin-block-end: 0;
+  }
+  .go {
+    grid-area: auto;
+    width: 3rem;
+    height: 3rem;
+    margin-block-start: 0.25rem;
+  }
+  .go svg {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+}
+@media (min-width: 1024px) {
+  .post,
+  .post.has-thumb {
+    grid-template-columns: 8.5rem minmax(0, 1fr) clamp(13rem, 28%, 19rem);
+    column-gap: 3rem;
+  }
+  /* Larger, slightly taller thumbnail on wide screens. */
+  .thumb {
+    aspect-ratio: 4 / 3;
+  }
+  .has-thumb .go {
+    inset-block-end: 0.75rem;
+    inset-inline-end: 0.75rem;
+    width: 3rem;
+    height: 3rem;
+  }
+}
+@media (min-width: 800px) and (hover: hover) {
+  .post:hover {
+    padding-inline: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post,
+  .go,
+  .thumb img {
+    transition: none;
+  }
+  .post:hover .thumb img {
+    transform: none;
+  }
+  .post:hover {
+    padding-inline: 0;
+  }
+}
+
+@media print {
+  .go {
+    display: none;
+  }
+}

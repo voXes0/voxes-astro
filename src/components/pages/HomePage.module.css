@@ -1,18 +1,11 @@
-/* Phones (< 640px): one column. A card holds the eyebrow, the title and the
-   fabricator; the lead and the two buttons sit below it.
-   640px and up: a grid. The card dissolves, so the stage, the heading and the
-   content become grid items. */
+/* Phones (< 640px) */
 .main {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* The phone card: full width, no border. It starts below the fixed nav (same
-   height as the nav spacer below) and holds the heading, then the stage.
-   It is at least one full screen tall (lvh: the tallest the viewport gets, so
-   it holds when the browser toolbar collapses), which keeps the lead and the
-   buttons below the fold; the stage stretches to fill what the heading leaves. */
+/* The phone card: full width */
 .card {
   display: flex;
   flex-direction: column;
@@ -30,9 +23,8 @@
   flex-direction: column;
 }
 
-/* The "laser fabrication" stage. Sizing/background live here; what it
-   draws lives in src/fab/pieces/. On phones it fills the rest of the card
-   (never shorter than 20rem, so short screens still get a decent stage). */
+/* The "laser fabrication" stage. */
+
 .stage {
   position: relative;
   display: flex;
@@ -55,10 +47,7 @@
   flex: 1;
 }
 
-/* Phones only: a faint cue that there is more below the stage. A line is
-   "drawn" downward by a small glowing dot (the fabricator's laser head), lands
-   in a chevron, then fades; it repeats slowly. It sits inside the card, so it
-   scrolls away with it. */
+/* Phones only: a faint scroll cue */ 
 .scrollHint {
   position: absolute;
   inset-inline: 0;
@@ -145,7 +134,8 @@
   color: var(--secondary);
 }
 
-.title {
+.title1 {
+  position: relative;
   margin: 0;
   font-size: clamp(2.4rem, 6vw, 3.8rem);
   max-width: 80%;
@@ -156,8 +146,12 @@
   color: var(--soft-foreground);
 }
 
+.title2 {
+  color: var(--secondary);
+}
+
 .lead {
-  max-width: 30rem;
+  max-width: 38rem;
   margin: 0 auto 2rem;
   font-size: clamp(0.95rem, 1.6vw, 1.1rem);
   line-height: 1.8;
@@ -174,15 +168,95 @@
   text-align: center;
 }
 
-/* Persian: slightly smaller headline, looser lead. */
-.fa .title {
-  font-size: clamp(2.2rem, 6.5vw, 3.6rem);
+.fa .lead {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  line-height: 1.6;
 }
 
-.fa .lead {
-  font-size: clamp(0.9rem, 2vw, 1.3rem);
-  line-height: 1.9;
+/* Surname footnote */
+.footnote {
+  padding: 0 0.15em;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 0;
+  letter-spacing: 0;
+  vertical-align: 0em;
+  color: inherit;
+  cursor: help;
+  transition: color var(--duration-fast) var(--ease-standard);
+  transform: translate(-7px, -4px);
 }
+
+.footnote:hover,
+.footnote[aria-expanded="true"] {
+  color: var(--soft-foreground);
+}
+
+.footnote:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Centred under the title on phones/tablets; start-aligned beside the
+   stage on desktop, where the heading is left-aligned. */
+.tip {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  inset-inline-start: 50%;
+  translate: -50% 0.25rem;
+  z-index: 10;
+  width: max-content;
+  max-width: min(26rem, 80vw);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--soft-foreground);
+  background-color: var(--background);
+  border: 1px solid color-mix(in oklab, var(--secondary) 35%, transparent);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px color-mix(in oklab, var(--foreground) 12%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-fast) var(--ease-standard),
+    translate var(--duration-fast) var(--ease-standard),
+    visibility 0s linear var(--duration-fast);
+}
+
+.footnote:hover + .tip,
+.footnote:focus-visible + .tip,
+.footnote[aria-expanded="true"] + .tip {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+  transition-delay: 0s;
+}
+
+@media (min-width: 1024px) {
+  .tip {
+    inset-inline-start: 0;
+    translate: 0 0.25rem;
+    text-align: start;
+  }
+
+  .footnote:hover + .tip,
+  .footnote:focus-visible + .tip,
+  .footnote[aria-expanded="true"] + .tip {
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tip {
+    transition: none;
+  }
+}
+
 
 @media (min-width: 640px) {
   .main {
@@ -235,8 +309,13 @@
     font-size: 0.95rem;
   }
 
-  .title {
+  .title1 {
     margin-bottom: 2rem;
+  }
+
+  .footnote {
+    font-size: 3rem;
+    transform: translate(-15px, -8px);
   }
 
   .lead {
@@ -247,6 +326,10 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+  }
+
+  .ctaBtn {
+    min-width: 12rem;
   }
 }
 
@@ -272,7 +355,7 @@
   }
 
   .eyebrow,
-  .title,
+  .title1,
   .lead {
     text-align: start;
   }

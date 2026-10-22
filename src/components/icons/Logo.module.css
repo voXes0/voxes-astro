@@ -1,0 +1,11 @@
+/* The welcome text drifts across the screen slowly. */
+.welcome {
+  transition: transform 8s linear;
+}
+
+/* Wordmark and "HOME?" shrink to nothing and back around their own centre. */
+.flip {
+  transition: transform 0.3s ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+}

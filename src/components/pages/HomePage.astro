@@ -13,6 +13,16 @@ interface Props {
 const { locale } = Astro.props;
 const isPersian = isRtl(locale);
 const m = t(locale).home;
+
+// The surname footnote only exists in the English title: in Farsi the pun is
+// already native, so there is nothing to explain.
+const showNameNote = !isPersian;
+
+const breakLines = (text: string) =>
+  text.split(/\r?\n|\\n/).map((line, i, arr) => {
+    const breaks = i < arr.length - 1;
+    return { text: breaks ? line.trimEnd() : line, breaks };
+  });
 ---
 
 <BaseLayout
@@ -27,19 +37,54 @@ const m = t(locale).home;
     <div class={styles.card}>
       <div class={styles.heading}>
         <p class={styles.eyebrow}>{m.eyebrow}</p>
-
-        <h1 class={styles.title}>{m.title}</h1>
+        <h1 class={styles.title1}>
+          {
+            breakLines(m.title1).map((line) => (
+              <Fragment>
+                {line.text}
+                {line.breaks && <br />}
+              </Fragment>
+            ))
+          }<span class={styles.title2}>
+            {
+              breakLines(m.title2).map((line) => (
+                <Fragment>
+                  {line.text}
+                  {line.breaks && <br />}
+                </Fragment>
+              ))
+            }{
+              showNameNote && (
+                <>
+                  <button
+                    type="button"
+                    class={styles.footnote}
+                    data-footnote
+                    aria-expanded="false"
+                    aria-describedby="name-note"
+                    aria-label="About my surname"
+                  >
+                    *
+                  </button>
+                  <span id="name-note" role="tooltip" class={styles.tip}>
+                    My surname, Haghighi (<bdi lang="fa">حقیقی</bdi>) means
+                    “true, real” in Persian.
+                  </span>
+                </>
+              )
+            }</span
+          >
+        </h1>
       </div>
 
-      <!-- The "laser fabrication" stage. Sizing/background live here;
-           what it draws lives in src/fab/pieces/. -->
+      <!-- The "laser fabrication" stage -->
       <div class={styles.stage}>
-        <!-- Navbar spacer: keeps the fixed nav from covering the top of the fabricator. -->
+        <!-- Navbar spacer -->
         <div class={styles.navSpacer} aria-hidden="true"></div>
         <div class={styles.fab}>
           <Fabricator />
         </div>
-        <!-- Phones only: a faint "scroll" cue, drawn like the fabricator's laser. -->
+        <!-- Phones only: a faint "scroll" cue. -->
         <div class={styles.scrollHint} aria-hidden="true">
           <svg viewBox="0 0 24 40" class={styles.hintSvg}>
             <path class={styles.hintLine} d="M12 2V30" pathLength="1"></path>
@@ -53,14 +98,28 @@ const m = t(locale).home;
     <!-- Lead + calls to action -->
     <div class={styles.content}>
       <div class={styles.inner}>
-        <p class={styles.lead}>{m.lead}</p>
+        <p class={styles.lead}>
+          {
+            breakLines(m.lead).map((line) => (
+              <Fragment>
+                {line.text}
+                {line.breaks && <br />}
+              </Fragment>
+            ))
+          }
+        </p>
 
         <div class={styles.actions}>
-          <ButtonLink variant="primary" href={localizedHref("/works", locale)}>
+          <ButtonLink
+            class={styles.ctaBtn}
+            variant="secondary"
+            href={localizedHref("/works", locale)}
+          >
             {m.cta1}
           </ButtonLink>
           <ButtonLink
-            variant="secondary"
+            class={styles.ctaBtn}
+            variant="primary"
             href={localizedHref("/contact", locale)}
           >
             {m.cta2}
@@ -70,3 +129,29 @@ const m = t(locale).home;
     </div>
   </main>
 </BaseLayout>
+
+<script>
+  // Touch devices have no hover, and Safari does not focus buttons on tap,
+  // so the footnote is toggled explicitly. Delegated on document so it keeps
+  // working after the client-side router swaps the page.
+  const OPEN = "[data-footnote][aria-expanded='true']";
+
+  const closeAll = (except?: Element | null) => {
+    document.querySelectorAll(OPEN).forEach((b) => {
+      if (b !== except) b.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as Element).closest("[data-footnote]");
+    closeAll(btn);
+    if (btn) {
+      const open = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!open));
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAll();
+  });
+</script>

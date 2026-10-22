@@ -1,5 +1,6 @@
 import { createSignal, createEffect, onCleanup } from "solid-js";
 import type { JSX } from "solid-js";
+import styles from "./Logo.module.css";
 
 interface LogoProps {
   isMenuOpen: boolean;
@@ -177,7 +178,7 @@ export default function Logo(props: LogoProps): JSX.Element {
           fill={textFill()}
           opacity={isHovered() || !showWelcome() || props.isMenuOpen ? 0 : 1}
           transform={showWelcome() ? "translate(2000, 0)" : "translate(-200, 0)"}
-          style={{ transition: "transform 8s linear" }}
+          class={styles.welcome}
         />
       </g>
 
@@ -187,7 +188,7 @@ export default function Logo(props: LogoProps): JSX.Element {
         fill={textFill()}
         transform={isHovered() || showWelcome() || props.isMenuOpen ? "scale(0)" : "scale(1)"}
         opacity={isHovered() ? 0 : 1}
-        style={{ transition: "transform 0.3s ease-out", "transform-box": "fill-box", "transform-origin": "center" }}
+        class={styles.flip}
       />
 
       {/* HOME? */}
@@ -196,7 +197,7 @@ export default function Logo(props: LogoProps): JSX.Element {
         fill={textFill()}
         transform={isHovered() ? "scale(1)" : "scale(0)"}
         opacity={isHovered() && !props.isMenuOpen ? 1 : 0}
-        style={{ transition: "transform 0.3s ease-out", "transform-box": "fill-box", "transform-origin": "center" }}
+        class={styles.flip}
       />
     </svg>
   );

@@ -1,0 +1,392 @@
+.shell {
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.hero {
+  max-width: 52rem;
+}
+
+.back {
+  margin-block-end: 2rem;
+}
+.links {
+  margin-block-start: 1.5rem;
+}
+.meta-row {
+  margin-block-end: 1.25rem;
+}
+.title {
+  margin-block-end: 1.5rem;
+  font-size: clamp(2.8rem, 8vw, 4.75rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -2px;
+  color: var(--soft-foreground);
+}
+.title:lang(fa) {
+  color: var(--softer-foreground);
+}
+.lead {
+  max-width: 40rem;
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  line-height: 1.75;
+  color: var(--soft-foreground);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 1.25rem 2rem;
+  margin-block: 2.5rem 1.75rem;
+  padding-block: 1.25rem;
+  border-block: 1px solid var(--low-opacity-soft-foreground);
+}
+.facts dt {
+  margin-block-end: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--mid-opacity-soft-foreground);
+}
+.facts dd {
+  font-weight: 600;
+  color: var(--soft-foreground);
+}
+
+.hero-fig {
+  margin-block: 3rem 4.5rem;
+}
+
+/* ── Page grid: sticky contents + reading column ── */
+.layout {
+  display: grid;
+  gap: 3rem;
+}
+@media (min-width: 1100px) {
+  .layout {
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+.toc {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .toc {
+    display: block;
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+}
+.toc-label {
+  margin-block-end: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mid-opacity-soft-foreground);
+}
+.toc ul {
+  border-inline-start: 2px solid var(--low-opacity-soft-foreground);
+}
+.toc a {
+  display: block;
+  padding: 0.45rem 0;
+  padding-inline: 1rem 0;
+  margin-inline-start: -2px;
+  border-inline-start: 2px solid transparent;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--soft-foreground);
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.toc a:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.toc a:hover {
+  color: var(--secondary);
+  border-inline-start-color: var(--secondary);
+}
+.content {
+  min-width: 0;
+  max-width: 52rem;
+}
+
+/* ── Sections ── */
+.section {
+  margin-block-end: 6rem;
+  scroll-margin-top: 6rem;
+}
+.intro {
+  max-width: 38rem;
+  margin-block-end: 2.5rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--soft-foreground);
+}
+:where(.section) h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--soft-foreground);
+}
+.prose p,
+.prose-p {
+  max-width: 38rem;
+  line-height: 1.85;
+  color: var(--high-opacity-soft-foreground);
+}
+.prose p + p {
+  margin-block-start: 1.25rem;
+}
+.block-fig {
+  margin-block-start: 2rem;
+}
+
+/* ── Brief ── */
+.brief {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 900px) {
+  .brief {
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: 3rem;
+    align-items: start;
+  }
+}
+.asks {
+  padding: 1.5rem;
+  border: 2px solid var(--low-opacity-soft-foreground);
+  border-radius: 1.5rem;
+}
+.asks h3 {
+  margin-block-end: 1rem;
+  font-size: 1rem;
+}
+.asks ul,
+.asks li,
+.points li {
+  position: relative;
+  padding-inline-start: 1.4rem;
+  line-height: 1.6;
+  color: var(--high-opacity-soft-foreground);
+}
+.asks li + li,
+.points li + li {
+  margin-block-start: 0.7rem;
+}
+/* Diamond bullet (nod to the lattice motif). */
+.asks li::before,
+.points li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.1rem;
+  top: 0.62em;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: var(--secondary);
+  transform: rotate(45deg);
+}
+
+/* ── Timeline ── */
+.timeline {
+  border-inline-start: 2px solid var(--low-opacity-soft-foreground);
+  margin-inline-start: 0.4rem;
+}
+.phase {
+  position: relative;
+  padding-inline-start: 2rem;
+  padding-block-end: 3rem;
+}
+.phase:last-child {
+  padding-block-end: 0;
+}
+.phase::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(-0.45rem - 1px);
+  top: 0.3rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--secondary);
+  border-radius: 50%;
+  background: var(--background);
+}
+.period {
+  margin-block-end: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+.phase h3 {
+  margin-block-end: 0.6rem;
+}
+
+/* ── Decisions ── */
+.decisions {
+  border-block-start: 1px solid var(--low-opacity-soft-foreground);
+}
+.decision {
+  display: grid;
+  gap: 1rem;
+  padding-block: 2rem;
+  border-block-end: 1px solid var(--low-opacity-soft-foreground);
+}
+@media (min-width: 720px) {
+  .decision {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+.chosen {
+  margin-block-start: 0.6rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+.chosen-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--mid-opacity-soft-foreground);
+}
+.considered {
+  margin-block-start: 1rem;
+  font-size: 0.9rem;
+  color: var(--mid-opacity-soft-foreground);
+}
+.considered span {
+  font-weight: 600;
+}
+
+/* ── Challenges ── */
+.challenges {
+  display: grid;
+  gap: 1.5rem;
+}
+.challenge {
+  padding: 1.75rem;
+  border: 2px solid var(--low-opacity-soft-foreground);
+  border-radius: 1.5rem;
+}
+@media (min-width: 720px) {
+  .challenge {
+    padding: 2.25rem;
+  }
+}
+.pair {
+  display: grid;
+  gap: 1.5rem;
+  margin-block-start: 1.25rem;
+}
+@media (min-width: 720px) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+.pair-label {
+  margin-block-end: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--mid-opacity-soft-foreground);
+}
+.solution {
+  padding-inline-start: 1.25rem;
+  border-inline-start: 2px solid var(--secondary);
+}
+.solution .pair-label {
+  color: var(--secondary);
+}
+
+/* ── Showcase ── */
+.showcase {
+  display: grid;
+  gap: 4rem;
+}
+.feature-text {
+  display: grid;
+  gap: 1.5rem;
+  margin-block-start: 1.75rem;
+}
+@media (min-width: 720px) {
+  .feature-text {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+}
+.kind-tag {
+  display: inline-block;
+  margin-block-end: 0.75rem;
+  padding: 0.15rem 0.7rem;
+  border: 1px solid var(--low-opacity-soft-foreground);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+.feature h3 {
+  margin-block-end: 0.6rem;
+  font-size: 1.6rem;
+}
+
+/* ── Learnings ── */
+.lessons {
+  display: grid;
+  gap: 2rem 3rem;
+}
+@media (min-width: 720px) {
+  .lessons {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.lessons li {
+  padding-block-start: 1.25rem;
+  border-block-start: 2px solid var(--secondary);
+}
+.lessons h3 {
+  margin-block-end: 0.5rem;
+}
+.closing {
+  max-width: 40rem;
+  margin-block-start: 3.5rem;
+  font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--soft-foreground);
+}
+.section:last-of-type {
+  margin-block-end: 3.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc a {
+    transition: none;
+  }
+}
+
+/* Scroll-spy: a section is "active" while it crosses a thin band near the top
+   of the viewport (view-timeline-inset trims 20% off the top, 68% off the
+   bottom). Browsers without scroll-driven animations just show no highlight. */
+@supports (animation-timeline: view()) {
+  .section {
+    view-timeline-inset: 20% 68%;
+  }
+  .toc a {
+    animation: toc-active linear both;
+  }
+}
+@keyframes toc-active {
+  1%,
+  99% {
+    color: var(--secondary);
+    border-inline-start-color: var(--secondary);
+  }
+}

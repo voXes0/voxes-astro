@@ -49,3 +49,8 @@
 .headDot {
   fill: var(--secondary);
 }
+
+/* Sun bloom gradient stops, in the scene's own colour. */
+.bloomStop {
+  stop-color: var(--secondary);
+}

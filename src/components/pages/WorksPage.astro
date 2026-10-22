@@ -9,6 +9,7 @@ import { t, type Locale } from "@/i18n";
 import { localizedHref } from "@/lib/navigation";
 import WorkMeta from "@/components/WorkMeta.astro";
 import { getWorks } from "@/lib/works";
+import styles from "./WorksPage.module.css";
 
 interface Props {
   locale: Locale;
@@ -43,7 +44,7 @@ const filters = [
     height="0"
     aria-hidden="true"
     focusable="false"
-    style="position: absolute"
+    class={styles.defs}
   >
     <defs>
       <clipPath id="works-arch" clipPathUnits="objectBoundingBox">
@@ -60,7 +61,7 @@ const filters = [
   </svg>
 
   <PageShell long>
-    <div class="shell">
+    <div class={styles.shell}>
       <PageHeader
         size="lg"
         eyebrow={m.eyebrow}
@@ -74,16 +75,16 @@ const filters = [
         filters={filters}
       />
 
-      <ul class="list" role="list">
+      <ul class={styles.list} role="list">
         {
           items.map((w) => (
-            <li class="item" data-filter-value={w.kind}>
-              <article class="work">
-                <div class="arch">
-                  <div class="arch-inner">
+            <li class={styles.item} data-filter-value={w.kind}>
+              <article class={styles.work}>
+                <div class={styles.arch}>
+                  <div class={styles["arch-inner"]}>
                     {w.image ? (
                       <img
-                        class="art"
+                        class={styles.art}
                         src={w.image.src}
                         width={w.image.width}
                         height={w.image.height}
@@ -92,8 +93,8 @@ const filters = [
                         decoding="async"
                       />
                     ) : (
-                      <div class="art placeholder" data-pattern={w.pattern}>
-                        <span class="medallion" aria-hidden="true">
+                      <div class:list={[styles.art, styles.placeholder]} data-pattern={w.pattern}>
+                        <span class={styles.medallion} aria-hidden="true">
                           {Array.from(w.title)[0]}
                         </span>
                       </div>
@@ -101,8 +102,8 @@ const filters = [
                   </div>
                 </div>
 
-                <div class="body">
-                  <div class="meta-row">
+                <div class={styles.body}>
+                  <div class={styles["meta-row"]}>
                     <WorkMeta
                       locale={locale}
                       kind={w.kind}
@@ -111,7 +112,7 @@ const filters = [
                     />
                   </div>
 
-                  <h2 class="name">
+                  <h2 class={styles.name}>
                     <a
                       class="stretched-link"
                       href={localizedHref(`/works/${w.slug}`, locale)}
@@ -119,13 +120,13 @@ const filters = [
                       {w.title}
                     </a>
                   </h2>
-                  <p class="desc">{w.description}</p>
+                  <p class={styles.desc}>{w.description}</p>
 
-                  <div class="tech">
+                  <div class={styles.tech}>
                     <ChipList items={w.tech} />
                   </div>
 
-                  <div class="links">
+                  <div class={styles.links}>
                     <WorkLinks locale={locale} work={w} touch />
                   </div>
                 </div>
@@ -137,250 +138,3 @@ const filters = [
     </div>
   </PageShell>
 </BaseLayout>
-
-<style>
-  .shell {
-    max-width: 68rem;
-    margin-inline: auto;
-  }
-
-  /* ── List ── */
-  .list {
-    border-block-start: 1px solid var(--low-opacity-soft-foreground);
-  }
-  .item {
-    border-block-end: 1px solid var(--low-opacity-soft-foreground);
-  }
-
-  /* Phones: arch banner above the details. From 640px: image beside text. */
-  .work {
-    position: relative;
-    display: grid;
-    gap: 1.1rem;
-    padding-block: 1.75rem 1.5rem;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .body {
-    min-width: 0;
-  }
-  .meta-row {
-    margin-block-end: 0.7rem;
-  }
-  .name {
-    margin-block-end: 0.6rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.15;
-    color: var(--soft-foreground);
-    overflow-wrap: anywhere;
-  }
-
-  @media (min-width: 640px) {
-    .work {
-      --thumb: 12rem;
-      grid-template-columns: var(--thumb) minmax(0, 1fr);
-      column-gap: 2rem;
-      align-items: start;
-      padding-block: 2.5rem;
-    }
-    .meta-row {
-      margin-block-end: 1rem;
-    }
-    .name {
-      margin-block-end: 0.75rem;
-      font-size: clamp(1.5rem, 3vw, 2rem);
-    }
-  }
-  @media (min-width: 720px) {
-    .work {
-      --thumb: 13.5rem;
-      column-gap: 3rem;
-    }
-  }
-  @media (min-width: 1024px) {
-    .work {
-      --thumb: 16rem;
-      column-gap: 3.5rem;
-    }
-  }
-
-  /* ── Arch frame ──
-     The outer shape is the border colour; the inner shape is inset by the ring
-     width, so the "stroke" follows the arch. It's a size container so the
-     placeholder artwork scales with the frame (cqw). */
-  .arch {
-    --ring: 4px;
-    --clip: url(#works-arch-wide);
-    --tile: 12cqw;
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    container-type: inline-size;
-    background: var(--softer-foreground);
-    clip-path: var(--clip);
-    transition: background-color 0.35s ease;
-  }
-  @media (min-width: 440px) {
-    .arch {
-      aspect-ratio: 2 / 1;
-    }
-  }
-  @media (min-width: 640px) {
-    .arch {
-      --ring: 5px;
-      --clip: url(#works-arch);
-      --tile: 14cqw;
-      aspect-ratio: 4 / 5;
-    }
-  }
-  .arch-inner {
-    position: absolute;
-    inset: var(--ring);
-    overflow: hidden;
-    background: var(--background);
-    clip-path: var(--clip);
-  }
-  .art {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-
-  /* Placeholder until a real image is supplied: a patterned field with a
-     medallion. Everything derives from --tile (a cqw length). */
-  .placeholder {
-    display: grid;
-    place-items: center;
-    background-color: var(--background);
-  }
-  .placeholder[data-pattern="1"] {
-    background-image:
-      linear-gradient(
-        135deg,
-        var(--low-opacity-secondary) 25%,
-        transparent 25%
-      ),
-      linear-gradient(
-        225deg,
-        var(--low-opacity-secondary) 25%,
-        transparent 25%
-      ),
-      linear-gradient(45deg, var(--low-opacity-secondary) 25%, transparent 25%),
-      linear-gradient(315deg, var(--low-opacity-secondary) 25%, transparent 25%);
-    background-size: var(--tile) var(--tile);
-    background-position:
-      calc(var(--tile) / 2) 0,
-      calc(var(--tile) / 2) 0,
-      0 0,
-      0 0;
-  }
-  .placeholder[data-pattern="2"] {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      var(--low-opacity-secondary) 0 calc(var(--tile) / 6),
-      transparent calc(var(--tile) / 6) calc(var(--tile) / 2)
-    );
-  }
-  .placeholder[data-pattern="3"] {
-    background-image: radial-gradient(
-      circle,
-      var(--low-opacity-secondary) calc(var(--tile) / 12),
-      transparent calc(var(--tile) / 10)
-    );
-    background-size: calc(var(--tile) * 0.6) calc(var(--tile) * 0.6);
-  }
-  .medallion {
-    display: grid;
-    place-items: center;
-    /* Wide frame: sized by height so it stays round and clear of the edges. */
-    height: 46%;
-    aspect-ratio: 1;
-    margin-block-start: 8%;
-    border: 2px solid var(--softer-foreground);
-    border-radius: 50%;
-    background: var(--background);
-    font-size: 2.4rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--secondary);
-  }
-  @media (min-width: 640px) {
-    .medallion {
-      width: 42%;
-      height: auto;
-      margin-block-start: 18%; /* sit in the arch's wide lower body */
-      font-size: 17cqw;
-      border-width: clamp(1.5px, 0.8cqw, 2px);
-    }
-  }
-
-  /* Hover only where it exists: on touch screens :hover sticks after a tap,
-     so presses get :active instead. */
-  @media (hover: hover) {
-    .work:hover .arch {
-      background: var(--secondary);
-    }
-    .work:hover .art {
-      transform: scale(1.05);
-    }
-    .work:hover .name a {
-      color: var(--secondary);
-    }
-  }
-  .work:has(.name a:focus-visible) .arch,
-  .work:has(.name a:active) .arch {
-    background: var(--secondary);
-  }
-  .work:has(.name a:focus-visible) .art {
-    transform: scale(1.05);
-  }
-  .work:has(.name a:active) .name a {
-    color: var(--secondary);
-  }
-
-  /* ── Body ── */
-  .desc {
-    max-width: 38rem;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: var(--high-opacity-soft-foreground);
-  }
-  @media (min-width: 640px) {
-    .desc {
-      margin-block-end: 1.25rem;
-      font-size: 1rem;
-      line-height: 1.75;
-    }
-  }
-
-  .tech {
-    margin-block-start: 0.85rem;
-  }
-  @media (min-width: 640px) {
-    .tech {
-      margin-block-start: 0;
-    }
-  }
-  .links {
-    margin-block-start: 0.5rem;
-  }
-  @media (min-width: 640px) {
-    .links {
-      margin-block-start: 0.75rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .arch,
-    .art {
-      transition: none;
-    }
-    .work:hover .art,
-    .work:has(.name a:focus-visible) .art {
-      transform: none;
-    }
-  }
-</style>

@@ -52,17 +52,17 @@ import styles from "./Fabricator.module.css";
       <radialGradient id="fab-sun-bloom">
         <stop
           offset="0"
-          style="stop-color: var(--secondary)"
+          class={styles.bloomStop}
           stop-opacity="0.45"></stop>
         <stop
           offset="0.35"
-          style="stop-color: var(--secondary)"
+          class={styles.bloomStop}
           stop-opacity="0.2"></stop>
         <stop
           offset="0.7"
-          style="stop-color: var(--secondary)"
+          class={styles.bloomStop}
           stop-opacity="0.05"></stop>
-        <stop offset="1" style="stop-color: var(--secondary)" stop-opacity="0"
+        <stop offset="1" class={styles.bloomStop} stop-opacity="0"
         ></stop>
       </radialGradient>
     </defs>

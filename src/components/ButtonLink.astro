@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import styles from "./ButtonLink.module.css";
 
-type Props = Omit<HTMLAttributes<"a">, "class" | "href"> & {
+type Props = Omit<HTMLAttributes<"a">, "class" | "href" | "type"> & {
   variant?: "primary" | "secondary";
   size?: "md" | "sm";
   /** Renders a link when set, a <button type="button"> otherwise. */
@@ -11,8 +11,19 @@ type Props = Omit<HTMLAttributes<"a">, "class" | "href"> & {
   [attr: `data-${string}`]: string | undefined;
 };
 
-const { variant = "primary", size = "md", href, class: className, ...attrs } = Astro.props;
-const classes = [styles.button, styles[variant], size === "sm" && styles.sm, className];
+const {
+  variant = "primary",
+  size = "md",
+  href,
+  class: className,
+  ...attrs
+} = Astro.props;
+const classes = [
+  styles.button,
+  styles[variant],
+  size === "sm" && styles.sm,
+  className,
+];
 ---
 
 {

@@ -12,7 +12,8 @@ export interface Messages {
   home: {
     meta: { title: string; description: string };
     eyebrow: string;
-    title: string;
+    title1: string;
+    title2: string;
     lead: string;
     cta1: string;
     cta2: string;
@@ -172,8 +173,9 @@ export default {
       description: "Homepage of Taha Haghighi, also known as Voxes. I'm an Iranian software developer.",
     },
     eyebrow: 'Taha "Voxes" Haghighi',
-    title: "Building a Living World",
-    lead: "I'm a self-taught developer who enjoys building anything interactive.",
+    title1: "Digital Worlds,\n Made ",
+    title2: "True",
+    lead: "Self-taught web and systems developer,\n drawn to ideas and to bringing them into reality.",
     cta1: "See my work",
     cta2: "Get in touch",
   },

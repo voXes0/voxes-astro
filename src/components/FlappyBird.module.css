@@ -1,0 +1,185 @@
+.flappy {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 480 / 320;
+  overflow: hidden;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1.25rem;
+  background: color-mix(in oklab, var(--secondary) 9%, var(--background));
+  color: var(--soft-foreground);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Taps are flaps: no double-tap zoom or scroll gestures on the playfield. */
+  touch-action: manipulation;
+}
+.flappy:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 3px;
+}
+.stage {
+  width: 100%;
+  height: 100%;
+}
+[data-state="crashed"] .stage {
+  animation: flappy-shake 0.32s ease-out;
+}
+@keyframes flappy-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-5px, 2px);
+  }
+  40% {
+    transform: translate(4px, -3px);
+  }
+  60% {
+    transform: translate(-3px, 2px);
+  }
+  80% {
+    transform: translate(2px, -1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-state="crashed"] .stage {
+    animation: none;
+  }
+  .overlay {
+    transition: none;
+  }
+}
+
+/* ── Scene colours ── */
+.grid-line {
+  stroke: color-mix(in oklab, var(--soft-foreground) 11%, transparent);
+  stroke-width: 1;
+}
+.floor {
+  fill: color-mix(in oklab, var(--soft-foreground) 9%, transparent);
+}
+.ground {
+  stroke: var(--mid-opacity-soft-foreground);
+  stroke-width: 2;
+}
+.bird {
+  color: var(--secondary);
+}
+/* Built by game.ts, so they lack Astro's scoping attribute. */
+:global(.flappy-ob) {
+  fill: color-mix(in oklab, var(--soft-foreground) 14%, transparent);
+  stroke: var(--high-opacity-soft-foreground);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+:global(.flappy-finish) {
+  fill: none;
+  stroke: var(--secondary);
+  stroke-width: 2;
+  stroke-dasharray: 7 7;
+}
+:global(.flappy-flag) {
+  fill: color-mix(in oklab, var(--secondary) 55%, transparent);
+  stroke: var(--secondary);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* ── Progress ── */
+.hud {
+  position: absolute;
+  inset-block-start: 0.7rem;
+  inset-inline: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft-foreground);
+  pointer-events: none;
+}
+.hud-label[dir="rtl"] {
+  letter-spacing: 0;
+}
+.hud-count {
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+.hud-track {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--low-opacity-soft-foreground);
+  overflow: hidden;
+}
+.hud-bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--secondary);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ── Messages: one per state; the rest are invisible and unfocusable ── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: color-mix(in oklab, var(--background) 80%, transparent);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s;
+}
+/* The "ready" hint sits over the scene without hiding it. */
+.overlay-hint {
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  justify-content: flex-end;
+  padding-block-end: 3rem;
+  pointer-events: none;
+}
+[data-state="ready"] [data-flappy-overlay="ready"],
+[data-state="paused"] [data-flappy-overlay="paused"],
+[data-state="lost"] [data-flappy-overlay="lost"],
+[data-state="won"] [data-flappy-overlay="won"] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.ov-title {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--soft-foreground);
+}
+.ov-body {
+  max-width: 24rem;
+  margin-block-end: 0.5rem;
+  font-size: clamp(0.85rem, 2.6vw, 1rem);
+  line-height: 1.6;
+  color: var(--soft-foreground);
+}
+.overlay-hint .ov-title {
+  font-size: clamp(1.05rem, 3.6vw, 1.4rem);
+}
+.overlay-hint .ov-body {
+  margin: 0;
+  color: var(--high-opacity-soft-foreground);
+}
