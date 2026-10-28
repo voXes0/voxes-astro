@@ -1,0 +1,15 @@
+---
+/** A highlighted note box. The slot takes Markdown (leave blank lines around it in MDX). */
+import styles from "./Callout.module.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<aside class={styles.callout}>
+  {title && <p class={styles.title}>{title}</p>}
+  <slot />
+</aside>

@@ -4,9 +4,10 @@ import PageHeader from "@/components/PageHeader.astro";
 import PageShell from "@/components/PageShell.astro";
 import FilterPills from "@/components/FilterPills.astro";
 import ChipList from "@/components/ChipList.astro";
-import { t, type Locale } from "@/i18n";
+import { isRtl, t, type Locale } from "@/i18n";
 import { localizedHref } from "@/lib/navigation";
-import { blogTopics, getPosts } from "@/lib/blog";
+import { blogTopics, getPosts, type Post } from "@/lib/blog";
+import { postFormatters } from "@/lib/format";
 import styles from "./BlogPage.module.css";
 
 interface Props {
@@ -15,19 +16,18 @@ interface Props {
 
 const { locale } = Astro.props;
 const m = t(locale).blog;
-const items = getPosts(locale);
+const items = await getPosts(locale);
+const { fmtDate, fmtNum, fmtRead } = postFormatters(locale, m.readTime);
 
-// fa-IR gives Persian digits and the Solar Hijri calendar; en-US stays Gregorian.
-const intlLocale = locale === "fa" ? "fa-IR" : "en-US";
-const dateFmt = new Intl.DateTimeFormat(intlLocale, {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  timeZone: "UTC",
-});
-const numFmt = new Intl.NumberFormat(intlLocale);
-const fmtDate = (iso: string) => dateFmt.format(new Date(`${iso}T00:00:00Z`));
-const fmtRead = (n: number) => m.readTime.replace("{n}", numFmt.format(n));
+// A post that only exists in the other language keeps its own language and direction.
+const contentAttrs = (p: Post) =>
+  p.fallback
+    ? {
+        lang: p.contentLocale,
+        dir: isRtl(p.contentLocale) ? "rtl" : "ltr",
+        "data-alt-lang": p.contentLocale,
+      }
+    : {};
 
 const filters = [
   { value: "all", label: m.filters.all, count: items.length },
@@ -38,7 +38,7 @@ const filters = [
   })),
 ]
   .filter((f) => f.count > 0)
-  .map((f) => ({ ...f, count: numFmt.format(f.count) }));
+  .map((f) => ({ ...f, count: fmtNum(f.count) }));
 ---
 
 <BaseLayout
@@ -70,8 +70,15 @@ const filters = [
                 </div>
 
                 <div class={styles.body}>
-                  <span class={styles.topic}>{m.topics[p.topic]}</span>
-                  <h2 class={styles.name}>
+                  <div class={styles.labels}>
+                    <span class={styles.topic}>{m.topics[p.topic]}</span>
+                    {p.fallback && (
+                      <span class={styles.only}>
+                        {m.languageOnly[p.contentLocale]}
+                      </span>
+                    )}
+                  </div>
+                  <h2 class={styles.name} {...contentAttrs(p)}>
                     <a
                       class="stretched-link"
                       href={localizedHref(`/blog/${p.slug}`, locale)}
@@ -79,7 +86,9 @@ const filters = [
                       {p.title}
                     </a>
                   </h2>
-                  <p class={styles.desc}>{p.description}</p>
+                  <p class={styles.desc} {...contentAttrs(p)}>
+                    {p.description}
+                  </p>
 
                   <div class={styles.tags}>
                     <ChipList items={p.tags} dir="auto" />

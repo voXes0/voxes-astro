@@ -1,0 +1,82 @@
+---
+title: "Smoothed-particle hydrodynamics, without the hand-waving"
+description: "Placeholder description: how a pile of particles becomes water, and the one kernel choice that decides whether your simulation explodes."
+date: 2026-09-28
+topic: algorithm
+tags: ["SPH", "Rust", "Simulation"]
+thumbnail: "/images/blog/sph-from-scratch.svg"
+---
+
+<Lead>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, and this paragraph shows the larger lead style.</Lead>
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in **voluptate velit esse** cillum dolore eu fugiat nulla pariatur, with some *emphasis*, a [regular link](https://example.com), and `inline code` for good measure.
+
+## First section
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. <Small>This sentence is set in the small style, handy for asides.</Small>
+
+### A smaller heading
+
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+
+- Ut enim ad minima veniam, quis nostrum exercitationem
+- Quis autem vel eum iure reprehenderit qui in ea voluptate
+- At vero eos et accusamus et iusto odio dignissimos
+
+1. Temporibus autem quibusdam et aut officiis debitis
+2. Itaque earum rerum hic tenetur a sapiente delectus
+3. Nam libero tempore, cum soluta nobis est eligendi
+
+## Images and figures
+
+A plain Markdown image sits on its own line:
+
+![Placeholder illustration](/images/blog/lipsum-figure.svg)
+
+A `Figure` adds a caption and an optional width and height, so the page doesn't jump while it loads:
+
+<Figure
+  src="/images/blog/lipsum-figure.svg"
+  alt="Placeholder illustration"
+  caption="Figure 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  width={1200}
+  height={675}
+/>
+
+## Code, quotes and notes
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.
+
+```rust
+fn poly6(r: f32, h: f32) -> f32 {
+    if r >= h {
+        return 0.0;
+    }
+    let d = h * h - r * r;
+    315.0 / (64.0 * std::f32::consts::PI * h.powi(9)) * d * d * d
+}
+```
+
+> Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.
+
+<Callout title="Heads up">
+
+Omnis voluptas assumenda est, omnis dolor repellendus. A callout can hold **Markdown**, `code` and [links](https://example.com) too.
+
+</Callout>
+
+| Kernel | Cost | Notes |
+| ------ | ---- | ----- |
+| Poly6 | Low | Lorem ipsum |
+| Spiky | Medium | Dolor sit amet |
+| Cubic spline | Medium | Consectetur |
+
+## Wrapping up
+
+Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus.
+
+---
+
+Ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.

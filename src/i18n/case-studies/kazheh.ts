@@ -7,17 +7,18 @@ import type { CaseStudy } from "./types";
 // The Farsi block is a short, unreviewed placeholder as well.
 
 const en: CaseStudy = {
-  lead: "Placeholder: one or two sentences saying what Kazheh is, who it was for, and what I did, written so someone skimming gets it in ten seconds.",
+  lead: "Kazheh House is a boutique hotel in Rasht. I designed and built their website, including an online reservation system.",
   facts: [
     { label: "Client", value: "Boutique hotel" },
-    { label: "Role", value: "Placeholder role" },
-    { label: "Duration", value: "Placeholder duration" },
-    { label: "Languages", value: "English, Farsi" },
+    { label: "Role", value: "Full-stack developer" },
+    { label: "Duration", value: "65 days" },
+    { label: "Languages", value: "English, Persian" },
   ],
   hero: {
-    alt: "Placeholder: the finished Kazheh site on a laptop and a phone",
-    caption: "Placeholder: the finished site, desktop and mobile.",
+    alt: "A screenshot of the intro section of the homepage.",
+    caption: "The intro section of the homepage.",
     ratio: "16 / 9",
+    src: "/images/kazheh/thumbnail.png",
   },
   sections: [
     {
@@ -25,20 +26,21 @@ const en: CaseStudy = {
       kind: "brief",
       title: "The brief",
       body: [
-        "Placeholder: describe who the client is and what they came to me with. What problem did they have before this site existed, and what did they believe they needed?",
-        "Placeholder: describe what the work actually turned out to be once we talked it through. This is where the gap between the request and the real job goes, if there was one.",
+        "Given the uncertain situation in the country, the client needed a way to stay visible online and keep their content available without depending on any foreign services. They also asked for online booking that would largely replace their system of spreadsheets, phone calls and WhatsApp.",
+        "I chose to build the whole thing from scratch with Next.js, both to gain experience and to make sure everything was unique and tailored to Kazheh's needs.",
       ],
       asksLabel: "What I was asked to do",
       asks: [
-        "Placeholder: a public site in two languages",
-        "Placeholder: online booking for rooms",
-        "Placeholder: a way for staff to manage it themselves",
-        "Placeholder: a launch date and a budget to respect",
+        "A public site in two languages",
+        "Hosting and services that depend only on Iranian infrastructure",
+        "A way for staff to manage the site themselves",
+        "Fast load times both inside and outside Iran",
       ],
       figure: {
-        alt: "Placeholder: the client's original sketch or notes",
-        caption: "Placeholder: the client's starting point.",
-        ratio: "21 / 9",
+        alt: "How bookings worked before the website: everything manual",
+        caption: "The client's starting point. All the names and numbers of guests are generics in this page.",
+        src: "/images/kazheh/kazheh-before-en.svg",
+        ratio: "1948 / 1182",
       },
     },
     {
@@ -46,42 +48,49 @@ const en: CaseStudy = {
       kind: "timeline",
       title: "How it went",
       intro:
-        "Placeholder: a sentence on how the work was structured, and how much of it was planned versus discovered along the way.",
+        "The project was initially planned to take around 45 days. Paperwork, photography, videography and a few unexpected twists during development stretched it to 65.",
       phases: [
         {
-          title: "Discovery and scoping",
-          period: "Placeholder: week 1",
-          body: "Placeholder: what I asked, what I learned, and what we agreed to leave out of the first version.",
-        },
-        {
-          title: "Design",
-          period: "Placeholder: weeks 2 to 3",
-          body: "Placeholder: how the look and the page structure were decided, who signed off, and how many rounds it took.",
+          title: "Planning and first drafts",
+          period: "Week 1",
+          body: "The first days went into drafting a rough plan, experimenting with the design and color palette, and building the first iteration of the navbar, homepage and footer.",
           figure: {
-            alt: "Placeholder: early design sketches",
-            caption: "Placeholder: early layouts for the room pages.",
-            ratio: "16 / 9",
+            alt: ["First version of the homepage.", "First version of the footer"],
+            caption: "First version of the homepage.",
+            src: ["/images/kazheh/early-hero.png", "/images/kazheh/early-footer.png"],
+            ratio: "3 / 2",
           },
         },
         {
-          title: "Building the public site",
-          period: "Placeholder: weeks 3 to 6",
-          body: "Placeholder: the order I built things in and why. A longer entry like this one shows how a timeline row behaves when the text runs to several lines on a narrow screen.",
+          title: "Design and the rooms page",
+          period: "Weeks 2 to 3",
+          body: "By this point the homepage was finished and the design approved, so I moved on to the rooms page. We decided to use the hotel's floor plan as an interactive element.",
+          figure: {
+            alt: ["First version of the rooms page.", "First version of the individual room pages"],
+            caption: "First version of the homepage.",
+            src: ["/images/kazheh/early-rooms.png", "/images/kazheh/early-room.png"],
+            ratio: "3 / 2",
+          },
+        },
+        {
+          title: "Building the guest side",
+          period: "Weeks 3 to 4",
+          body: "Next came the calendar, which took longer than expected because it had to support both the Iranian solar and Gregorian calendars. I wasn't happy with the rooms page either, so I redid it, and the final version grew out of that second iteration. Each room's own page was also built during this stretch.",
+        },
+        {
+          title: "Backend foundations",
+          period: "Weeks 4 to 6",
+          body: "I set up the PostgreSQL database and split the backend into API endpoints and server actions. The guest side got further polish, and work on the admin panel began.",
         },
         {
           title: "Admin panel and content",
-          period: "Placeholder: weeks 6 to 8",
-          body: "Placeholder: how the staff-facing side was built and tested with the people who would actually use it.",
+          period: "Weeks 6 to 8",
+          body: "Most of this stretch went into the admin panel's UI, with the API evolving alongside it. The staff needed a calendar that was always up to date and easy to use, plus pages for pricing, statistics, discounts, record keeping and more.",
         },
         {
           title: "Launch and handover",
-          period: "Placeholder: week 9",
-          body: "Placeholder: what going live involved, and what I handed over so the client could run it without me.",
-          figure: {
-            alt: "Placeholder: launch-day photo or analytics screenshot",
-            caption: "Placeholder: the first week after launch.",
-            ratio: "16 / 9",
-          },
+          period: "Week 8 to launch",
+          body: "The final weeks went into testing, cleaning up the code, polishing the design, setting up the content, teaching the staff and testing again.",
         },
       ],
     },
@@ -90,31 +99,25 @@ const en: CaseStudy = {
       kind: "decisions",
       title: "What I chose, and why",
       intro:
-        "Placeholder: a sentence framing the main forks in the road, and the principle I used to pick between them.",
+        "I made many decisions along the way. Here are a few of them.",
       items: [
         {
           title: "Framework",
           choice: "Next.js",
-          why: "Placeholder: the reasons this fit the project better than the alternatives, in terms the client would care about as well as technical ones.",
-          considered: ["Placeholder option A", "Placeholder option B"],
+          why: "Next.js let me develop every layer of the stack quickly in one framework and offers modern features such as server actions. It also has a large developer community, so the client isn't dependent on any one developer.",
+          considered: ["ASP.NET Core"],
         },
         {
-          title: "Two languages",
-          choice: "Placeholder choice",
-          why: "Placeholder: how translated content and right-to-left layout were handled, and what that cost.",
-          considered: ["Placeholder option A"],
-        },
-        {
-          title: "Where the data lives",
-          choice: "Placeholder choice",
-          why: "Placeholder: what was stored, who needed to edit it, and why this was the simplest thing that could work.",
-          considered: ["Placeholder option A", "Placeholder option B", "Placeholder option C"],
+          title: "Database",
+          choice: "PostgreSQL",
+          why: "PostgreSQL was the right fit. A date-range exclusion constraint makes overlapping bookings for the same room impossible at the database level, with advisory locks serializing bookings per room on top of it, and our host supports it.",
+          considered: ["SQLite"],
         },
         {
           title: "Hosting",
-          choice: "Placeholder choice",
-          why: "Placeholder: the trade-off between cost, effort for the client afterwards, and speed for visitors.",
-          considered: ["Placeholder option A"],
+          choice: "Liara",
+          why: "The site needed to be fast both inside and outside Iran. Among the options, Liara offered the best balance of affordability, ease of use and useful features.",
+          considered: ["Vercel", "Hostiran"],
         },
       ],
     },
@@ -123,33 +126,41 @@ const en: CaseStudy = {
       kind: "challenges",
       title: "What got in the way",
       intro:
-        "Placeholder: a sentence on which problems were the hardest, and which only looked hard.",
+        "Many problems came up during development. Here a few who got me thinking up ideas.",
       items: [
         {
-          title: "Placeholder challenge one",
+          title: "Reservation state machine",
           problem:
-            "Placeholder: what went wrong or what was unclear, and why it mattered for the client or for visitors.",
+            "A boutique hotel differs from larger hotels in scale and workflow, so a standard booking flow didn't fit. I had to design a state machine for reservations from scratch.",
           solution:
-            "Placeholder: what I tried, what failed, and what finally worked. Naming the dead ends is more convincing than only the fix.",
-          figure: {
-            alt: "Placeholder: diagram or before-and-after of the problem",
-            caption: "Placeholder: before and after.",
-            ratio: "16 / 9",
-          },
+            "The diagram below shows how the state machine works.",
+            figure: {
+              alt: "Reservation state machine diagram",
+              caption: "A visual representation of the reservation state machine.",
+              src: "/public/images/kazheh/state-machine-en.png",
+              ratio: "392 / 571",
+            }
         },
         {
-          title: "Placeholder challenge two",
+          title: "Dynamic data with server-side rendering",
           problem:
-            "Placeholder: a second problem, shorter this time, to show a row without a figure.",
+            "Once the calendars were hooked up to availability queries, Next.js began flagging their pages as dynamic, which slowed loading considerably.",
           solution:
-            "Placeholder: how it was resolved and what it changed about the way I worked afterwards.",
+            "Public pages are statically generated for speed, then invalidated on demand whenever a reservation or price changes. Each change also sends a PostgreSQL NOTIFY, which a single listener fans out to browsers over server-sent events, so availability and pricing update live without a page reload.",
         },
         {
-          title: "Placeholder challenge three",
+          title: "Moving the staff off Excel",
           problem:
-            "Placeholder: a third problem, with a longer description so the two-column layout is tested against uneven text lengths on both sides.",
+            "The staff ran their reservations in Excel. I needed to port that workflow to the site so it would feel familiar, while being easier to use and better suited to the new system.",
           solution:
-            "Placeholder: a short resolution.",
+            "I built a spreadsheet-inspired component in the admin panel: infinitely scrollable, with colors representing reservation states.",
+        },
+        {
+          title: "Dynamic media",
+          problem:
+            "A month after launch, the client asked to update the images. I needed a way for media changes to happen without a developer or a redeploy.",
+          solution:
+            "I used the disk storage that comes free with Liara's plans instead of object storage, to keep maintenance costs down. Staff upload or replace content through the admin panel, and database tables keep track of which file belongs to which slot.",
         },
       ],
     },
@@ -158,51 +169,55 @@ const en: CaseStudy = {
       kind: "showcase",
       title: "Parts worth a closer look",
       intro:
-        "Placeholder: a sentence introducing the pieces I'm proudest of, or the ones that show the most about how I build.",
+        "Here are a few pieces I'm proudest of.",
       items: [
         {
           title: "Admin panel",
           kind: "System",
-          body: "Placeholder: what the admin panel lets staff do, who it is for, and what made it different from filling in a generic dashboard template.",
+          body: "The admin panel is the hidden backbone of the site. Besides managing bookings and media, it lets staff adjust pricing, manage discounts, view charts of how the hotel is performing, and more.",
           points: [
-            "Placeholder: managing rooms and prices",
-            "Placeholder: seeing and editing bookings",
-            "Placeholder: editing both languages side by side",
-            "Placeholder: roles and access",
+            "Manages room prices and discounts",
+            "Blocks dates from booking at the staff's discretion",
+            "Manages the site's images and videos",
+            "Manages staff accounts and roles",
+            "Charts the hotel's performance",
           ],
           figure: {
-            alt: "Placeholder: screenshot of the admin panel",
-            caption: "Placeholder: the bookings view in the admin panel.",
-            ratio: "16 / 10",
+            alt: "Bookings table in the admin panel table",
+            caption: "The bookings view in the admin panel.",
+            ratio: "3 / 2",
+            src: "/images/kazheh/bookings-view.png"
           },
         },
         {
-          title: "Booking flow",
-          kind: "Component",
-          body: "Placeholder: how a visitor goes from choosing dates to a confirmed booking, and the details that keep it from feeling like a form.",
-          points: [
-            "Placeholder: availability checking",
-            "Placeholder: handling of dates and time zones",
-            "Placeholder: confirmation and follow-up",
-          ],
-          figure: {
-            alt: "Placeholder: screenshot of the booking flow on a phone",
-            caption: "Placeholder: the booking flow on mobile.",
-            ratio: "16 / 10",
-          },
-        },
-        {
-          title: "Bilingual layer",
+          title: "Admin calendar",
           kind: "System",
-          body: "Placeholder: how one codebase serves left-to-right and right-to-left pages, and how copy, dates and numbers are kept consistent between them.",
+          body: "A closer look on the component in the admin panel that replaced Excel for the staff.",
           points: [
-            "Placeholder: locale-aware routing",
-            "Placeholder: mirrored layout without duplicated components",
+            "An infinitely scrollable Iranian calendar",
+            "Color-coded reservation states and built-in tools for managing bookings",
+            "Includes many quality of life tools"
           ],
           figure: {
-            alt: "Placeholder: the same page in English and in Farsi, side by side",
-            caption: "Placeholder: one page, two languages.",
+            alt: "Placeholder: screenshot of the admin calendar",
+            caption: "Placeholder: the admin calendar.",
             ratio: "16 / 10",
+          },
+        },
+        {
+          title: "Rasht map",
+          kind: "Component",
+          body: "A visual component on the homepage that shows the hotel's location.",
+          points: [
+            "A canvas rendering of Rasht's actual map",
+            "Thousands of heavily optimized paths, rendered smoothly while rotating",
+            "Points of interest for tourists, each with a description",
+          ],
+          figure: {
+            alt: "The Rasht Map component",
+            caption: "The Rasht Map component",
+            ratio: "2854 / 1411",
+            src:"/images/kazheh/rasht-map.png"
           },
         },
       ],
@@ -212,27 +227,27 @@ const en: CaseStudy = {
       kind: "lessons",
       title: "What I learned",
       intro:
-        "Placeholder: a sentence on what this project changed about how I work.",
+        "This was my first freelance project. I learned a lot, and I was glad to put what I'd studied into practice.",
       items: [
         {
-          title: "Placeholder lesson one",
-          body: "Placeholder: what I would do differently, and what I'd do the same.",
+          title: "Planning the project",
+          body: "Looking back, I would plan each piece in more detail. The gallery page, for example, was an unplanned late addition, and better upfront scoping would have let me give a more accurate roadmap.",
         },
         {
-          title: "Placeholder lesson two",
-          body: "Placeholder: something about working with a real client, rather than something technical.",
+          title: "Fitting software to a client's business",
+          body: "I learned to study how a particular business operates and to find the best way to bring it into the digital world.",
         },
         {
-          title: "Placeholder lesson three",
-          body: "Placeholder: something technical that I now consider settled.",
+          title: "Solidifying my understanding of SSR vs CSR",
+          body: "After running into the dynamic data problem, I researched and experimented with several approaches. I now feel confident in how server-side and client-side rendering work.",
         },
         {
-          title: "Placeholder lesson four",
-          body: "Placeholder: a thing I still don't know how to do well, and plan to get better at.",
+          title: "Commercial work with databases",
+          body: "This was my first serious work with databases, so I had to learn more about SQL and PostgreSQL. I feel knowledgeable now, but I'm looking forward to learning more.",
         },
       ],
       closing:
-        "Placeholder: a closing paragraph that ties the project back to the kind of work I want to do next.",
+        "Overall, Kazheh means a lot to me as my first client project and one of the works I'm proudest of. The development process was interesting, I'm happy with how everything turned out, and I learned a lot that I'll keep building on.",
       figure: {
         alt: "Placeholder: a team or client photo, if there is one",
         caption: "Placeholder: optional closing photo.",
@@ -243,192 +258,213 @@ const en: CaseStudy = {
 };
 
 const fa: CaseStudy = {
-  lead: "متن نمونه: یکی دو جمله درباره اینکه کاژه چیست، برای چه کسی ساخته شد و من چه کردم.",
+  lead: "کاژه هتل بوتیکی در رشت هست. من وب‌سایتش رو، به‌همراه سیستم رزرو آنلاین، از طراحی تا اجرا ساختم.",
   facts: [
     { label: "کارفرما", value: "هتل بوتیک" },
-    { label: "نقش", value: "نقش نمونه" },
-    { label: "مدت", value: "مدت نمونه" },
+    { label: "نقش", value: "توسعه‌دهنده فول‌استک" },
+    { label: "مدت", value: "۶۵ روز" },
     { label: "زبان‌ها", value: "انگلیسی، فارسی" },
   ],
   hero: {
-    alt: "متن نمونه: سایت نهایی روی لپ‌تاپ و موبایل",
-    caption: "متن نمونه: سایت نهایی، دسکتاپ و موبایل.",
+    alt: "تصویری از اولین بخش صفحه اصلی سایت",
+    caption: "اولین بخش صفحه اصلی.",
     ratio: "16 / 9",
+    src: "/images/kazheh/thumbnail.png",
   },
   sections: [
     {
       id: "brief",
       kind: "brief",
-      title: "درخواست",
+      title: "سفارش",
       body: [
-        "متن نمونه: کارفرما کیست و با چه خواسته‌ای آمد. پیش از این سایت چه مشکلی داشت؟",
-        "متن نمونه: کار واقعی بعد از گفتگو چه شد. فاصله درخواست و کار واقعی اینجا می‌آید.",
+        "با توجه به شرایط نامطمئن کشور، کارفرما می‌خواست بدون وابستگی به سرویس‌های خارجی هم در اینترنت دیده‌شه، و سایتش همیشه در دسترس باشه. رزرو آنلاین هم می‌خواستند تا بیشترِ کارهایی که تا اون زمان با اکسل، تماس تلفنی و واتساپ انجام می‌شد، به صورت مدرن توسط سایت انجام بشه.",
+        "تصمیم گرفتم همه‌چیز رو از صفر با Next.js بسازم؛ هم برای کسب تجربه، و هم برای اینکه هر بخش منحصربه‌فرد و دقیقاً مناسب با نیاز کاژه باشه.",
       ],
       asksLabel: "از من چه خواسته شد",
       asks: [
-        "متن نمونه: یک سایت عمومی دوزبانه",
-        "متن نمونه: رزرو آنلاین اتاق",
-        "متن نمونه: پنل مدیریت برای کارکنان",
-        "متن نمونه: تاریخ انتشار و بودجه مشخص",
+        "یک وب‌سایت عمومی دوزبانه",
+        "هاست فقط به زیرساخت داخل کشور وابسته باشه",
+        "راهی برای اینکه کارمند‌ها خودشون سایت رو مدیریت کنن",
+        "باز شدن سریع سایت، هم داخل و هم خارج از ایران",
       ],
       figure: {
-        alt: "متن نمونه: طرح یا یادداشت اولیه کارفرما",
-        caption: "متن نمونه: نقطه شروع کارفرما.",
-        ratio: "21 / 9",
+        alt: "شیوه‌کار هتل قبل سایت: همه‌چی دستی",
+        caption: "نقطه شروع کارفرما. تمام نام‌ها و شماره‌های مهمانان توی این صفحه جایگزین هستن.",
+        ratio: "1948 / 1182",
+        src: "/images/kazheh/kazheh-before-fa.svg"
       },
     },
     {
       id: "process",
       kind: "timeline",
       title: "روند کار",
-      intro: "متن نمونه: یک جمله درباره ساختار کار و میزان برنامه‌ریزی در برابر کشف حین کار.",
+      intro: "پروژه در ابتدا حدود ۴۵ روز قرار بود طول بکشه. کارهای اداری، عکاسی، فیلمبرداری و چند اتفاق دیگر در حین ساخت، باعث شد ۶۵ روز زمان ببره.",
       phases: [
         {
-          title: "شناخت و تعریف دامنه",
-          period: "متن نمونه: هفته ۱",
-          body: "متن نمونه: چه پرسیدم، چه فهمیدم و چه چیزی را از نسخه اول کنار گذاشتیم.",
-        },
-        {
-          title: "طراحی",
-          period: "متن نمونه: هفته ۲ تا ۳",
-          body: "متن نمونه: ظاهر و ساختار صفحه‌ها چطور تعیین شد و چند دور طول کشید.",
+          title: "برنامه‌ریزی و اولین طرح‌ها",
+          period: "هفته اول",
+          body: "روزهای اول صرف برنامه‌ریزی، امتحان طرح‌ها و رنگ‌ها، و درست کردن اولین نسخه منو، صفحه اصلی و بخش پایانی صفحه شد.",
           figure: {
-            alt: "متن نمونه: طرح‌های اولیه",
-            caption: "متن نمونه: طرح‌های اولیه صفحه اتاق‌ها.",
-            ratio: "16 / 9",
+            alt: ["اولین نسخه صفحه اصل.", "اولین نسخه قسمت پایانی سایت کاژه"],
+            caption: "اولین نسخه صفحه اصلی.",
+            src: ["/images/kazheh/early-hero.png", "/images/kazheh/early-footer.png"],
+            ratio: "3 / 2",
           },
         },
         {
-          title: "ساخت سایت عمومی",
-          period: "متن نمونه: هفته ۳ تا ۶",
-          body: "متن نمونه: ترتیبی که چیزها را ساختم و دلیلش. این مورد کمی طولانی‌تر است تا رفتار ردیف خط زمانی در صفحه‌های باریک دیده شود.",
+          title: "صفحه اتاق‌ها",
+          period: "هفته دوم تا سوم",
+          body: "تو این زمان صفحه اصلی آماده شد و طراحیش توسط کارفرما تأیید شد. بعد من سراغ صفحه اتاق‌ها رفتم. تصمیم گرفتیم از فلورپلن هتل در این صفحه استفاده کنیم.",
+          figure: {
+            alt: ["اولین نسخه صفحه اتاق‌ها سایت کاژه.", "اولین نسخه صفحات هر اتاق."],
+            caption: "اولین نسخه صفحه اتاق‌‌ها و صفحه هر اتاق.",
+            src: ["/images/kazheh/early-rooms.png", "/images/kazheh/early-room.png"],
+            ratio: "3 / 2",
+          },
         },
         {
-          title: "پنل مدیریت و محتوا",
-          period: "متن نمونه: هفته ۶ تا ۸",
-          body: "متن نمونه: بخش مخصوص کارکنان چطور ساخته و با کاربران واقعی آزموده شد.",
+          title: "صفحات هر اتاق",
+          period: "هفته سوم تا چهارم",
+          body: "بعد نوبت تقویم رسید که بیشتر از انتظار طول کشید، چون باید هم تقویم شمسی و هم میلادی رو پشتیبانی می‌کرد. از صفحه اتاق‌ها هم راضی نبودم و دوباره ساختمش؛ نسخه نهایی از همون دور دوم در اومد. صفحه اختصاصی هر اتاق هم در همین بازه زمانی درست شد.",
+        },
+        {
+          title: "زیرساخت پشت صحنه",
+          period: "هفته چهارم تا ششم",
+          body: "دیتابیس PostgreSQL رو راه‌اندازی کردم و بَک‌‌اند یعنی جایی که رزروها و قیمت‌ها ذخیره و پردازش می‌شند، رو توسعه دادم. رو صفحات سمت مهمان‌ها تغییراتی انجام شد و کار روی پنل مدیریت شروع شد.",
+        },
+        {
+          title: "پنل مدیریت و جای‌گزاری محتوا‌ها",
+          period: "هفته ششم تا هشتم",
+          body: "بیشتر این روزها صرف ظاهر و امکانات پنل مدیریت و بَک‌‌اند شد. کارمندای هتل به تقویمی نیاز داشتن که همیشه به‌روز باشه و کار باهاش راحت و طبیعی باشه. علاوه بر این‌ها برای پنل مدیریت صفحه‌هایی برای قیمت‌ها، آمار، تخفیف‌ها، سوابق رزروها و چیزهای دیگر توسعه داده‌ شد.",
         },
         {
           title: "انتشار و تحویل",
-          period: "متن نمونه: هفته ۹",
-          body: "متن نمونه: انتشار چه کارهایی داشت و چه چیزی تحویل دادم تا کارفرما بدون من ادامه دهد.",
-          figure: {
-            alt: "متن نمونه: عکس روز انتشار یا تصویر آمار",
-            caption: "متن نمونه: هفته اول پس از انتشار.",
-            ratio: "16 / 9",
-          },
+          period: "از هفته هشتم تا انتشار",
+          body: "هفته‌های آخر صرف تست، تمیز کردن کد، نهایی کردن طراحی، آماده‌کردن محتوا و تست دوباره شد. همه‌چیز به‌جز پرداخت آنلاین اجرا شد؛ برای پرداخت انلاین منتظر مدارک کارفرما هستیم.",
         },
       ],
     },
     {
       id: "decisions",
       kind: "decisions",
-      title: "چه انتخاب کردم و چرا",
-      intro: "متن نمونه: یک جمله درباره دوراهی‌های اصلی و معیاری که برای انتخاب داشتم.",
+      title: "چه انتخاباتی کردم و چرا",
+      intro: "در طول کار تصمیمات زیادی باید می‌گرفتم. دلایل چندتاش رو اینجا نوشتم.",
       items: [
         {
           title: "فریم‌ورک",
           choice: "Next.js",
-          why: "متن نمونه: دلایل مناسب‌تر بودن این انتخاب، هم برای کارفرما و هم از نظر فنی.",
-          considered: ["گزینه نمونه الف", "گزینه نمونه ب"],
+          why: "Next.js اجازه می‌داد همه بخش‌های سایت رو سریع و در یک چارچوب واحد بسازم و از امکانات مدرنش مثل Server Actions استفاده کنم. برنامه‌نویس های زیادی هم باهاش آشنا هستن، پس لازم نبود کارفرما به یک نفر خاص وابسته بمونه برای سایت.",
+          considered: ["ASP.NET Core"],
         },
         {
-          title: "دو زبانه بودن",
-          choice: "انتخاب نمونه",
-          why: "متن نمونه: چطور محتوای ترجمه‌شده و چیدمان راست‌به‌چپ مدیریت شد و هزینه‌اش چه بود.",
-          considered: ["گزینه نمونه الف"],
+          title: "دِیتابِیس",
+          choice: "PostgreSQL",
+          why: "PostgreSQL انتخاب مناسبی بود.این امکان رو می‌داد تا جلوی رزرو یک اتاق در یک تاریخ توسط چند نفر رو حتی در سطح دیتابیس هم بگیره،  هنگام ثبت هر رزرو اون اتاق قفل می‌شه تا دو درخواست هم‌زمان با هم تداخل نکنن. هاست ما هم از اون پشتیبانی می‌کرد.",
+          considered: ["SQLite"],
         },
         {
-          title: "محل نگهداری داده",
-          choice: "انتخاب نمونه",
-          why: "متن نمونه: چه چیزی ذخیره می‌شد، چه کسی ویرایشش می‌کرد و چرا ساده‌ترین راه همین بود.",
-          considered: ["گزینه نمونه الف", "گزینه نمونه ب", "گزینه نمونه ج"],
-        },
-        {
-          title: "میزبانی",
-          choice: "انتخاب نمونه",
-          why: "متن نمونه: مصالحه میان هزینه، زحمت بعدی کارفرما و سرعت برای بازدیدکننده.",
-          considered: ["گزینه نمونه الف"],
+          title: "هاست",
+          choice: "لیارا",
+          why: "سایت باید هم داخل و هم خارج از ایران سریع باز می‌شد. در بین گزینه‌ها، لیارا بهترین ترکیب رو از نظر قیمت، استفاده راحت و امکانات به‌درد‌بخور ارائه می‌کرد.",
+          considered: ["Vercel", "هاست ایران"],
         },
       ],
     },
     {
       id: "challenges",
       kind: "challenges",
-      title: "چه چیزی سد راه شد",
-      intro: "متن نمونه: کدام مشکل‌ها واقعاً سخت بودند و کدام فقط سخت به نظر می‌رسیدند.",
+      title: "مشکلات و مسائل در طول کار",
+      intro: "در طول کار مسائل و مشکلات زیادی پیش اومد. مهم‌ترین‌ها رو ادامه میخونید.",
       items: [
         {
-          title: "چالش نمونه یک",
-          problem: "متن نمونه: چه چیزی خراب شد یا مبهم بود و چرا مهم بود.",
-          solution: "متن نمونه: چه چیزهایی امتحان کردم، چه شکست خورد و چه چیزی بالاخره جواب داد.",
+          title: "سیستم وضعیت رزرو",
+          problem: "یک هتل بوتیک از نظر اندازه و روش کار با هتل‌های بزرگ فرق هایی داره، پس سیستم رزروِ آماده ممکنه خیلی مناسبش نباشه. باید مراحل و وضعیت‌های یک رزرو رو از صفر طراحی می‌کردم.",
+          solution: "عکس زیر نشون می‌ده این سیستم چطور کار می‌کنه.",
           figure: {
-            alt: "متن نمونه: نمودار یا پیش و پس از مشکل",
-            caption: "متن نمونه: پیش و پس.",
-            ratio: "16 / 9",
-          },
+            alt: "نمودار سیستم وضعیت رزرو",
+            caption: "نمایش تصویری از سیستم وضعیت رزرو.",
+            src: "/images/kazheh/state-machine.png",
+            ratio: "784 / 1101",
+            width: 100,
+            height: 100,
+          }
         },
         {
-          title: "چالش نمونه دو",
-          problem: "متن نمونه: مشکل دوم، کوتاه‌تر، برای نمایش ردیف بدون تصویر.",
-          solution: "متن نمونه: چطور حل شد و چه چیزی را در روش کارم عوض کرد.",
+          title: "داده‌های متغیر، سرعت کمتر بارگزاری صفحات",
+          problem: "وقتی تقویم‌ها رو به رزرو اتاق‌ها وصل کردم، Next.js صفحه‌ها رو «داینامیک» حساب کرد و سرعت بارگزاری صفحات به‌صورت محسوسی کند شد.",
+          solution: "صفحه‌های عمومی از پیش توسط سرور ساخته می‌شند تا سرعتشون به اندازه یک صفحه ثابت بمونه، و هر بار که رزرو یا قیمتی عوض شود یا اضافه شود، این صفحات دوباره ساخته می‌شند. همچنین هر تغییر به صفحه‌های باز هم خبر داده می‌شه، پس موجودی اتاق‌ها و قیمت‌ها همون لحظه و حتی بدون نیاز به بارگذاری دوباره صفحه به‌روزرسانی می‌شند.",
         },
         {
-          title: "چالش نمونه سه",
-          problem: "متن نمونه: مشکل سوم با توضیح طولانی‌تر تا چیدمان دو ستونه با متن‌های نابرابر آزموده شود.",
-          solution: "متن نمونه: راه‌حل کوتاه.",
+          title: "جابه‌جایی کارمند‌ها از اکسل به سایت",
+          problem: "کارمند‌ها رزروها رو با اکسل مدیریت می‌کردن. باید روش کارشون رو به سایت منتقل می‌کردم، طوری که آشنا براشون باشه اما ساده‌تر و مناسب سیستم جدید.",
+          solution: "در پنل مدیریت بخشی شبیه جدول های اکسل ساختم که بی‌نهایت اسکرول می‌شه و وضعیت هر رزرو رو با رنگی نشون می‌ده.",
+        },
+        {
+          title: "تغییر دوباره عکس‌ها و ویدیوها",
+          problem: "یک ماه بعد از انتشار، کارفرما خواست عکس‌ها رو عوض کنه. به راهی نیاز داشتم که تغییر عکس‌ها و ویدیو‌ها بدون متخصص و بدون دیپلوی دوباره سایت انجام بشه.",
+          solution: "به‌جای یک سرویس ذخیره‌سازی ابری جدا، از دیسکی که با پلن‌های لیارا همراه‌ هست استفاده کردم تا در هزینه نگهداری سایت صرفه‌جویی شه. کارمند‌ها تصاویر و ویدیو‌ها رو از پنل مدیریت بارگذاری و جایگزین می‌کنن، و دِیتابِیس دخیره میکنه که کدوم فایل برای کدوم جا هست.",
+        },
+        {
+          title: "انتشار بدون درگاه پرداخت",
+          problem: "پرداخت آنلاین به درگاه پرداخت اینترنتی نیاز داره و گرفتن اون نیاز به اینماد داره. چون کافرما کارش رو تازه تاسیس کرده بود، هنوز مدارک لازم صادر تشده و انتظار می‌ره این کار حدود تابستان ۱۴۰۶ انجام بشه.",
+          solution: "پرداخت وقتی درگاه اماده شد به روند رزرو اضافه میشه. فعلا مهمون‌ها سایت رو مشاهده میکنن، موجودی اتاق ها رو از سایت میبینن‌، با پذیرش تماس می‌گیرن و رزرو میکنن. پذیرش، رزرو رو در پنل مدیریت ثبت می‌کنه و تقویم اتاق‌ها همون لحظه به‌روز می‌شه.",
         },
       ],
     },
     {
       id: "showcase",
       kind: "showcase",
-      title: "بخش‌هایی که ارزش دیدن دارند",
-      intro: "متن نمونه: یک جمله درباره بخش‌هایی که بیشتر از همه به آن‌ها افتخار می‌کنم.",
+      title: "قسمت‌های که ارزش دیدن دارن",
+      intro: "توضیحاتی راجب به قسمت هایی از سایت که وقت زیادی گرفتن.",
       items: [
         {
           title: "پنل مدیریت",
-          kind: "سامانه",
-          body: "متن نمونه: پنل مدیریت چه امکاناتی به کارکنان می‌دهد و چه تفاوتی با یک قالب آماده داشبورد دارد.",
+          kind: "سیستم",
+          body: "پنل مدیریت ستون پنهان سایت هست. علاوه بر مدیریت رزروها و تصویر‌ها، کارمند‌ها با اون قیمت‌ها رو تنظیم می‌کنن، تخفیف‌ها رو مدیریت می‌کنن و می‌تونن آمار و نمودار عملکرد هتل رو هم ببینن.",
           points: [
-            "متن نمونه: مدیریت اتاق‌ها و قیمت‌ها",
-            "متن نمونه: مشاهده و ویرایش رزروها",
-            "متن نمونه: ویرایش دو زبان کنار هم",
-            "متن نمونه: نقش‌ها و دسترسی",
+            "مدیریت قیمت اتاق‌ها و تخفیف‌ها",
+            "مسدود کردن تاریخ‌ها به رزرو، به صلاحدید کارمند‌ها",
+            "مدیریت تصاویر و ویدیوهای سایت",
+            "اطلاع‌رسانی رزروها به مدیر از ربات بله",
+            "مدیریت اکانت‌ های کارمند‌ها و دستگاه های مجاز به دسترسی به پنل ادمین",
+            "نمایش نمودار و آمار هتل"
           ],
           figure: {
-            alt: "متن نمونه: تصویر پنل مدیریت",
-            caption: "متن نمونه: نمای رزروها در پنل مدیریت.",
+            alt: "جدول رزرو‌‌ها در پنل مدیریت",
+            caption: "جدول رزرو‌ها در پنل مدیریت.",
+            ratio: "3 / 2",
+            src: "/images/kazheh/bookings-view.png"
+          },
+        },
+        {
+          title: "تقویم مدیریت",
+          kind: "سیستم",
+          body: "نگاهی نزدیک تر به اون قسمتی از پنل مدیریت که جایگزین اکسل شد.",
+          points: [
+            "تقویم خورشیدی با اسکرول بی‌نهایت",
+            "رنگ‌بندی وضعیت رزروها",
+            "مدیریت جمعی رزرو‌ها"
+          ],
+          figure: {
+            alt: "متن نمونه: تصویر تقویم مدیریت",
+            caption: "متن نمونه: تقویم مدیریت.",
             ratio: "16 / 10",
           },
         },
         {
-          title: "فرآیند رزرو",
-          kind: "مؤلفه",
-          body: "متن نمونه: بازدیدکننده چطور از انتخاب تاریخ به رزرو تأییدشده می‌رسد و چه جزئیاتی آن را از یک فرم ساده جدا می‌کند.",
+          title: "نقشه رشت",
+          kind: "دیزاین",
+          body: "نقشه نشون دادن مکان هتل",
           points: [
-            "متن نمونه: بررسی موجودی",
-            "متن نمونه: مدیریت تاریخ و منطقه زمانی",
-            "متن نمونه: تأیید و پیگیری",
+            "نقشه خیابان‌های رشت، بر اساس OpenStreetMap",
+            "هزاران مسیر بهینه‌سازی شده که روان می‌چرخن",
+            "همراه با نقاط دیدنی برای گردشگرها، هر کدوم همراه با توضیحات",
           ],
           figure: {
-            alt: "متن نمونه: تصویر فرآیند رزرو روی موبایل",
-            caption: "متن نمونه: فرآیند رزرو در موبایل.",
-            ratio: "16 / 10",
-          },
-        },
-        {
-          title: "لایه دوزبانه",
-          kind: "سامانه",
-          body: "متن نمونه: یک کدبیس چطور هم صفحه‌های چپ‌به‌راست و هم راست‌به‌چپ را ارائه می‌دهد.",
-          points: [
-            "متن نمونه: مسیریابی بر اساس زبان",
-            "متن نمونه: چیدمان آینه‌ای بدون کپی کردن مؤلفه‌ها",
-          ],
-          figure: {
-            alt: "متن نمونه: یک صفحه به انگلیسی و فارسی کنار هم",
-            caption: "متن نمونه: یک صفحه، دو زبان.",
-            ratio: "16 / 10",
+            alt: "تصویری از بخش موقعیت",
+            caption: "نقشه رشت در بخش موقعیت.",
+            ratio: "2854 / 1411",
+            src:"/images/kazheh/rasht-map.png"
           },
         },
       ],
@@ -436,15 +472,27 @@ const fa: CaseStudy = {
     {
       id: "learnings",
       kind: "lessons",
-      title: "چه یاد گرفتم",
-      intro: "متن نمونه: یک جمله درباره اینکه این پروژه چه چیزی را در روش کار من عوض کرد.",
+      title: "تجرباتی که کسب کردم",
+      intro: "این اولین کار فریلنس من بود. چیزهای زیادی یاد گرفتم..",
       items: [
-        { title: "درس نمونه یک", body: "متن نمونه: چه چیزی را متفاوت انجام می‌دادم و چه چیزی را همان‌طور." },
-        { title: "درس نمونه دو", body: "متن نمونه: چیزی درباره کار با کارفرمای واقعی، نه موضوع فنی." },
-        { title: "درس نمونه سه", body: "متن نمونه: چیزی فنی که حالا برایم جاافتاده است." },
-        { title: "درس نمونه چهار", body: "متن نمونه: چیزی که هنوز خوب بلد نیستم و می‌خواهم بهتر شوم." },
+        {
+          title: "برنامه‌ریزی پروژه",
+          body: "در پروژه های بعدی با جزئیات بیشتری برنامه‌ریزی می‌کنم. مثلاً صفحه گالری برنامه‌ریزی‌نشده بود. تعریف دقیق‌تر کار از همون ابتدا به من اجازه می‌داد زمان‌بندی دقیق‌تری ارائه کنم.",
+        },
+        {
+          title: "نرم‌افزار، برای یک کسب‌وکار",
+          body: "بررسی کردم یک کسب‌وکار چطور کار می‌کنه تا بتونم به بهترین روش ممکن در دنیای دیجیتال پیاده‌اش کنم.",
+        },
+        {
+          title: "فرق رندر صفحه روی سرور (SSR) و روی دستگاه کاربر (CSR)",
+          body: "بعد از حل  مشکل داده‌های داینامیک، چند روش رو بررسی و آزمایش کردم و حالا راجب این موضوع اطلاعات و تجربه خوبی دارم.",
+        },
+        {
+          title: "کار حرفه‌ای با دِیتابِیس",
+          body: "این اولین تحربه جدی من با دیتابیس بود، باعث شد SQL و PostgreSQL رو بیشتر یاد بگیرم. حالا آشنایی خوبی با اینها دارم، اما هنوز مشتاق یادگرفتن بیشترم.",
+        },
       ],
-      closing: "متن نمونه: پاراگراف پایانی که پروژه را به نوع کاری که می‌خواهم بعداً انجام دهم وصل می‌کند.",
+      closing: "در مجموع، کاژه به‌عنوان اولین پروژه‌ام برای یک کارفرما و یکی از کارهایی مورد علاقه‌ام، برای من ارزش زیادی داره. فرایند توسعه جالب بود، از نتیجه‌اش راضی‌ام، و چیزهای زیادی یاد گرفتم که در کار‌های آینده‌ام ازشون استفاده میکنم.",
       figure: {
         alt: "متن نمونه: عکس تیم یا کارفرما، اگر وجود داشت",
         caption: "متن نمونه: عکس پایانی اختیاری.",

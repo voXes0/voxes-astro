@@ -7,7 +7,7 @@ interface Props {
   locale: Locale;
   kind: WorkKind;
   status: WorkStatus;
-  year: number;
+  year?: number;
 }
 
 const { locale, kind, status, year } = Astro.props;
@@ -23,5 +23,5 @@ const m = t(locale).works;
     {status === "live" && <span class={styles.dot} aria-hidden="true" />}
     {m.status[status]}
   </span>
-  <span class={styles.year}>{year}</span>
+  {year && <span class={styles.year}>{year}</span>}
 </div>

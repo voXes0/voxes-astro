@@ -1,0 +1,164 @@
+/* Styles the elements Markdown produces, so posts need no classes. */
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--soft-foreground);
+  overflow-wrap: break-word;
+}
+.prose:lang(fa) {
+  line-height: 2;
+}
+
+.prose :global(p),
+.prose :global(ul),
+.prose :global(ol),
+.prose :global(blockquote),
+.prose :global(pre),
+.prose :global(table) {
+  margin-block: 0 1.25em;
+}
+
+/* ── Headings ── */
+.prose :global(h2),
+.prose :global(h3),
+.prose :global(h4) {
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--soft-foreground);
+  text-wrap: balance;
+  /* Clears the fixed nav when jumping to a heading. */
+  scroll-margin-block-start: 7rem;
+}
+.prose :global(h2) {
+  margin-block: 2.5em 0.7em;
+  font-size: clamp(1.5rem, 4vw, 1.9rem);
+}
+.prose :global(h3) {
+  margin-block: 2em 0.6em;
+  font-size: 1.3rem;
+}
+.prose :global(h4) {
+  margin-block: 1.75em 0.5em;
+  font-size: 1.1rem;
+}
+
+/* ── Inline ── */
+.prose :global(a) {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--secondary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+@media (hover: hover) {
+  .prose :global(a:hover) {
+    color: var(--secondary);
+  }
+}
+.prose :global(strong) {
+  font-weight: 700;
+  color: var(--foreground);
+}
+/* Persian has no italics, so emphasis is a colour instead. */
+.prose:lang(fa) :global(em) {
+  font-style: normal;
+  color: var(--secondary);
+}
+
+/* ── Lists ── */
+.prose :global(ul),
+.prose :global(ol) {
+  padding-inline-start: 1.5em;
+}
+.prose :global(ul) {
+  list-style: disc;
+}
+.prose :global(ol) {
+  list-style: decimal;
+}
+.prose :global(li) {
+  margin-block-end: 0.4em;
+  padding-inline-start: 0.25em;
+}
+.prose :global(li)::marker {
+  color: var(--secondary);
+}
+
+/* ── Blocks ── */
+.prose :global(blockquote) {
+  padding-inline: 1.25rem;
+  border-inline-start: 3px solid var(--secondary);
+  color: var(--high-opacity-soft-foreground);
+}
+.prose :global(hr) {
+  margin-block: 2.5em;
+  border-block-start: 1px solid var(--low-opacity-soft-foreground);
+}
+.prose :global(p > img) {
+  width: 100%;
+  margin-block: 2em;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1rem;
+}
+.prose :global(table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose :global(th),
+.prose :global(td) {
+  padding: 0.6rem 1rem;
+  border-block-end: 1px solid var(--low-opacity-soft-foreground);
+  text-align: start;
+}
+.prose :global(th) {
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+/* ── Code: always left-to-right, even in Persian posts ── */
+.prose :global(code),
+.prose :global(pre) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  direction: ltr;
+}
+.prose :global(code) {
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: var(--low-opacity-secondary);
+  font-size: 0.9em;
+  unicode-bidi: isolate;
+}
+.prose :global(pre code) {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+}
+.prose :global(pre) {
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--soft-foreground) 6%, var(--background));
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: left;
+}
+.prose :global(pre span) {
+  color: var(--shiki-light);
+}
+:global(.dark) .prose :global(pre span) {
+  color: var(--shiki-dark);
+}
+
+/* The first and last elements shouldn't add outer space. */
+.prose > :global(:first-child) {
+  margin-block-start: 0;
+}
+.prose > :global(:last-child) {
+  margin-block-end: 0;
+}

@@ -1,0 +1,248 @@
+/* Light on dark, whatever the site theme: images sit on a dark ground. */
+.host,
+.overlay {
+  --veil: rgb(8 5 3);
+  --light: rgb(245 241 232);
+  --dim: color-mix(in srgb, var(--light) 65%, transparent);
+}
+
+/* ── Inline: lives inside the figure's frame ── */
+.host {
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-user-select: none;
+  direction: ltr;
+}
+.slider {
+  touch-action: pan-y;
+}
+
+.panel {
+  position: absolute;
+  /* The 1px overlap hides subpixel seams between neighbouring slides. */
+  inset: 0 -1px;
+  will-change: transform;
+}
+.cover,
+.contain {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cover {
+  object-fit: cover;
+}
+.contain {
+  object-fit: contain;
+}
+
+.expand {
+  position: absolute;
+  bottom: 1.1rem;
+  inset-inline-end: 1.1rem;
+  z-index: 2;
+  display: flex;
+  padding: 0.5rem;
+  color: var(--dim);
+  background: color-mix(in srgb, var(--veil) 45%, transparent);
+  cursor: pointer;
+  transition: color var(--duration-base), background var(--duration-base);
+}
+.expand:hover {
+  color: var(--light);
+  background: color-mix(in srgb, var(--veil) 70%, transparent);
+}
+
+.dots {
+  position: absolute;
+  bottom: 1.2rem;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  gap: 0.5rem;
+  transform: translateX(-50%);
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: color-mix(in srgb, white 45%, transparent);
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-standard);
+}
+.dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: white;
+}
+
+/* ── Fullscreen viewer ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Dragging down fades it out: --fade goes from 1 to 0. */
+  background: color-mix(in srgb, var(--veil) calc((0.27 + 0.7 * var(--fade, 1)) * 100%), transparent);
+  direction: ltr;
+  animation: fade-in 0.18s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 0.25rem;
+  inset-inline-end: 1.2rem;
+  z-index: 10;
+  padding: 0.6rem;
+  color: var(--dim);
+  opacity: var(--fade, 1);
+  cursor: pointer;
+  transition: color var(--duration-base);
+}
+.close:hover {
+  color: var(--light);
+}
+
+.frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 95vw;
+  height: 80dvh;
+}
+@media (min-width: 1060px) {
+  .frame {
+    height: 94vh;
+  }
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.stage[data-grab="true"] {
+  cursor: grab;
+}
+.stage[data-grab="true"]:active {
+  cursor: grabbing;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  padding: 0.8rem 8rem;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--dim);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color var(--duration-base), background var(--duration-base);
+}
+.nav:hover {
+  color: var(--light);
+  background: color-mix(in srgb, var(--veil) 70%, transparent);
+}
+.prev {
+  inset-inline-start: -3.2rem;
+}
+.next {
+  inset-inline-end: -3.2rem;
+}
+@media (max-width: 900px) {
+  .prev {
+    inset-inline-start: 0;
+  }
+  .next {
+    inset-inline-end: 0;
+  }
+}
+@media (max-width: 650px) {
+  .nav {
+    display: none;
+  }
+}
+
+.trail {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 1.2rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 80dvh;
+  padding: 2px;
+  overflow: hidden auto;
+  opacity: var(--fade, 1);
+  scrollbar-width: none;
+  transform: translateY(-50%);
+}
+.trail::-webkit-scrollbar {
+  display: none;
+}
+@media (max-width: 768px) {
+  .trail {
+    top: auto;
+    bottom: 1rem;
+    left: 50%;
+    inset-inline-end: unset;
+    flex-direction: row;
+    max-height: none;
+    max-width: 92vw;
+    overflow: auto hidden;
+    transform: translateX(-50%);
+  }
+}
+
+.thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 72px;
+  height: 54px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity var(--duration-fast), border-color var(--duration-fast);
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thumb:hover {
+  opacity: 0.85;
+}
+.thumb.current {
+  border-color: var(--light);
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .thumb {
+    width: 64px;
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    animation: none;
+  }
+}

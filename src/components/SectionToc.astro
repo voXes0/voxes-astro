@@ -1,0 +1,44 @@
+---
+/**
+ * Sticky "on this page" list for wide screens (hidden below 1100px). Place it
+ * where the page's layout grid wants it; it sticks within that grid cell.
+ *
+ * With `spy`, the link of the section on screen is highlighted. That needs
+ * each section element to set `view-timeline-name: spyName(id)` and an ancestor
+ * to set `timeline-scope: spyScope(ids)` (see lib/sectionSpy.ts).
+ */
+import { spyName } from "@/lib/sectionSpy";
+import styles from "./SectionToc.module.css";
+
+interface Props {
+  label: string;
+  items: { id: string; title: string }[];
+  spy?: boolean;
+  /** Language of the item titles when it differs from the page's. */
+  itemLang?: string;
+}
+
+const { label, items, spy = false, itemLang } = Astro.props;
+---
+
+<nav class={styles.toc} aria-label={label}>
+  <p class={styles.label}>{label}</p>
+  <ul role="list">
+    {
+      items.map((item) => (
+        <li>
+          <a
+            class={styles.link}
+            href={`#${item.id}`}
+            lang={itemLang}
+            data-alt-lang={itemLang}
+            data-spy={spy || undefined}
+            style={spy ? `animation-timeline: ${spyName(item.id)}` : undefined}
+          >
+            {item.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

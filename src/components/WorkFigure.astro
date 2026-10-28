@@ -1,5 +1,7 @@
 ---
 import type { CaseFigure } from "@/i18n/case-studies";
+import { galleryData, toSlides } from "@/lib/gallery";
+import { localeFromPathname } from "@/lib/navigation";
 import styles from "./WorkFigure.module.css";
 
 interface Props {
@@ -12,24 +14,30 @@ interface Props {
 
 const { figure, placeholderLabel, eager = false } = Astro.props;
 const ratio = figure.ratio ?? "16 / 10";
+const slides = figure.src ? toSlides(figure.src, figure.alt) : [];
+const [first] = slides;
 ---
 
-<figure class={styles.fig}>
+<figure class={styles.fig} style={figure.size ? `max-width: ${figure.size}` : undefined}>
   <!-- Double border: outer line, gap, inner image. -->
   <div class={styles.frame}>
-    <div class={styles.well} style={`aspect-ratio: ${ratio}`}>
+    <div
+      class={styles.well}
+      style={`aspect-ratio: ${ratio}`}
+      data-gallery={first && galleryData(localeFromPathname(Astro.url.pathname), slides, figure.autoplay)}
+    >
       {
-        figure.src ? (
+        first ? (
           <img
-            src={figure.src}
+            src={first.src}
             width={figure.width}
             height={figure.height}
-            alt={figure.alt}
+            alt={first.alt}
             loading={eager ? "eager" : "lazy"}
             decoding="async"
           />
         ) : (
-          <div class={styles.ph} role="img" aria-label={figure.alt}>
+          <div class={styles.ph} role="img" aria-label={[figure.alt].flat()[0]}>
             <span class={styles["ph-label"]}>{placeholderLabel}</span>
           </div>
         )

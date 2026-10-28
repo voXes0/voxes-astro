@@ -1,0 +1,47 @@
+---
+/** An image or slider with an optional caption, for use inside posts. */
+import { galleryData, toSlides } from "@/lib/gallery";
+import { localeFromPathname } from "@/lib/navigation";
+import styles from "./Figure.module.css";
+
+interface Props {
+  /** One image, or several for a slider. */
+  src: string | string[];
+  /** One description, or one per image in `src`. */
+  alt: string | string[];
+  caption?: string;
+  /** Intrinsic size, so the page doesn't jump while the image loads. A slider's frame takes this ratio (default 16 / 10). */
+  width?: number;
+  height?: number;
+  /** Milliseconds between automatic slides. Omit for a manual slider. */
+  autoplay?: number;
+}
+
+const { src, alt, caption, width, height, autoplay } = Astro.props;
+const slides = toSlides(src, alt);
+const [first] = slides;
+const slider = slides.length > 1;
+const ratio = width && height ? `${width} / ${height}` : "16 / 10";
+---
+
+<figure class={styles.figure}>
+  <div
+    class={styles.frame}
+    style={slider ? `aspect-ratio: ${ratio}` : undefined}
+    data-gallery={galleryData(
+      localeFromPathname(Astro.url.pathname),
+      slides,
+      autoplay,
+    )}
+  >
+    <img
+      src={first.src}
+      alt={first.alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

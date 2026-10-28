@@ -2,6 +2,7 @@
 import ButtonLink from "@/components/ButtonLink.astro";
 import ChipList from "@/components/ChipList.astro";
 import PageShell from "@/components/PageShell.astro";
+import SectionToc from "@/components/SectionToc.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import TextLink from "@/components/TextLink.astro";
 import WorkLinks from "@/components/WorkLinks.astro";
@@ -10,6 +11,7 @@ import WorkFigure from "@/components/WorkFigure.astro";
 import { t, type Locale } from "@/i18n";
 import type { CaseStudy } from "@/i18n/case-studies";
 import { localizedHref } from "@/lib/navigation";
+import { spyName, spyScope } from "@/lib/sectionSpy";
 import type { Work } from "@/lib/works";
 import styles from "./CaseStudy.module.css";
 
@@ -24,11 +26,7 @@ const m = t(locale).works;
 const d = m.detail;
 const ph = d.imagePlaceholder;
 
-// Scroll-spy for the contents list, in CSS only (the client-side router doesn't
-// re-run inline scripts): each section is a named view timeline, and its link
-// animates to the active style while the section crosses the reading line.
-const spy = (id: string) => `--spy-${id}`;
-const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
+const timelineScope = spyScope(study.sections.map((sec) => sec.id));
 ---
 
 <PageShell long>
@@ -42,7 +40,7 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
           locale={locale}
           kind={work.kind}
           status={work.status}
-          year={work.year}
+          year={Number(work.date.slice(0, 4))}
         />
       </div>
       <h1 class={styles.title}>{work.title}</h1>
@@ -73,20 +71,7 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
     </div>
 
     <div class={styles.layout} style={`timeline-scope: ${timelineScope}`}>
-      <nav class={styles.toc} aria-label={d.toc}>
-        <p class={styles["toc-label"]}>{d.toc}</p>
-        <ul role="list">
-          {
-            study.sections.map((s) => (
-              <li>
-                <a href={`#${s.id}`} style={`animation-timeline: ${spy(s.id)}`}>
-                  {s.title}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
+      <SectionToc label={d.toc} items={study.sections} spy />
 
       <div class={styles.content}>
         {
@@ -94,7 +79,7 @@ const timelineScope = study.sections.map((s) => spy(s.id)).join(", ");
             <section
               id={s.id}
               class={styles.section}
-              style={`view-timeline-name: ${spy(s.id)}`}
+              style={`view-timeline-name: ${spyName(s.id)}`}
             >
               <SectionHeading large tight title={s.title} />
               {s.intro && <p class={styles.intro}>{s.intro}</p>}

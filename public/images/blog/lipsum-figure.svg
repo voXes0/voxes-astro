@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Placeholder figure">
+  <defs>
+    <pattern id="dots" width="36" height="36" patternUnits="userSpaceOnUse">
+      <circle cx="18" cy="18" r="3" fill="#7aa383" fill-opacity=".35"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="#f4efe3"/>
+  <rect width="1200" height="675" fill="url(#dots)"/>
+  <circle cx="600" cy="337" r="130" fill="#f4efe3" stroke="#b9a37a" stroke-width="6"/>
+  <path d="M530 360c40-70 100-70 140 0" fill="none" stroke="#5f8a6a" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="560" cy="310" r="12" fill="#5f8a6a"/>
+  <circle cx="640" cy="310" r="12" fill="#5f8a6a"/>
+</svg>

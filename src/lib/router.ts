@@ -7,6 +7,7 @@
  */
 
 import { localeFromPathname, localizedHref } from "@/lib/navigation";
+import { finishProgress, startProgress } from "@/lib/progress";
 
 const APP_CONTENT_ID = "app-content";
 
@@ -110,12 +111,23 @@ function swapHead(newDoc: Document): void {
     .forEach((el) => document.head.appendChild(el.cloneNode(true)));
 }
 
+function suppressTransitionsForLocaleSwap(): void {
+  const root = document.documentElement;
+  root.setAttribute("data-locale-swap", "");
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => root.removeAttribute("data-locale-swap")),
+  );
+}
+
 /** Swaps <html> lang/dir (the body font follows `lang` via global.css). */
 function swapDocumentAttributes(newDoc: Document): void {
   const newHtml = newDoc.documentElement;
+  const newDir = newHtml.getAttribute("dir") ?? "ltr";
+  if (document.documentElement.getAttribute("dir") !== newDir) {
+    suppressTransitionsForLocaleSwap();
+  }
   document.documentElement.setAttribute("lang", newHtml.getAttribute("lang") ?? "en");
-  document.documentElement.setAttribute("dir", newHtml.getAttribute("dir") ?? "ltr");
-
+  document.documentElement.setAttribute("dir", newDir);
   // Preserve dark-mode class (client-controlled).
   const isDark = document.documentElement.classList.contains("dark");
   document.documentElement.className = isDark ? "dark" : "";
@@ -128,7 +140,10 @@ function notFoundUrlFor(url: string): string {
   return localizedHref("/404", localeFromPathname(pathname));
 }
 
-async function navigate(url: string, { push = true } = {}): Promise<void> {
+async function runNavigation(
+  url: string,
+  { push = true } = {},
+): Promise<void> {
   let html: string;
   try {
     let res = await fetch(url, { headers: { "X-Router": "app" } });
@@ -172,6 +187,20 @@ async function navigate(url: string, { push = true } = {}): Promise<void> {
   document.dispatchEvent(
     new CustomEvent("app:navigated", { detail: { url } }),
   );
+}
+
+/** Wraps a navigation in the top loading bar. `finally` covers every exit
+ *  path: 404 fallback, network failure and non-app pages. */
+async function navigate(
+  url: string,
+  opts: { push?: boolean } = {},
+): Promise<void> {
+  startProgress();
+  try {
+    await runNavigation(url, opts);
+  } finally {
+    finishProgress();
+  }
 }
 
 function onClick(event: MouseEvent): void {

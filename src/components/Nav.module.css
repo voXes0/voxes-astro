@@ -290,6 +290,10 @@
   translate: 50% -54.4%;
 }
 
+:global(html[data-locale-swap]) .logo {
+  transition: none;
+}
+
 .logoClosed {
   width: 3.75rem;
   height: 3.75rem;

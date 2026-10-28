@@ -1,16 +1,9 @@
 import { t, type Locale } from "@/i18n";
 import { joinCopy } from "./registry";
+import { linkedin, github, telegram, instagram, x, discord } from "./links";
 
 /**
- * Social links shown on the Contact page. Structural facts (name, url, the
- * handle as displayed) live here and are the same in every locale; the
- * translatable one-line description lives in the i18n message files under
- * `contact.items`, joined by `id`. `getSocials` throws at build time if a
- * locale is missing one, same idea as `getWorks`.
- *
- * Order here is the display order.
- *
- * TODO: every href and handle below is a placeholder.
+ * Social links shown on the Contact page.
  */
 
 export type SocialIconName =
@@ -23,7 +16,7 @@ export type SocialIconName =
 
 export interface SocialData {
   id: SocialIconName;
-  /** Brand name. Not translated: brands keep their Latin spelling. */
+  /** Brand name. Not translated. */
   label: string;
   href: string;
   /** What's shown beside the link, e.g. "@username". Always LTR. */
@@ -34,39 +27,38 @@ export const socials: SocialData[] = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/username",
-    handle: "linkedin.com/in/username",
+    href: `https://${linkedin}`,
+    handle: `${linkedin}`,
   },
   {
     id: "github",
     label: "GitHub",
-    href: "https://github.com/username",
-    handle: "github.com/username",
+    href: `https://${github}`,
+    handle: `${github}`,
   },
   {
     id: "telegram",
     label: "Telegram",
-    href: "https://t.me/username",
-    handle: "@username",
+    href: `https://${telegram}`,
+    handle: `${telegram}`,
   },
   {
     id: "instagram",
     label: "Instagram",
-    href: "https://www.instagram.com/username",
-    handle: "@username",
+    href: `https://${instagram}`,
+    handle: `${instagram}`,
   },
   {
     id: "x",
     label: "X",
-    href: "https://x.com/username",
-    handle: "@username",
+    href: `https://x.com/${x}`,
+    handle: `${x}`,
   },
   {
     id: "discord",
     label: "Discord",
-    // Real Discord profile links need a numeric user ID, not the username.
-    href: "https://discord.com/users/000000000000000000",
-    handle: "username",
+    href: `https://${discord}`,
+    handle: `${discord}`,
   },
 ];
 

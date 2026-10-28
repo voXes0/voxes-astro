@@ -6,14 +6,20 @@
  */
 
 export interface CaseFigure {
-  /** Path under /public. Omit to render the placeholder frame. */
-  src?: string;
+  /** Path under /public, or several paths for a slider. Omit to render the placeholder frame. */
+  src?: string | string[];
+  /** Intrinsic size of the first image. */
   width?: number;
   height?: number;
-  alt: string;
+  /** One description for the figure, or one per image in `src`. */
+  alt: string | string[];
   caption: string;
   /** CSS aspect-ratio for the frame, e.g. "16 / 10". Default "16 / 10". */
   ratio?: string;
+  /** Maximum width of the frame as a CSS length, e.g. "28rem" or "60%". Default: the full column. */
+  size?: string;
+  /** Milliseconds between automatic slides. Omit for a manual slider. */
+  autoplay?: number;
 }
 
 /** Fields every section can have; `figure` renders after the section's content. */

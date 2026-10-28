@@ -567,19 +567,6 @@ a.contactValue {
   }
 }
 
-/* The About page doubles as a printable CV: drop the decoration. */
-@media print {
-  .page {
-    padding-block-start: 0;
-  }
-
-  .blob,
-  .downloadCv,
-  .cta {
-    display: none;
-  }
-}
-
 @keyframes float {
   0%,
   100% {

@@ -44,7 +44,7 @@ export default function Nav(props: NavProps): JSX.Element {
   const isHomePage = () => unprefixedPath() === "/" || unprefixedPath() === "";
   const href = (path: string) => localizedHref(path, locale());
   const swapLocaleHref = () => localizedHref(unprefixedPath(), otherLocale(locale()));
-  // A section stays "current" on its sub-pages too (/works/kazheh -> Works).
+  // A section stays "current" on its sub-pages too
   const isActive = (path: string) => {
     const current = unprefixedPath().replace(/\/$/, "");
     return current === path || current.startsWith(`${path}/`);

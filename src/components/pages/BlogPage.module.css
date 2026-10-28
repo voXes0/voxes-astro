@@ -69,14 +69,30 @@
   transition: transform 0.5s ease;
 }
 
-.topic {
+.labels {
   grid-area: topic;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   align-self: center;
+  gap: 0.4rem 0.75rem;
+}
+.topic {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--secondary);
+}
+
+/* Marks a post that exists in one language only. */
+.only {
+  padding: 0.1rem 0.6rem;
+  border: 1px solid var(--low-opacity-soft-foreground);
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--mid-opacity-soft-foreground);
 }
 
 .name {
@@ -94,7 +110,7 @@
 
 .desc {
   grid-area: desc;
-  max-width: 38rem;
+  max-width: 30rem;
   margin-block-end: 1rem;
   font-size: 0.95rem;
   line-height: 1.7;
@@ -235,8 +251,7 @@
   .read::before {
     display: none;
   }
-  .topic {
-    display: inline-block;
+  .labels {
     margin-block-end: 0.6rem;
   }
   .name {

@@ -14,8 +14,7 @@ const { locale } = Astro.props;
 const isPersian = isRtl(locale);
 const m = t(locale).home;
 
-// The surname footnote only exists in the English title: in Farsi the pun is
-// already native, so there is nothing to explain.
+// The surname footnote only exists in the English title
 const showNameNote = !isPersian;
 
 const breakLines = (text: string) =>
@@ -77,7 +76,7 @@ const breakLines = (text: string) =>
         </h1>
       </div>
 
-      <!-- The "laser fabrication" stage -->
+      <!-- The fabrication stage -->
       <div class={styles.stage}>
         <!-- Navbar spacer -->
         <div class={styles.navSpacer} aria-hidden="true"></div>

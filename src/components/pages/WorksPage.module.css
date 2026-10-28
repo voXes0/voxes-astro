@@ -1,13 +1,8 @@
-.defs {
-  position: absolute;
-}
-
 .shell {
   max-width: 68rem;
   margin-inline: auto;
 }
 
-/* ── List ── */
 .list {
   border-block-start: 1px solid var(--low-opacity-soft-foreground);
 }
@@ -15,122 +10,66 @@
   border-block-end: 1px solid var(--low-opacity-soft-foreground);
 }
 
-/* Phones: arch banner above the details. From 640px: image beside text. */
+/* Phone: .body and .aside are `display: contents`, so all parts share one
+   grid and can be ordered freely:
+*/
 .work {
   position: relative;
   display: grid;
-  gap: 1.1rem;
-  padding-block: 1.75rem 1.5rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "thumb thumb"
+    "pills go"
+    "name name"
+    "desc desc"
+    "tech tech"
+    "links links"
+    "meta meta";
+  column-gap: 1rem;
+  padding-block: 1.5rem;
+  padding-inline: 0;
   -webkit-tap-highlight-color: transparent;
+  transition: padding-inline 0.3s ease;
 }
-.body {
-  min-width: 0;
-}
-.meta-row {
-  margin-block-end: 0.7rem;
-}
-.name {
-  margin-block-end: 0.6rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--soft-foreground);
-  overflow-wrap: anywhere;
+.body,
+.aside {
+  display: contents;
 }
 
-@media (min-width: 640px) {
-  .work {
-    --thumb: 12rem;
-    grid-template-columns: var(--thumb) minmax(0, 1fr);
-    column-gap: 2rem;
-    align-items: start;
-    padding-block: 2.5rem;
-  }
-  .meta-row {
-    margin-block-end: 1rem;
-  }
-  .name {
-    margin-block-end: 0.75rem;
-    font-size: clamp(1.5rem, 3vw, 2rem);
-  }
-}
-@media (min-width: 720px) {
-  .work {
-    --thumb: 13.5rem;
-    column-gap: 3rem;
-  }
-}
-@media (min-width: 1024px) {
-  .work {
-    --thumb: 16rem;
-    column-gap: 3.5rem;
-  }
-}
-
-/* ── Arch frame ──
-   The outer shape is the border colour; the inner shape is inset by the ring
-   width, so the "stroke" follows the arch. It's a size container so the
-   placeholder artwork scales with the frame (cqw). */
-.arch {
-  --ring: 4px;
-  --clip: url(#works-arch-wide);
-  --tile: 12cqw;
+.thumb {
+  --tile: clamp(2rem, 12cqw, 3.25rem);
+  grid-area: thumb;
   position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  container-type: inline-size;
-  background: var(--softer-foreground);
-  clip-path: var(--clip);
-  transition: background-color 0.35s ease;
-}
-@media (min-width: 440px) {
-  .arch {
-    aspect-ratio: 2 / 1;
-  }
-}
-@media (min-width: 640px) {
-  .arch {
-    --ring: 5px;
-    --clip: url(#works-arch);
-    --tile: 14cqw;
-    aspect-ratio: 4 / 5;
-  }
-}
-.arch-inner {
-  position: absolute;
-  inset: var(--ring);
+  aspect-ratio: 16 / 9;
+  max-height: 15rem;
+  margin-block-end: 1.1rem;
   overflow: hidden;
-  background: var(--background);
-  clip-path: var(--clip);
+  container-type: inline-size;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1rem;
+  background: var(--low-opacity-soft-foreground);
 }
-.art {
-  position: absolute;
-  inset: 0;
+.thumb img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.5s ease;
 }
 
-/* Placeholder until a real image is supplied: a patterned field with a
-   medallion. Everything derives from --tile (a cqw length). */
+/* Placeholder image */
 .placeholder {
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
   background-color: var(--background);
+  transition: transform 0.5s ease;
 }
 .placeholder[data-pattern="1"] {
   background-image:
-    linear-gradient(
-      135deg,
-      var(--low-opacity-secondary) 25%,
-      transparent 25%
-    ),
-    linear-gradient(
-      225deg,
-      var(--low-opacity-secondary) 25%,
-      transparent 25%
-    ),
+    linear-gradient(135deg, var(--low-opacity-secondary) 25%, transparent 25%),
+    linear-gradient(225deg, var(--low-opacity-secondary) 25%, transparent 25%),
     linear-gradient(45deg, var(--low-opacity-secondary) 25%, transparent 25%),
     linear-gradient(315deg, var(--low-opacity-secondary) 25%, transparent 25%);
   background-size: var(--tile) var(--tile);
@@ -158,91 +97,252 @@
 .medallion {
   display: grid;
   place-items: center;
-  /* Wide frame: sized by height so it stays round and clear of the edges. */
-  height: 46%;
+  height: 52%;
   aspect-ratio: 1;
-  margin-block-start: 8%;
   border: 2px solid var(--softer-foreground);
   border-radius: 50%;
   background: var(--background);
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 700;
   line-height: 1;
   color: var(--secondary);
 }
-@media (min-width: 640px) {
-  .medallion {
-    width: 42%;
-    height: auto;
-    margin-block-start: 18%; /* sit in the arch's wide lower body */
-    font-size: 17cqw;
-    border-width: clamp(1.5px, 0.8cqw, 2px);
-  }
+
+.pills {
+  grid-area: pills;
+  align-self: center;
 }
 
-/* Hover only where it exists: on touch screens :hover sticks after a tap,
-   so presses get :active instead. */
-@media (hover: hover) {
-  .work:hover .arch {
-    background: var(--secondary);
-  }
-  .work:hover .art {
-    transform: scale(1.05);
-  }
-  .work:hover .name a {
-    color: var(--secondary);
-  }
+.name {
+  grid-area: name;
+  margin-block: 0.7rem 0.55rem;
+  font-size: clamp(1.3rem, 5.6vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--soft-foreground);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
-.work:has(.name a:focus-visible) .arch,
-.work:has(.name a:active) .arch {
-  background: var(--secondary);
-}
-.work:has(.name a:focus-visible) .art {
-  transform: scale(1.05);
-}
-.work:has(.name a:active) .name a {
-  color: var(--secondary);
+.name:lang(fa) {
+  line-height: 1.45;
 }
 
-/* ── Body ── */
 .desc {
-  max-width: 38rem;
+  grid-area: desc;
+  max-width: 30rem;
+  margin-block-end: 1rem;
   font-size: 0.95rem;
   line-height: 1.7;
   color: var(--high-opacity-soft-foreground);
-}
-@media (min-width: 640px) {
-  .desc {
-    margin-block-end: 1.25rem;
-    font-size: 1rem;
-    line-height: 1.75;
-  }
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .tech {
-  margin-block-start: 0.85rem;
-}
-@media (min-width: 640px) {
-  .tech {
-    margin-block-start: 0;
-  }
+  grid-area: tech;
 }
 .links {
-  margin-block-start: 0.5rem;
+  grid-area: links;
+  margin-block: 0.35rem 0.75rem;
 }
-@media (min-width: 640px) {
+
+/* Contains both date and reading time */
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--mid-opacity-soft-foreground);
+}
+.date {
+  font-weight: 600;
+  color: var(--soft-foreground);
+}
+.date-solar,
+.read {
+  unicode-bidi: isolate;
+}
+.date-solar::before,
+.read::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin-inline-end: 0.6rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Arrow */
+.go {
+  grid-area: go;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 50%;
+  color: var(--soft-foreground);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+.go svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+:lang(fa) .go svg {
+  transform: scaleX(-1);
+}
+
+/* Touch and keyboard-focus feedback. */
+.work:active .name a,
+.work:has(.name a:focus-visible) .name a {
+  color: var(--secondary);
+}
+.work:active .go,
+.work:has(.name a:focus-visible) .go {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--background);
+}
+
+/* Hover only with a real pointer, so it never sticks after a tap. */
+@media (hover: hover) {
+  .work:hover .name a {
+    color: var(--secondary);
+  }
+  .work:hover .go {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--background);
+  }
+  .work:hover .thumb img,
+  .work:hover .placeholder {
+    transform: scale(1.05);
+  }
+}
+
+/* ── Desktop row: meta | body | thumbnail with arrow badge ── */
+@media (min-width: 800px) {
+  .work {
+    grid-template-columns: 8.5rem minmax(0, 1fr) clamp(9rem, 26%, 14rem);
+    grid-template-areas: none;
+    column-gap: 2rem;
+    align-items: start;
+    padding-block: 2.25rem;
+  }
+  .body {
+    display: block;
+    min-width: 0;
+  }
+  .aside {
+    display: block;
+    position: relative;
+  }
+  .thumb {
+    --tile: 14cqw;
+    aspect-ratio: 3 / 2;
+    max-height: none;
+    margin-block-end: 0;
+  }
+  .medallion {
+    width: 38%;
+    height: auto;
+    font-size: 15cqw;
+    border-width: clamp(1.5px, 0.8cqw, 2px);
+  }
+  .meta {
+    grid-area: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding-block-start: 0.35rem;
+    font-size: 0.875rem;
+  }
+  .date-solar::before,
+  .read::before {
+    display: none;
+  }
+  .pills {
+    margin-block-end: 0.8rem;
+  }
+  .name {
+    margin-block: 0 0.75rem;
+  }
+  .name:lang(fa) {
+    line-height: 1.35;
+  }
+  .desc {
+    margin-block-end: 1.1rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    display: block;
+    overflow: visible;
+  }
   .links {
-    margin-block-start: 0.75rem;
+    margin-block: 0.5rem 0;
+  }
+  /* The arrow badge sits on the thumbnail's corner. */
+  .go {
+    position: absolute;
+    inset-block-end: 0.5rem;
+    inset-inline-end: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--background);
+  }
+  .go svg {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+}
+@media (min-width: 1024px) {
+  .work {
+    grid-template-columns: 8.5rem minmax(0, 1fr) clamp(13rem, 28%, 19rem);
+    column-gap: 3rem;
+  }
+  .thumb {
+    aspect-ratio: 4 / 3;
+  }
+  .go {
+    inset-block-end: 0.75rem;
+    inset-inline-end: 0.75rem;
+    width: 3rem;
+    height: 3rem;
+  }
+}
+@media (min-width: 800px) and (hover: hover) {
+  .work:hover {
+    padding-inline: 1rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .arch,
-  .art {
+  .work,
+  .go,
+  .thumb img,
+  .placeholder {
     transition: none;
   }
-  .work:hover .art,
-  .work:has(.name a:focus-visible) .art {
+  .work:hover .thumb img,
+  .work:hover .placeholder {
     transform: none;
+  }
+  .work:hover {
+    padding-inline: 0;
+  }
+}
+
+@media print {
+  .go {
+    display: none;
   }
 }

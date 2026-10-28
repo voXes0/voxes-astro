@@ -75,7 +75,7 @@
 
 :root {
   --background: oklch(0.9588 0.0127 86.83);
-  --foreground: oklch(0.244 0.0457 70);
+  --foreground: oklch(0.26 0.054 70);
   --soft-foreground: oklch(38.796% 0.06249 69.373);
   --low-opacity-soft-foreground: oklch(0.304 0.0557 70 / 20%);
   --mid-opacity-soft-foreground: color-mix(in oklab, var(--soft-foreground) 60%, transparent);
@@ -85,10 +85,6 @@
   --secondary: oklch(0.5963 0.0844 150);
   --low-opacity-secondary: oklch(72.131% 0.10024 150.517 / 0.24);
   --soft-secondary: oklch(0.7601 0.0794 150);
-  --glow-core: var(--secondary);
-  --glow-near: oklch(0.5963 0.0844 150 / 0.55);
-  --glow-far: oklch(0.5963 0.0844 150 / 0.3);
-
 
   --font-latin: "Google Sans Flex Variable", sans-serif;
   --font-persian: "Vazirmatn Variable", sans-serif;
@@ -132,17 +128,19 @@
 
 .dark {
   --background: oklch(0.204 0.0257 70);
-  --foreground: oklch(0.9588 0.0127 86.83);
+  --foreground: oklch(0.9588 0.04 86.83);
   --soft-foreground: oklch(0.8788 0.0327 86.83);
   --low-opacity-soft-foreground: oklch(0.8788 0.0327 86.83 / 20%);
   --softer-foreground: oklch(0.61 0.07 147.5);
-  --low-opacity-softer-foreground: oklch(0% 0 0 / 0.2);
+  --low-opacity-softer-foreground: oklch(39.778% 0.06073 70.012 / 0.25);
   --secondary: oklch(0.8 0.075 77);
   --low-opacity-secondary: oklch(0.735 0.068 75 / 20%);
   --soft-secondary: oklch(0.67 0.075 77);
-  --glow-core: color-mix(in oklch, var(--secondary), white 70%);
-  --glow-near: var(--secondary);
-  --glow-far: oklch(0.8 0.075 77 / 0.6);
+}
+
+::selection {
+  background: var(--secondary);
+  color: var(--background);
 }
 
 /* The font follows <html lang>, which router.ts keeps in sync. */
@@ -156,6 +154,15 @@ body {
 
 html:lang(fa) body {
   font-family: var(--font-persian);
+}
+
+/* Text in a different language than the page (a post shown in its only
+   translation) switches font with it. */
+[data-alt-lang="fa"] {
+  font-family: var(--font-persian);
+}
+[data-alt-lang="en"] {
+  font-family: var(--font-latin);
 }
 
 /* Persian is a connected script, so it is never letter-spaced. The leading
@@ -214,3 +221,51 @@ html :lang(fa) {
   outline: 2px solid var(--secondary);
   outline-offset: -4px;
 }
+
+/* Theme switch: the new colors flow outward from the toggle button as a
+   soft-edged wave. Colors only, no layout changes. Driven by toggleTheme()
+   in lib/theme.ts, which sets data-theme-transition and the --theme-* vars
+   on <html>. */
+
+@property --theme-reveal {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+html[data-theme-transition]::view-transition,
+html[data-theme-transition]::view-transition-group(*),
+html[data-theme-transition]::view-transition-image-pair(*),
+html[data-theme-transition]::view-transition-old(*),
+html[data-theme-transition]::view-transition-new(*) {
+  pointer-events: none;
+}
+
+html[data-theme-transition]::view-transition-old(root),
+html[data-theme-transition]::view-transition-new(root) {
+  mix-blend-mode: normal; /* default plus-lighter would wash out colors */
+}
+
+/* The old theme stays put underneath while the new one is revealed over it. */
+html[data-theme-transition]::view-transition-old(root) {
+  animation: none;
+}
+
+html[data-theme-transition]::view-transition-new(root) {
+  mask-image: radial-gradient(
+    circle at var(--theme-x) var(--theme-y),
+    #000 calc(var(--theme-reveal) - var(--theme-feather)),
+    transparent var(--theme-reveal)
+  );
+  animation: theme-reveal 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes theme-reveal {
+  from {
+    --theme-reveal: 0px;
+  }
+  to {
+    --theme-reveal: var(--theme-end);
+  }
+}
+

@@ -6,7 +6,7 @@ interface ThemeToggleIconProps {
   class?: string;
 }
 
-/** Bulb: lit in light mode, unlit in dark. The variants are different paths, so we branch rather than recolor. */
+/** Bulb: lit in light mode, unlit in dark. The variants are different paths, so branch rather than recolor. */
 export default function ThemeToggleIcon(props: ThemeToggleIconProps): JSX.Element {
   const style = () =>
     props.rotate ? { transform: `rotate(${props.rotate}deg)` } : undefined;

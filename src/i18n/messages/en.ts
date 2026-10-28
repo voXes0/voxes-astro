@@ -88,6 +88,8 @@ export interface Messages {
     kind: { open: string; closed: string };
     status: { live: string; wip: string; archived: string };
     links: { source: string; site: string };
+    /** "{n}" is replaced with the number of minutes. */
+    readTime: string;
     detail: {
       back: string;
       comingSoon: string;
@@ -120,7 +122,16 @@ export interface Messages {
     };
     /** "{n}" is replaced with the number of minutes. */
     readTime: string;
-    items: { slug: string; title: string; description: string }[];
+    /** Badge on a listing card for a post that exists in one language only, keyed by that language. */
+    languageOnly: { en: string; fa: string };
+    detail: {
+      back: string;
+      toc: string;
+      /** Banner on a post page, keyed by the language the post is written in. */
+      notice: { en: string; fa: string };
+      /** Page title of a post; "{title}" is replaced with the post's title. */
+      metaTitle: string;
+    };
   };
   contact: {
     meta: { title: string; description: string };
@@ -153,6 +164,14 @@ export interface Messages {
     paused: { title: string; hint: string };
     lost: { title: string; body: string; action: string };
     won: { title: string; body: string; action: string };
+  };
+  /** Strings of the image slider and fullscreen viewer. `{n}` and `{total}` are filled in by the viewer. */
+  gallery: {
+    open: string;
+    close: string;
+    previous: string;
+    next: string;
+    image: string;
   };
 }
 
@@ -307,6 +326,7 @@ export default {
     kind: { open: "Open source", closed: "Closed source" },
     status: { live: "Live", wip: "In progress", archived: "Archived" },
     links: { source: "Source code", site: "Visit website" },
+    readTime: "{n} min read",
     detail: {
       back: "All works",
       comingSoon: "Placeholder: this project's own page is not built yet.",
@@ -338,18 +358,6 @@ export default {
         description:
           "Placeholder description: this very site, built code-first with no builder and no template.",
       },
-      {
-        slug: "placeholder-four",
-        title: "Placeholder Four",
-        description:
-          "Placeholder description: an older closed-source project kept here for the record.",
-      },
-      {
-        slug: "placeholder-five",
-        title: "Placeholder Five",
-        description:
-          "Placeholder description: a small open-source tool with a short blurb.",
-      },
     ],
   },
   blog: {
@@ -357,7 +365,6 @@ export default {
       title: 'Taha "Voxes" Haghighi - Blog',
       description: "Taha Haghighi, also known as Voxes writes on various topics such as technical problems, frameworks and alghoritms, as well as personal workflow.",
     },
-    // TODO: placeholder copy — replace with real posts.
     eyebrow: "Blog",
     title1: "Notes on ",
     title2: "how things work.",
@@ -372,44 +379,18 @@ export default {
       notes: "Notes",
     },
     readTime: "{n} min read",
-    items: [
-      {
-        slug: "sph-from-scratch",
-        title: "Smoothed-particle hydrodynamics, without the hand-waving",
-        description:
-          "Placeholder description: how a pile of particles becomes water, and the one kernel choice that decides whether your simulation explodes.",
+    /** Badge on a listing card for a post that exists in one language only, keyed by that language. */
+    languageOnly: { en: "English only", fa: "Persian only" },
+    detail: {
+      back: "All posts",
+      toc: "In this post",
+      /** Banner on a post page, keyed by the language the post is written in. */
+      notice: {
+        en: "This post is only available in English, so you're reading the English version.",
+        fa: "This post is only available in Persian, so you're reading the Persian version.",
       },
-      {
-        slug: "astro-vs-next",
-        title: "Astro or Next.js for a content site?",
-        description:
-          "Placeholder description: what each ships to the browser, where each one gets in your way, and how I'd pick.",
-      },
-      {
-        slug: "a-star-heuristics",
-        title: "A* is only as good as its heuristic",
-        description:
-          "Placeholder description: admissible, consistent, and why a slightly wrong guess can be a feature.",
-      },
-      {
-        slug: "css-has-selector",
-        title: "Things :has() quietly made possible",
-        description:
-          "Placeholder description: scriptless filters, form-aware layouts and other small wins.",
-      },
-      {
-        slug: "wasm-or-not",
-        title: "Rust to WASM: when it pays off, when it doesn't",
-        description:
-          "Placeholder description: measuring the boundary-crossing cost before rewriting anything.",
-      },
-      {
-        slug: "why-i-write-here",
-        title: "Why I keep a blog at all",
-        description:
-          "Placeholder description: a short note on writing things down to understand them.",
-      },
-    ],
+      metaTitle: "Voxes - {title}",
+    },
   },
   contact: {
     meta: {
@@ -486,5 +467,12 @@ export default {
       body: "All {total} gates cleared.",
       action: "Play again",
     },
+  },
+  gallery: {
+    open: "View fullscreen",
+    close: "Close",
+    previous: "Previous image",
+    next: "Next image",
+    image: "Image {n} of {total}",
   },
 } satisfies Messages;

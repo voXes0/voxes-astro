@@ -1,0 +1,39 @@
+.bar {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--secondary);
+  /* Animate transform, not width: it stays on the compositor. */
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+  /* Above the header (z-index 100) and the mobile menu. */
+  z-index: 9999;
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.3s ease;
+}
+
+/* Persian pages grow from the right. router.ts keeps <html dir> in sync. */
+:global(html[dir="rtl"]) .bar {
+  transform-origin: right;
+}
+
+.active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: opacity 0.3s ease;
+  }
+}
+
+@media print {
+  .bar {
+    display: none;
+  }
+}

@@ -1,3 +1,6 @@
+.fig {
+  margin-inline: auto;
+}
 .frame {
   padding: 6px;
   border: 2px solid var(--softer-foreground);

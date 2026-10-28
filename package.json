@@ -4,9 +4,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "fab:import": "node scripts/svg-to-piece.mjs",
-    "fab:flower": "node scripts/flower-from-scene.mjs",
-    "fab:scene": "node scripts/scene-from-svg.mjs",
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
@@ -19,9 +16,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^8.1.1",
     "@astrojs/sitemap": "^3.2.1",
-    "@astrojs/solid-js": "^5.0.5",
-    "astro": "^5.4.2",
-    "typescript": "^5.9.3"
+    "@astrojs/solid-js": "^7.1.1",
+    "astro": "^7.4.2",
+    "typescript": "^7.0.2"
   }
 }

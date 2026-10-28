@@ -1,0 +1,65 @@
+.toc {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .toc {
+    display: block;
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+}
+.label {
+  margin-block-end: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mid-opacity-soft-foreground);
+}
+.toc ul {
+  border-inline-start: 2px solid var(--low-opacity-soft-foreground);
+}
+.link {
+  display: block;
+  padding: 0.45rem 0;
+  padding-inline: 1rem 0;
+  margin-inline-start: -2px;
+  border-inline-start: 2px solid transparent;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--soft-foreground);
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.link:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.link:hover {
+  color: var(--secondary);
+  border-inline-start-color: var(--secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}
+
+/* Scroll-spy: highlighted while its section is the active one (the section
+   sets the timeline). Browsers without scroll-driven animations just show no
+   highlight. */
+@supports (animation-timeline: view()) {
+  .link[data-spy] {
+    animation: toc-active linear both;
+  }
+}
+@keyframes toc-active {
+  1%,
+  99% {
+    color: var(--secondary);
+    border-inline-start-color: var(--secondary);
+  }
+}

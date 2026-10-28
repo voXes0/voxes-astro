@@ -1,0 +1,20 @@
+.figure {
+  margin-block: 2em;
+}
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid var(--low-opacity-soft-foreground);
+  border-radius: 1rem;
+  background: var(--low-opacity-soft-foreground);
+}
+.frame img {
+  width: 100%;
+}
+.figure figcaption {
+  margin-block-start: 0.75rem;
+  padding-inline: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--mid-opacity-soft-foreground);
+}

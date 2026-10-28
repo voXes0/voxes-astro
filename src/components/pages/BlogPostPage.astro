@@ -1,0 +1,102 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageShell from "@/components/PageShell.astro";
+import TextLink from "@/components/TextLink.astro";
+import ButtonLink from "@/components/ButtonLink.astro";
+import ChipList from "@/components/ChipList.astro";
+import Prose from "@/components/Prose.astro";
+import SectionToc from "@/components/SectionToc.astro";
+import { postComponents } from "@/components/mdx";
+import { isRtl, t, type Locale } from "@/i18n";
+import { getPost } from "@/lib/blog";
+import { postFormatters } from "@/lib/format";
+import { localizedHref } from "@/lib/navigation";
+import styles from "./BlogPostPage.module.css";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const m = t(locale).blog;
+const post = await getPost(slug, locale);
+if (!post) throw new Error(`blog: no post with slug "${slug}"`);
+
+const { Content, headings } = await render(post.entry);
+const sections = headings.filter((h) => h.depth === 2);
+const showToc = sections.length >= 3;
+const { fmtDate, fmtRead } = postFormatters(locale, m.readTime);
+
+// The header, contents and body follow the post's own language, which is not
+// the page's when only the other translation exists.
+const contentDir = isRtl(post.contentLocale) ? "rtl" : "ltr";
+const blogHref = localizedHref("/blog", locale);
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.detail.metaTitle.replace("{title}", post.title)}
+  description={post.description}
+>
+  <PageShell long>
+    <article class={styles.shell} data-toc={showToc || undefined}>
+      <div class={styles.top}>
+        <div class={styles.back}>
+          <TextLink href={blogHref}>{m.detail.back}</TextLink>
+        </div>
+
+        {
+          post.fallback && (
+            <p class={styles.notice} role="note">
+              {m.detail.notice[post.contentLocale]}
+            </p>
+          )
+        }
+
+        <header
+          class={styles.head}
+          lang={post.contentLocale}
+          dir={contentDir}
+          data-alt-lang={post.contentLocale}
+        >
+          <span class={styles.topic}>{m.topics[post.topic]}</span>
+          <h1 class={styles.title}>{post.title}</h1>
+          <p class={styles.lead}>{post.description}</p>
+          <div class={styles.meta}>
+            <time class={styles.date} datetime={post.date}>
+              {fmtDate(post.date)}
+            </time>
+            <span class={styles.read}>{fmtRead(post.minutes)}</span>
+          </div>
+          <ChipList items={post.tags} dir="auto" />
+        </header>
+      </div>
+
+      {
+        showToc && (
+          <div class={styles.rail}>
+            <SectionToc
+              label={m.detail.toc}
+              items={sections.map((h) => ({ id: h.slug, title: h.text }))}
+              itemLang={post.contentLocale}
+            />
+          </div>
+        )
+      }
+
+      <div class={styles.main}>
+        <Prose locale={post.contentLocale}>
+          <Content components={postComponents} />
+        </Prose>
+
+        <div class={styles.end}>
+          <ButtonLink variant="secondary" href={blogHref}>
+            {m.detail.back}
+          </ButtonLink>
+        </div>
+      </div>
+    </article>
+  </PageShell>
+</BaseLayout>

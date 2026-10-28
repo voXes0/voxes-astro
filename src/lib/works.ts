@@ -1,5 +1,7 @@
 import { t, type Locale } from "@/i18n";
+import { getCaseStudy } from "@/i18n/case-studies";
 import { joinCopy } from "./registry";
+import { estimateMinutes } from "./readingTime";
 
 /**
  * Works registry. Structural facts live here (kind, status, tech, links,
@@ -25,7 +27,8 @@ export interface WorkData {
   slug: string;
   kind: WorkKind;
   status: WorkStatus;
-  year: number;
+  /** ISO date, YYYY-MM-DD. */
+  date: string;
   tech: string[];
   /** Public source repository. Only meaningful for open-source work. */
   repo?: string;
@@ -40,18 +43,23 @@ export interface WorkData {
 export const works: WorkData[] = [
   {
     slug: "kazheh",
+    image: {
+      src:"/images/kazheh/mockup.png",
+      width: 720,
+      height: 450,
+    },
     kind: "closed",
     status: "live",
-    year: 2025,
-    tech: ["Next.js", "TypeScript", "i18n"],
-    site: "https://example.com",
+    date: "2026",
+    tech: ["Next.js", "React", "PostgreSQL","i18n"],
+    site: "https://kazhehhouse.ir",
     pattern: 1,
   },
   {
     slug: "vofluid",
     kind: "open",
     status: "wip",
-    year: 2026,
+    date: "2026-03-01",
     tech: ["Rust", "SPH", "WASM"],
     repo: "https://github.com/example/vofluid",
     pattern: 2,
@@ -60,38 +68,25 @@ export const works: WorkData[] = [
     slug: "voxes",
     kind: "open",
     status: "live",
-    year: 2026,
+    date: "2026-09-01",
     tech: ["Astro", "Solid.js", "CSS", "TypeScript"],
     repo: "https://github.com/example/voxes",
     site: "https://example.com",
     pattern: 3,
-  },
-  {
-    slug: "placeholder-four",
-    kind: "closed",
-    status: "archived",
-    year: 2024,
-    tech: ["Unity", "C#", "Compute shaders"],
-    pattern: 2,
-  },
-  {
-    slug: "placeholder-five",
-    kind: "open",
-    status: "live",
-    year: 2024,
-    tech: ["Node.js", "PostgreSQL"],
-    repo: "https://github.com/example/placeholder-five",
-    pattern: 1,
   },
 ];
 
 export interface Work extends WorkData {
   title: string;
   description: string;
+  /** Reading time of the work's case study; undefined while it has none. */
+  minutes?: number;
 }
 
 function join(data: WorkData, locale: Locale): Work {
-  return joinCopy("works", "slug", data, t(locale).works.items, locale);
+  const copy = joinCopy("works", "slug", data, t(locale).works.items, locale);
+  const study = getCaseStudy(data.slug, locale);
+  return study ? { ...copy, minutes: estimateMinutes(study, locale) } : copy;
 }
 
 /** All works with copy for the given locale, in display order. */
