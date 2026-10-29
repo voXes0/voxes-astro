@@ -126,6 +126,13 @@
   }
 }
 
+/* Nav and footer content stop spreading at ~1600px: the side margin grows once
+   the viewport is wider than --shell-max. */
+:root {
+  --shell-max: 100rem;
+  --shell-gutter: max(var(--page-gutter), calc((100% - var(--shell-max)) / 2));
+}
+
 .dark {
   --background: oklch(0.204 0.0257 70);
   --foreground: oklch(0.9588 0.04 86.83);

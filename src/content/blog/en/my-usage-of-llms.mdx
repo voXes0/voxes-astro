@@ -1,0 +1,59 @@
+---
+title: "My Usage Of LLMs"
+description: "Learn when and how I use AI during my workflow."
+date: 2026-10-29
+topic: notes
+tags: ["AI", "Workflow", "Notes"]
+thumbnail: "/images/blog/my-usage-of-llms.svg"
+---
+
+<Lead>AI is the talk of everyone nowadays, so much so that it starts to feel annoying. But it is hard to ignore.</Lead>
+
+Do I use AI? The short answer is yes; the longer answer is also yes, but a bit more complicated.
+
+## My first approach
+
+When I began to learn to code, I learnt it the somewhat traditional way, through online sources such as videos, books and documentation. I didn't like using any sort of LLMs, because during those times
+they were often wrong and unreliable. It was only two years into my career that I used an LLM, ChatGPT in this case, to help me port [Kotsoft's Particle-based Viscoelastic Fluid Simulation](https://github.com/kotsoft/particle_based_viscoelastic_fluid)
+into C#, the language I was learning and the one I was most confident in. I had little experience with JavaScript then.
+
+### Incorporating it to my workflow
+
+Since then, I've used it more often. It didn't do a very good job back then. it was buggy and unreliable, but LLMs as a whole have improved a lot since.
+I faced some problems when I further experimented with them. They often wrote difficult to read, unorganized, buggy messes of code, and relying on them
+limited how much I could innovate and improve upon my code. Since then, I've settled on exactly where and how they can be used for a positive impact
+on a project, which I explain below.
+
+## How I utilize them now
+
+Today I mostly just use [Claude](https://claude.ai), for the following purposes:
+
+### Planning and researching
+
+One thing that really speeds up the development process is being able to research a practical topic or problem and get a helpful answer immediately. That answer
+can even be used to do more precise research on the topic on the internet. The other is having a template to work upon for a particular project, such as a project scaffold or boilerplate, so you can quickly get to work.
+
+### Designing and visualizing
+
+On the frontend side, I find working with CSS the traditional way too time-consuming and, frankly, boring. More often than not, I use Claude for the CSS and elements.
+I make the color palette and theme, lay the foundations, give the ideas, and describe the kind of design I would like to experiment with, and through multiple iterations and many, many tweaks, get the final page done.
+In short, I direct the design and Claude executes it. It is also sometimes used for helping with JavaScript components such as the homepage animation sequence of this website.
+
+### Debugging and general optimization
+
+Sometimes finding those bugs becomes a real nuisance. Claude comes in handy by writing tests in bulk.
+It is also useful for writing benchmarks, which I run myself, to find performance bottlenecks, and for proposing somewhat surface-level optimizations for simpler parts of the code.
+
+### Code cleanup, documentation, and minor questions
+
+They can really help with skipping the most boring parts of a project. I use Claude for cleaning the codebase and documenting it for future me or others. Everything is still human-reviewed, of course. I read every diff, and necessary adjustments are made to the documentation.
+The other usage is finding the answer to a specific minor problem quickly. for example, I learnt Git and Linux commands by asking: How do I do x with Git/Linux?
+
+## Where I *don't* use them
+
+Whenever the code is for performance or security critical applications, or when innovation is required, everything is hand-written. The same goes for anywhere else where reliability and correctness are crucial and a bug cannot be afforded.
+Claude may then be used for testing and benchmarking them. Examples of this are most of the [Vofluid](https://voxes.ir/works/vofluid) project's core logic and most of the backend of the [Kazheh](https://voxes.ir/works/kazheh) project.
+
+---
+
+If something is not clear, or you have a particular question about how I use AI, you can contact me.

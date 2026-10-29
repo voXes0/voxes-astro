@@ -296,12 +296,19 @@
     padding: 4rem var(--page-gutter) 0;
     animation: fade 1s ease-out;
     display: inline;
+    /* Single column: centre the text column instead of pinning it to the start edge. */
+    width: 100%;
+    margin-inline: auto;
   }
 
   .content {
     grid-column: 1;
     grid-row: 4;
     padding: 0 var(--page-gutter) 4rem;
+  }
+
+  .inner {
+    margin-inline: auto;
   }
 
   .eyebrow {
@@ -311,6 +318,7 @@
 
   .title1 {
     margin-bottom: 2rem;
+    margin-inline: auto;
   }
 
   .footnote {
@@ -339,7 +347,9 @@
   }
 }
 
-@media (min-width: 1024px) {
+/* Desktop, and also any screen 640px+ wide that is too short to stack the stage
+   above the text (landscape phones, unfolded foldables). */
+@media (min-width: 1024px), (min-width: 640px) and (max-height: 720px) {
   .main {
     grid-template-columns: 44% minmax(0, 1fr);
   }
@@ -352,6 +362,17 @@
   .heading,
   .content {
     grid-column: 2;
+  }
+
+  /* Two columns: the text starts at the column edge again. */
+  .heading {
+    width: auto;
+    margin-inline: 0;
+  }
+
+  .title1,
+  .inner {
+    margin-inline: 0;
   }
 
   .eyebrow,
@@ -367,6 +388,83 @@
   .actions {
     align-items: flex-start;
     justify-content: flex-start;
+  }
+}
+
+/* Short screens narrower than desktop: a slimmer stage and text gutters, so the
+   headline keeps a readable measure in the narrower text column. */
+@media (min-width: 640px) and (max-width: 1023.98px) and (max-height: 720px) {
+  .main {
+    grid-template-columns: 40% minmax(0, 1fr);
+  }
+
+  .heading,
+  .content {
+    padding-inline: 2rem;
+  }
+}
+
+/* Very short screens (phones on their side): compact vertical rhythm so the
+   headline, tagline and both buttons fit without scrolling. */
+@media (min-width: 640px) and (max-height: 520px) {
+  .navSpacer {
+    height: 4.25rem;
+  }
+
+  .heading {
+    padding-top: 4.5rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .title1 {
+    margin-bottom: 1rem;
+    font-size: clamp(2.2rem, min(6vw, 11vh), 3.8rem);
+  }
+
+  .lead {
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .content {
+    padding-bottom: 2rem;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+
+  /* Both buttons side by side in the narrow text column. */
+  .actions .ctaBtn {
+    min-width: 0;
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Ultrawide: fade the stage into the page instead of ending in a hard edge, and
+   centre the text in the room that is left. */
+@media (min-width: 2200px) {
+  .stage {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 10rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 10rem), transparent);
+  }
+
+  .fa .stage {
+    -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 10rem), transparent);
+    mask-image: linear-gradient(to left, #000 calc(100% - 10rem), transparent);
+  }
+
+  .heading {
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .inner {
+    margin-inline: auto;
   }
 }
 

@@ -1,11 +1,6 @@
 import type { Locale } from "@/i18n";
 import type { CaseStudy } from "./types";
 
-// TODO: ALL of this is placeholder. It exists to prove out the layout and
-// lengths, not to say anything true about the project. Replace every string
-// (and add real `figure.src` paths under /public/images/works/kazheh/).
-// The Farsi block is a short, unreviewed placeholder as well.
-
 const en: CaseStudy = {
   lead: "Kazheh House is a boutique hotel in Rasht. I designed and built their website, including an online reservation system.",
   facts: [
@@ -137,7 +132,7 @@ const en: CaseStudy = {
             figure: {
               alt: "Reservation state machine diagram",
               caption: "A visual representation of the reservation state machine.",
-              src: "/public/images/kazheh/state-machine-en.png",
+              src: "/images/kazheh/state-machine-en.png",
               ratio: "392 / 571",
             }
         },
@@ -183,10 +178,13 @@ const en: CaseStudy = {
             "Charts the hotel's performance",
           ],
           figure: {
-            alt: "Bookings table in the admin panel table",
-            caption: "The bookings view in the admin panel.",
+            alt: ["Bookings table in the admin panel table", "New manual booking page", "Specific reservation page", "The page in the admin panel responsible for managing media."],
+            caption: "Overview of the admin panel.",
             ratio: "3 / 2",
-            src: "/images/kazheh/bookings-view.png"
+            src: ["/images/kazheh/bookings-view.png", "/images/kazheh/new-manual-booking.png", "/images/kazheh/booking-actions.png", "/images/kazheh/revenue.png",
+               "/images/kazheh/admin-media-1.png", "/images/kazheh/admin-media-2.png", "/images/kazheh/admin-media-3.png"
+            ],
+            autoplay: 2800
           },
         },
         {
@@ -199,9 +197,10 @@ const en: CaseStudy = {
             "Includes many quality of life tools"
           ],
           figure: {
-            alt: "Placeholder: screenshot of the admin calendar",
-            caption: "Placeholder: the admin calendar.",
-            ratio: "16 / 10",
+            alt: "Showcasing the admin booking calendar",
+            caption: "The admin calendar.",
+            src: "/images/kazheh/admin-calendar.png",
+            ratio: "3 / 2",
           },
         },
         {
@@ -248,11 +247,6 @@ const en: CaseStudy = {
       ],
       closing:
         "Overall, Kazheh means a lot to me as my first client project and one of the works I'm proudest of. The development process was interesting, I'm happy with how everything turned out, and I learned a lot that I'll keep building on.",
-      figure: {
-        alt: "Placeholder: a team or client photo, if there is one",
-        caption: "Placeholder: optional closing photo.",
-        ratio: "21 / 9",
-      },
     },
   ],
 };
@@ -430,10 +424,13 @@ const fa: CaseStudy = {
             "نمایش نمودار و آمار هتل"
           ],
           figure: {
-            alt: "جدول رزرو‌‌ها در پنل مدیریت",
-            caption: "جدول رزرو‌ها در پنل مدیریت.",
+            alt: ["جدول رزرو‌‌ها در پنل مدیریت", "فرم رزرو جدید دستی در پنل مدیریت", "صفحه یک رزرو", "صفحه مدیریت مهتوا"],
+            caption: "پنل مدیریت.",
             ratio: "3 / 2",
-            src: "/images/kazheh/bookings-view.png"
+            src: ["/images/kazheh/bookings-view.png", "/images/kazheh/new-manual-booking.png", "/images/kazheh/booking-actions.png", "/images/kazheh/revenue.png",
+               "/images/kazheh/admin-media-1.png", "/images/kazheh/admin-media-2.png", "/images/kazheh/admin-media-3.png"
+            ],
+            autoplay: 2800
           },
         },
         {
@@ -446,8 +443,9 @@ const fa: CaseStudy = {
             "مدیریت جمعی رزرو‌ها"
           ],
           figure: {
-            alt: "متن نمونه: تصویر تقویم مدیریت",
-            caption: "متن نمونه: تقویم مدیریت.",
+            alt: "تقویم مدیریت رزرو‌ها پنل مدیریت",
+            caption: "تقویم مدیریت رزرو‌ها پنل مدیریت",
+            src: "/images/kazheh/admin-calendar.png",
             ratio: "16 / 10",
           },
         },
@@ -493,11 +491,6 @@ const fa: CaseStudy = {
         },
       ],
       closing: "در مجموع، کاژه به‌عنوان اولین پروژه‌ام برای یک کارفرما و یکی از کارهایی مورد علاقه‌ام، برای من ارزش زیادی داره. فرایند توسعه جالب بود، از نتیجه‌اش راضی‌ام، و چیزهای زیادی یاد گرفتم که در کار‌های آینده‌ام ازشون استفاده میکنم.",
-      figure: {
-        alt: "متن نمونه: عکس تیم یا کارفرما، اگر وجود داشت",
-        caption: "متن نمونه: عکس پایانی اختیاری.",
-        ratio: "21 / 9",
-      },
     },
   ],
 };

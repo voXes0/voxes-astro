@@ -57,22 +57,40 @@
 
 .dots {
   position: absolute;
-  bottom: 1.2rem;
+  bottom: calc(1.2rem - 8.5px);
   left: 50%;
   z-index: 2;
   display: flex;
-  gap: 0.5rem;
   transform: translateX(-50%);
 }
+/* The button is a 24px touch target; the visible dot is drawn by ::after. */
 .dot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin-inline: -4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: width var(--duration-base) var(--ease-standard);
+}
+.dot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: color-mix(in srgb, white 45%, transparent);
-  cursor: pointer;
+  transform: translate(-50%, -50%);
   transition: all var(--duration-base) var(--ease-standard);
 }
 .dot.active {
+  width: 34px;
+}
+.dot.active::after {
   width: 22px;
   border-radius: 4px;
   background: white;

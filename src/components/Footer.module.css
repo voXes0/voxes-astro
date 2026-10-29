@@ -6,7 +6,7 @@
 
 .footer {
   width: 100%;
-  padding: 2rem var(--page-gutter) 1.75rem;
+  padding: 2rem var(--shell-gutter) 1.75rem;
   border-block-start: 2px solid color-mix(in oklab, var(--softer-foreground) 55%, transparent);
   border-start-start-radius: 1.25rem;
   border-start-end-radius: 1.25rem;

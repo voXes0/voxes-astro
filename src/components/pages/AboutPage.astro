@@ -76,7 +76,15 @@ const contactItems = [
                       ]}
                       dir="ltr"
                     >
-                      {text}
+                      {key === "email" ? (
+                        <>
+                          {text.slice(0, text.indexOf("@") + 1)}
+                          <wbr />
+                          {text.slice(text.indexOf("@") + 1)}
+                        </>
+                      ) : (
+                        text
+                      )}
                     </a>
                   </li>
                 ))

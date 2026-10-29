@@ -51,7 +51,7 @@ export const socials: SocialData[] = [
   {
     id: "x",
     label: "X",
-    href: `https://x.com/${x}`,
+    href: `https://${x}`,
     handle: `${x}`,
   },
   {

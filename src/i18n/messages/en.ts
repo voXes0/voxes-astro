@@ -204,8 +204,8 @@ export default {
       description: 'Learn about Taha Haghighi, AKA "Voxes", a software developer from Rasht, Iran.',
     },
     eyebrow: "About Me",
-    title1: "I enjoy building things that can be ",
-    title2: "experienced.",
+    title1: "From idea to reality",
+    title2: "",
     intro: "I love seeing my work come to fruition, appreciating the precision behind it, and watching people experience what I've made.",
     contactTitle: "Contact",
     profile: {
@@ -253,6 +253,7 @@ export default {
         bullets: [
           "A fully static website I made for myself.",
           "Built with Astro and Solid.js.",
+          "Blog pages made with mdx"
         ],
         tags: ["Astro", "Solid.js", "TypeScript"],
       },
@@ -318,7 +319,7 @@ export default {
     },
     eyebrow: "My Works",
     title1: "Things I've ",
-    title2: "built.",
+    title2: "made",
     intro:
       "Here are my most prominent works. They range from personal practical projects, to client sites and open source libraries.",
     filterLabel: "Filter by source",
@@ -337,7 +338,7 @@ export default {
       considered: "Also considered",
       listSeparator: ", ",
       chose: "Chosen",
-      metaTitle: "Voxes - {title}",
+      metaTitle: 'Taha "Voxes" Haghighi - {title}',
     },
     items: [
       {
@@ -366,8 +367,8 @@ export default {
       description: "Taha Haghighi, also known as Voxes writes on various topics such as technical problems, frameworks and alghoritms, as well as personal workflow.",
     },
     eyebrow: "Blog",
-    title1: "Notes on ",
-    title2: "how things work.",
+    title1: "Notes from the ",
+    title2: "internet",
     intro:
       "Short technical reads on topics such as frameworks, particular technical problems, my personal workflow and whatever else I felt would be worth writing about.",
     filterLabel: "Filter by topic",
@@ -389,7 +390,7 @@ export default {
         en: "This post is only available in English, so you're reading the English version.",
         fa: "This post is only available in Persian, so you're reading the Persian version.",
       },
-      metaTitle: "Voxes - {title}",
+      metaTitle: 'Taha "Voxes" Haghighi - {title}',
     },
   },
   contact: {
@@ -399,7 +400,7 @@ export default {
     },
     eyebrow: "Contact",
     title1: "Ways to reach ",
-    title2: "me.",
+    title2: "me",
     intro:
       "The best way to contact me depends on what you need.",
     newTab: "(opens in a new tab)",
@@ -440,7 +441,7 @@ export default {
     title: 'Taha "Voxes" Haghighi - Page not found',
     eyebrow: "Error 404",
     title1: "This page ",
-    title2: "flew away.",
+    title2: "flew away",
     intro:
       "The page you were looking for does not exist, or it has moved. While you are here, why not help this bird get to its home?",
     home: "Back to home",
