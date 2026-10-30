@@ -1,7 +1,7 @@
 import { createSignal, createEffect, onCleanup, onMount, For, Show, type JSX } from "solid-js";
 import { isRtl, t, type Locale } from "@/i18n";
 import { localeFromPathname, localizedHref, otherLocale, stripLocale } from "@/lib/navigation";
-import { theme, syncThemeFromDom, toggleTheme } from "@/lib/theme";
+import { theme, syncThemeFromDom, toggleTheme } from "@/client/theme";
 import { cx } from "@/lib/cx";
 import Logo from "./icons/Logo";
 import HamburgerIcon from "./icons/HamburgerIcon";
@@ -19,7 +19,7 @@ const mobileSections = ["works", "blog", "contact", "about"] as const;
 const barSections = ["works", "blog", "about", "contact"] as const;
 
 export default function Nav(props: NavProps): JSX.Element {
-  // This island's <header> is never re-created by the router (src/lib/router.ts
+  // This island's <header> is never re-created by the router (src/client/router.ts
   // only swaps #app-content), so `props` go stale after the first navigation.
   // Track the live URL in a signal instead, or active-link state and language
   // labels would be wrong on every page after the first.

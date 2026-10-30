@@ -1,8 +1,8 @@
 ---
 /**
  * The "laser fabrication" stage: a faint baseplate grid with an empty SVG
- * stage on top. Markup only — what gets drawn lives in src/fab/pieces/, how it
- * is drawn in src/fab/engine.ts, and src/fab/autoMount.ts (loaded by
+ * stage on top. Markup only — what gets drawn lives in src/features/fabricator/pieces/, how it
+ * is drawn in src/features/fabricator/engine.ts, and src/features/fabricator/entry.ts (loaded by
  * BaseLayout) brings it to life. Fills its nearest positioned ancestor, so the
  * parent decides size, background and clipping.
  *
@@ -48,7 +48,7 @@ import styles from "./Fabricator.module.css";
       <!-- Strokes get their own glow filter per piece: the engine creates it with the
            piece (the blur has to be rescaled to the piece's size) and removes it after. -->
 
-      <!-- the sun's bloom, in the scene's own colour (src/fab/pieces/sun.ts fills a circle with it) -->
+      <!-- the sun's bloom, in the scene's own colour (src/features/fabricator/pieces/sun.ts fills a circle with it) -->
       <radialGradient id="fab-sun-bloom">
         <stop
           offset="0"
@@ -87,7 +87,7 @@ import styles from "./Fabricator.module.css";
     </g>
     <!-- one <g> per piece is created here while it is on stage (piece sequencer) -->
     <g id="fab-layer"></g>
-    <!-- camera chapters: the world, panned by src/fab/camera.ts (the edge fade is CSS, on the stage) -->
+    <!-- camera chapters: the world, panned by src/features/fabricator/camera.ts (the edge fade is CSS, on the stage) -->
     <g id="fab-view">
       <g id="fab-world"></g>
     </g>

@@ -1,0 +1,159 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import PageShell from "@/components/PageShell.astro";
+import FilterPills from "@/components/FilterPills.astro";
+import ChipList from "@/components/ChipList.astro";
+import WorkLinks from "@/components/WorkLinks.astro";
+import { t, type Locale } from "@/i18n";
+import { localizedHref } from "@/lib/navigation";
+import WorkMeta from "@/components/WorkMeta.astro";
+import { getWorks } from "@/data/works";
+import styles from "./WorksPage.module.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const m = t(locale).works;
+const items = getWorks(locale);
+
+const counts = {
+  all: items.length,
+  open: items.filter((w) => w.kind === "open").length,
+  closed: items.filter((w) => w.kind === "closed").length,
+};
+
+const intlLocale = locale === "fa" ? "fa-IR" : "en-US";
+const dateFormatter = (tag: string) =>
+  new Intl.DateTimeFormat(tag, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+const gregorianFmt = dateFormatter(`${intlLocale}-u-ca-gregory-nu-latn`);
+const solarFmt = dateFormatter("fa-IR-u-ca-persian-nu-arabext");
+const numFmt = new Intl.NumberFormat(intlLocale);
+const parse = (iso: string) => new Date(`${iso}T00:00:00Z`);
+const fmtRead = (n: number) => m.readTime.replace("{n}", numFmt.format(n));
+
+const filters = [
+  { value: "all", label: m.filters.all, count: counts.all },
+  { value: "open", label: m.filters.open, count: counts.open },
+  { value: "closed", label: m.filters.closed, count: counts.closed },
+].map((f) => ({ ...f, count: String(f.count) }));
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.meta.title}
+  description={m.meta.description}
+>
+  <PageShell long>
+    <div class={styles.shell}>
+      <PageHeader
+        size="lg"
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+      />
+
+      <FilterPills
+        name="works-filter"
+        label={m.filterLabel}
+        filters={filters}
+      />
+
+      <ul class={styles.list} role="list">
+        {
+          items.map((w) => (
+            <li class={styles.item} data-filter-value={w.kind}>
+              <article class={styles.work}>
+                <div class={styles.meta}>
+                  {locale === "en" ? (
+                    <time class={styles.date} datetime={w.date}>
+                      {gregorianFmt.format(parse(w.date))}
+                    </time>
+                  ) : (
+                    <time
+                      class={styles["date-solar"]}
+                      datetime={w.date}
+                      lang="fa"
+                    >
+                      {solarFmt.format(parse(w.date))}
+                    </time>
+                  )}
+
+                  {w.minutes && (
+                    <span class={styles.read}>{fmtRead(w.minutes)}</span>
+                  )}
+                </div>
+
+                <div class={styles.body}>
+                  <div class={styles.pills}>
+                    <WorkMeta locale={locale} kind={w.kind} status={w.status} />
+                  </div>
+
+                  <h2 class={styles.name}>
+                    <a
+                      class="stretched-link"
+                      href={localizedHref(`/works/${w.slug}`, locale)}
+                    >
+                      {w.title}
+                    </a>
+                  </h2>
+                  <p class={styles.desc}>{w.description}</p>
+
+                  <div class={styles.tech}>
+                    <ChipList items={w.tech} />
+                  </div>
+
+                  <div class={styles.links}>
+                    <WorkLinks locale={locale} work={w} touch />
+                  </div>
+                </div>
+
+                <div class={styles.aside}>
+                  <div class={styles.thumb}>
+                    {w.image ? (
+                      <img
+                        src={w.image.src}
+                        width={w.image.width}
+                        height={w.image.height}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class={styles.placeholder} data-pattern={w.pattern}>
+                        <span class={styles.medallion} aria-hidden="true">
+                          {Array.from(w.title)[0]}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span class={styles.go} aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="22"
+                      height="22"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </span>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </PageShell>
+</BaseLayout>

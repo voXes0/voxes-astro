@@ -1,6 +1,6 @@
 ---
-import WorkDetailPage from "@/components/pages/WorkDetailPage.astro";
-import { works } from "@/lib/works";
+import WorkDetailPage from "@/components/views/WorkDetailPage.astro";
+import { works } from "@/data/works";
 
 export function getStaticPaths() {
   return works.map((w) => ({ params: { slug: w.slug } }));

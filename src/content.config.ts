@@ -1,6 +1,6 @@
 import { defineCollection} from "astro:content";
 import { glob } from "astro/loaders";
-import { blogTopics } from "./lib/blogTopics";
+import { blogTopics } from "./data/blogTopics";
 import { z} from "astro/zod";
 
 /**

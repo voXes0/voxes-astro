@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import solidJs from "@astrojs/solid-js";
 import sitemap from "@astrojs/sitemap";
-import { siteDomain } from "@/lib/links";
+import { siteDomain } from "@/data/links";
 
 export default defineConfig({
   site: `https://${siteDomain}`,

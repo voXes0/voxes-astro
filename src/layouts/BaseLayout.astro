@@ -70,9 +70,9 @@ const canonicalUrl = new URL(localizedHref(unprefixedPath, locale), Astro.site);
       <slot />
       <Footer locale={locale} />
     </div>
-    <script src="@/lib/router.ts"></script>
-    <script src="@/fab/autoMount.ts"></script>
-    <script src="@/flappy/autoMount.ts"></script>
-    <script src="@/gallery/autoMount.ts"></script>
+    <script src="@/client/router.ts"></script>
+    <script src="@/features/fabricator/entry.ts"></script>
+    <script src="@/features/flappy/entry.ts"></script>
+    <script src="@/features/gallery/entry.ts"></script>
   </body>
 </html>

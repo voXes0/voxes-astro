@@ -2,25 +2,25 @@
 /**
  * A small flappy-bird mini-game, reusable anywhere: `<FlappyBird locale={locale} />`.
  *
- * The bird is the fabricator's own (src/fab/pieces/bird.strokes.ts, so it
+ * The bird is the fabricator's own (src/features/fabricator/pieces/bird.strokes.ts, so it
  * follows art/bird.svg when that is redrawn), minus its legs, which it tucks
- * in flight. Markup and look live here; the rules are src/flappy/physics.ts,
- * the drawing and input src/flappy/game.ts, and src/flappy/autoMount.ts
- * (loaded by BaseLayout) brings it to life. Levels are data: src/flappy/levels.ts.
+ * in flight. Markup and look live here; the rules are src/features/flappy/physics.ts,
+ * the drawing and input src/features/flappy/game.ts, and src/features/flappy/entry.ts
+ * (loaded by BaseLayout) brings it to life. Levels are data: src/features/flappy/levels.ts.
  *
  * Fills the width its parent gives it (3:2). Colours all come from the site's
  * tokens, so it follows light / dark mode by itself.
  */
-import { strokes } from "@/fab/pieces/bird.strokes";
+import { strokes } from "@/features/fabricator/pieces/bird.strokes";
 import { isRtl, t, type Locale } from "@/i18n";
-import { BIRD, WORLD } from "@/flappy/config";
-import { defaultLevelId } from "@/flappy/levels";
+import { BIRD, WORLD } from "@/features/flappy/config";
+import { defaultLevelId } from "@/features/flappy/levels";
 import ButtonLink from "./ButtonLink.astro";
 import styles from "./FlappyBird.module.css";
 
 interface Props {
   locale: Locale;
-  /** A key of `levels` in src/flappy/levels.ts. */
+  /** A key of `levels` in src/features/flappy/levels.ts. */
   level?: string;
   /**
    * "visible": Space / ↑ / W work whenever the game is on screen (right for a

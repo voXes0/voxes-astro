@@ -1,6 +1,6 @@
 ---
-import BlogPostPage from "@/components/pages/BlogPostPage.astro";
-import { getPostSlugs } from "@/lib/blog";
+import BlogPostPage from "@/components/views/BlogPostPage.astro";
+import { getPostSlugs } from "@/data/blog";
 
 export async function getStaticPaths() {
   return (await getPostSlugs()).map((slug) => ({ params: { slug } }));

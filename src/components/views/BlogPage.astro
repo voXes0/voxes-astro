@@ -1,0 +1,133 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import PageShell from "@/components/PageShell.astro";
+import FilterPills from "@/components/FilterPills.astro";
+import ChipList from "@/components/ChipList.astro";
+import { isRtl, t, type Locale } from "@/i18n";
+import { localizedHref } from "@/lib/navigation";
+import { blogTopics, getPosts, type Post } from "@/data/blog";
+import { postFormatters } from "@/lib/format";
+import styles from "./BlogPage.module.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const m = t(locale).blog;
+const items = await getPosts(locale);
+const { fmtDate, fmtNum, fmtRead } = postFormatters(locale, m.readTime);
+
+// A post that only exists in the other language keeps its own language and direction.
+const contentAttrs = (p: Post) =>
+  p.fallback
+    ? {
+        lang: p.contentLocale,
+        dir: isRtl(p.contentLocale) ? "rtl" : "ltr",
+        "data-alt-lang": p.contentLocale,
+      }
+    : {};
+
+const filters = [
+  { value: "all", label: m.filters.all, count: items.length },
+  ...blogTopics.map((topic) => ({
+    value: topic,
+    label: m.topics[topic],
+    count: items.filter((p) => p.topic === topic).length,
+  })),
+]
+  .filter((f) => f.count > 0)
+  .map((f) => ({ ...f, count: fmtNum(f.count) }));
+---
+
+<BaseLayout
+  locale={locale}
+  title={m.meta.title}
+  description={m.meta.description}
+>
+  <PageShell long>
+    <div class={styles.shell}>
+      <PageHeader
+        size="lg"
+        eyebrow={m.eyebrow}
+        title={`${m.title1}${m.title2}`}
+        intro={m.intro}
+      />
+
+      <FilterPills name="blog-filter" label={m.filterLabel} filters={filters} />
+
+      <ul class={styles.list} role="list">
+        {
+          items.map((p) => (
+            <li class={styles.item} data-filter-value={p.topic}>
+              <article class:list={[styles.post, p.thumbnail && styles["has-thumb"]]}>
+                <div class={styles.meta}>
+                  <time class={styles.date} datetime={p.date}>
+                    {fmtDate(p.date)}
+                  </time>
+                  <span class={styles.read}>{fmtRead(p.minutes)}</span>
+                </div>
+
+                <div class={styles.body}>
+                  <div class={styles.labels}>
+                    <span class={styles.topic}>{m.topics[p.topic]}</span>
+                    {p.fallback && (
+                      <span class={styles.only}>
+                        {m.languageOnly[p.contentLocale]}
+                      </span>
+                    )}
+                  </div>
+                  <h2 class={styles.name} {...contentAttrs(p)}>
+                    <a
+                      class="stretched-link"
+                      href={localizedHref(`/blog/${p.slug}`, locale)}
+                    >
+                      {p.title}
+                    </a>
+                  </h2>
+                  <p class={styles.desc} {...contentAttrs(p)}>
+                    {p.description}
+                  </p>
+
+                  <div class={styles.tags}>
+                    <ChipList items={p.tags} dir="auto" />
+                  </div>
+                </div>
+
+                <div class={styles.aside}>
+                  {p.thumbnail && (
+                    <span class={styles.thumb}>
+                      <img
+                        src={p.thumbnail}
+                        alt=""
+                        width="600"
+                        height="400"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  )}
+                  <span class={styles.go} aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="22"
+                      height="22"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </span>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </PageShell>
+</BaseLayout>

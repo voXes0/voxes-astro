@@ -37,7 +37,7 @@
   mask-composite: intersect;
 }
 
-/* Revealed by src/fab/head.ts via inline style/attributes. */
+/* Revealed by src/features/fabricator/head.ts via inline style/attributes. */
 .headGroup {
   opacity: 0;
 }
