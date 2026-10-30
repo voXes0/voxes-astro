@@ -44,7 +44,7 @@ export const works: WorkData[] = [
   {
     slug: "kazheh",
     image: {
-      src:"/images/kazheh/mockup.png",
+      src:"/images/kazheh/mockup.avif",
       width: 720,
       height: 450,
     },

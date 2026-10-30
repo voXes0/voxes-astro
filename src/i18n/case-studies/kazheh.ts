@@ -13,7 +13,7 @@ const en: CaseStudy = {
     alt: "A screenshot of the intro section of the homepage.",
     caption: "The intro section of the homepage.",
     ratio: "16 / 9",
-    src: "/images/kazheh/thumbnail.png",
+    src: "/images/kazheh/thumbnail.avif",
   },
   sections: [
     {
@@ -52,7 +52,7 @@ const en: CaseStudy = {
           figure: {
             alt: ["First version of the homepage.", "First version of the footer"],
             caption: "First version of the homepage.",
-            src: ["/images/kazheh/early-hero.png", "/images/kazheh/early-footer.png"],
+            src: ["/images/kazheh/early-hero.avif", "/images/kazheh/early-footer.avif"],
             ratio: "3 / 2",
           },
         },
@@ -63,7 +63,7 @@ const en: CaseStudy = {
           figure: {
             alt: ["First version of the rooms page.", "First version of the individual room pages"],
             caption: "First version of the homepage.",
-            src: ["/images/kazheh/early-rooms.png", "/images/kazheh/early-room.png"],
+            src: ["/images/kazheh/early-rooms.avif", "/images/kazheh/early-room.avif"],
             ratio: "3 / 2",
           },
         },
@@ -132,7 +132,7 @@ const en: CaseStudy = {
             figure: {
               alt: "Reservation state machine diagram",
               caption: "A visual representation of the reservation state machine.",
-              src: "/images/kazheh/state-machine-en.png",
+              src: "/images/kazheh/state-machine-en.avif",
               ratio: "392 / 571",
             }
         },
@@ -181,8 +181,8 @@ const en: CaseStudy = {
             alt: ["Bookings table in the admin panel table", "New manual booking page", "Specific reservation page", "The page in the admin panel responsible for managing media."],
             caption: "Overview of the admin panel.",
             ratio: "3 / 2",
-            src: ["/images/kazheh/bookings-view.png", "/images/kazheh/new-manual-booking.png", "/images/kazheh/booking-actions.png", "/images/kazheh/revenue.png",
-               "/images/kazheh/admin-media-1.png", "/images/kazheh/admin-media-2.png", "/images/kazheh/admin-media-3.png"
+            src: ["/images/kazheh/bookings-view.avif", "/images/kazheh/new-manual-booking.avif", "/images/kazheh/booking-actions.avif", "/images/kazheh/revenue.avif",
+               "/images/kazheh/admin-media-1.avif", "/images/kazheh/admin-media-2.avif", "/images/kazheh/admin-media-3.avif"
             ],
             autoplay: 2800
           },
@@ -199,7 +199,7 @@ const en: CaseStudy = {
           figure: {
             alt: "Showcasing the admin booking calendar",
             caption: "The admin calendar.",
-            src: "/images/kazheh/admin-calendar.png",
+            src: "/images/kazheh/admin-calendar.avif",
             ratio: "3 / 2",
           },
         },
@@ -216,7 +216,7 @@ const en: CaseStudy = {
             alt: "The Rasht Map component",
             caption: "The Rasht Map component",
             ratio: "2854 / 1411",
-            src:"/images/kazheh/rasht-map.png"
+            src:"/images/kazheh/rasht-map.avif"
           },
         },
       ],
@@ -263,7 +263,7 @@ const fa: CaseStudy = {
     alt: "تصویری از اولین بخش صفحه اصلی سایت",
     caption: "اولین بخش صفحه اصلی.",
     ratio: "16 / 9",
-    src: "/images/kazheh/thumbnail.png",
+    src: "/images/kazheh/thumbnail.avif",
   },
   sections: [
     {
@@ -301,7 +301,7 @@ const fa: CaseStudy = {
           figure: {
             alt: ["اولین نسخه صفحه اصل.", "اولین نسخه قسمت پایانی سایت کاژه"],
             caption: "اولین نسخه صفحه اصلی.",
-            src: ["/images/kazheh/early-hero.png", "/images/kazheh/early-footer.png"],
+            src: ["/images/kazheh/early-hero.avif", "/images/kazheh/early-footer.avif"],
             ratio: "3 / 2",
           },
         },
@@ -312,7 +312,7 @@ const fa: CaseStudy = {
           figure: {
             alt: ["اولین نسخه صفحه اتاق‌ها سایت کاژه.", "اولین نسخه صفحات هر اتاق."],
             caption: "اولین نسخه صفحه اتاق‌‌ها و صفحه هر اتاق.",
-            src: ["/images/kazheh/early-rooms.png", "/images/kazheh/early-room.png"],
+            src: ["/images/kazheh/early-rooms.avif", "/images/kazheh/early-room.avif"],
             ratio: "3 / 2",
           },
         },
@@ -377,7 +377,7 @@ const fa: CaseStudy = {
           figure: {
             alt: "نمودار سیستم وضعیت رزرو",
             caption: "نمایش تصویری از سیستم وضعیت رزرو.",
-            src: "/images/kazheh/state-machine.png",
+            src: "/images/kazheh/state-machine.avif",
             ratio: "784 / 1101",
             width: 100,
             height: 100,
@@ -427,8 +427,8 @@ const fa: CaseStudy = {
             alt: ["جدول رزرو‌‌ها در پنل مدیریت", "فرم رزرو جدید دستی در پنل مدیریت", "صفحه یک رزرو", "صفحه مدیریت مهتوا"],
             caption: "پنل مدیریت.",
             ratio: "3 / 2",
-            src: ["/images/kazheh/bookings-view.png", "/images/kazheh/new-manual-booking.png", "/images/kazheh/booking-actions.png", "/images/kazheh/revenue.png",
-               "/images/kazheh/admin-media-1.png", "/images/kazheh/admin-media-2.png", "/images/kazheh/admin-media-3.png"
+            src: ["/images/kazheh/bookings-view.avif", "/images/kazheh/new-manual-booking.avif", "/images/kazheh/booking-actions.avif", "/images/kazheh/revenue.avif",
+               "/images/kazheh/admin-media-1.avif", "/images/kazheh/admin-media-2.avif", "/images/kazheh/admin-media-3.avif"
             ],
             autoplay: 2800
           },
@@ -445,7 +445,7 @@ const fa: CaseStudy = {
           figure: {
             alt: "تقویم مدیریت رزرو‌ها پنل مدیریت",
             caption: "تقویم مدیریت رزرو‌ها پنل مدیریت",
-            src: "/images/kazheh/admin-calendar.png",
+            src: "/images/kazheh/admin-calendar.avif",
             ratio: "16 / 10",
           },
         },
@@ -462,7 +462,7 @@ const fa: CaseStudy = {
             alt: "تصویری از بخش موقعیت",
             caption: "نقشه رشت در بخش موقعیت.",
             ratio: "2854 / 1411",
-            src:"/images/kazheh/rasht-map.png"
+            src:"/images/kazheh/rasht-map.avif"
           },
         },
       ],
