@@ -1,6 +1,7 @@
 # Taha "Voxes" Haghighi, Personal Website
 
 The source for [voxes.ir](https://voxes.ir) made with Astro and MDX, for both English and Persian speakers.
+You can learn more by reading about this project [here](https://voxes.ir/works/voxes)
 
 ## Stack
 - Astro, MDX
@@ -20,7 +21,7 @@ English is the default locale and has no URL prefix; Persian lives under `/fa/`.
 
 ```
 .
-├── public/                   Static files served as-is (images, favicons)
+├── public/                   Static files served as-is
 ├── astro.config.ts
 ├── tsconfig.json             `@/…` is an alias for `src/…`
 └── src/
