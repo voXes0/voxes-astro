@@ -71,22 +71,19 @@ export function setFramePause(reason: string, on: boolean) {
 }
 
 /**
- * Freeze the frame loops while `target` is off screenpr the tab is hidden
- *  the main thread is the scarce thing there. Returns the cleanup.
+ * Freeze the frame loops while `target` is off screen or the tab is hidden,
+ * so they don't spend main-thread time nobody sees. Returns the cleanup.
  */
 export function pauseWhenNotWatched(target: Element): () => void {
   const io = new IntersectionObserver((entries) => setFramePause("offscreen", !entries[entries.length - 1].isIntersecting));
   io.observe(target);
   const onVisibility = () => setFramePause("hidden", document.hidden);
+  document.addEventListener("visibilitychange", onVisibility);
   onVisibility();
-
-  let resume = 0;
-  const touch = matchMedia("(pointer: coarse)").matches;
 
   return () => {
     io.disconnect();
     document.removeEventListener("visibilitychange", onVisibility);
-    clearTimeout(resume);
     // let loops that are waiting see their abort and unwind
     for (const r of ["offscreen", "hidden"]) setFramePause(r, false);
   };
