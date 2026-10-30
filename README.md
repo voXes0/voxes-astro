@@ -7,12 +7,12 @@ The source for [voxes.ir](https://voxes.ir) made with Astro and MDX, for both En
 - CSS Modules
 
 ## Getting started
-\`\`\`bash
+```bash
 git clone https://github.com/voxes0/voxes-astro
 cd voxes-astro
 npm install
 npm run dev
-\`\`\`
+```
 
 ## Project structure
 
@@ -59,18 +59,6 @@ English is the default locale and has no URL prefix; Persian lives under `/fa/`.
     ├── content.config.ts     Collection schemas
     └── env.d.ts
 ```
-
-### How the pieces fit
-
-- **Pages are thin.** `pages/works/[slug].astro` and `pages/fa/works/[slug].astro` both render
-  `components/views/WorkDetailPage.astro` with a different `locale`. The page's real markup and styles live in `views/`.
-- **Features have the same shape.** Each folder in `features/` has an `entry.ts` that `BaseLayout` includes once.
-  The entry finds its elements on the page (`#fab-stage`, `[data-flappy]`, `[data-gallery]`), and only then
-  imports the heavy code, so pages without the feature download none of it. The matching Astro component
-  (`Fabricator.astro`, `FlappyBird.astro`, `mdx/Figure.astro`) renders the markup.
-- **Works are split on purpose.** Structure (kind, status, tech, links) is in `data/works.ts`; text is in
-  `i18n/messages/<locale>.ts`; a long-form page is in `i18n/case-studies/`. `joinCopy` fails the build if a
-  locale is missing an entry.
 
 ## License
 Code is licensed under the [MIT License](./LICENSE).
