@@ -7,6 +7,7 @@ import { t, type Locale } from "@/i18n";
 import { getCaseStudy } from "@/i18n/case-studies";
 import { localizedHref } from "@/lib/navigation";
 import { getWork } from "@/data/works";
+import styles from "./WorkDetailPage.module.css";
 
 interface Props {
   locale: Locale;
@@ -31,46 +32,17 @@ const study = getCaseStudy(slug, locale);
       <CaseStudy locale={locale} work={work} study={study} />
     ) : (
       <PageShell long>
-        <div class="shell">
-          <div class="back">
+        <div class={styles.shell}>
+          <div class={styles.back}>
             <TextLink href={localizedHref("/works", locale)}>
               {m.detail.back}
             </TextLink>
           </div>
-          <h1 class="title">{work.title}</h1>
-          <p class="desc">{work.description}</p>
-          <p class="soon">{m.detail.comingSoon}</p>
+          <h1 class={styles.title}>{work.title}</h1>
+          <p class={styles.desc}>{work.description}</p>
+          <p class={styles.soon}>{m.detail.comingSoon}</p>
         </div>
       </PageShell>
     )
   }
 </BaseLayout>
-
-<style>
-  .shell {
-    max-width: 44rem;
-    margin-inline: auto;
-  }
-  .back {
-    margin-block-end: 2rem;
-  }
-  .title {
-    margin-block-end: 1rem;
-    font-size: clamp(2.4rem, 6vw, 3.6rem);
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--soft-foreground);
-  }
-  .desc {
-    margin-block-end: 2rem;
-    font-size: 1.15rem;
-    line-height: 1.8;
-    color: var(--soft-foreground);
-  }
-  .soon {
-    padding: 1rem 1.25rem;
-    border: 1.5px dashed var(--low-opacity-soft-foreground);
-    border-radius: 1rem;
-    color: var(--mid-opacity-soft-foreground);
-  }
-</style>

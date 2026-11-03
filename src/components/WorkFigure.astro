@@ -18,13 +18,21 @@ const slides = figure.src ? toSlides(figure.src, figure.alt) : [];
 const [first] = slides;
 ---
 
-<figure class={styles.fig} style={figure.size ? `max-width: ${figure.size}` : undefined}>
+<figure
+  class={styles.fig}
+  style={figure.size ? `max-width: ${figure.size}` : undefined}
+>
   <!-- Double border: outer line, gap, inner image. -->
   <div class={styles.frame}>
     <div
       class={styles.well}
       style={`aspect-ratio: ${ratio}`}
-      data-gallery={first && galleryData(localeFromPathname(Astro.url.pathname), slides, figure.autoplay)}
+      data-gallery={first &&
+        galleryData(
+          localeFromPathname(Astro.url.pathname),
+          slides,
+          figure.autoplay,
+        )}
     >
       {
         first ? (

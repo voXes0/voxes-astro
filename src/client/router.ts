@@ -11,6 +11,32 @@ import { finishProgress, startProgress } from "@/client/progress";
 
 const APP_CONTENT_ID = "app-content";
 
+/** Path + query of the page currently shown. Two URLs with the same key differ
+ *  only by #hash, which is the browser's job (no fetch, no content swap). */
+const pageKey = (url: string | URL = window.location.href): string => {
+  const { pathname, search } = new URL(url, window.location.href);
+  return pathname + search;
+};
+let currentPage = pageKey();
+
+/** Scrolls to the element a #hash names (ids may be percent-encoded, e.g.
+ *  Persian headings), or to the top when there is none. */
+function scrollToHash(hash: string, behavior: ScrollBehavior = "instant"): void {
+  const raw = hash.replace(/^#/, "");
+  let id = raw;
+  try {
+    id = decodeURIComponent(raw);
+  } catch {
+    // Malformed escape: use it as written.
+  }
+  const target = id ? document.getElementById(id) : null;
+  if (target) {
+    target.scrollIntoView({ behavior, block: "start" });
+  } else if (!raw) {
+    window.scrollTo({ top: 0, left: 0, behavior });
+  }
+}
+
 function getAppContent(doc: Document = document): HTMLElement | null {
   return doc.getElementById(APP_CONTENT_ID);
 }
@@ -24,7 +50,8 @@ function isRoutable(anchor: HTMLAnchorElement): boolean {
   const url = new URL(anchor.href, window.location.href);
   if (url.origin !== window.location.origin) return false;
 
-  // Let the browser handle plain in-page hash links.
+  // Let the browser handle plain in-page hash links (including a bare "#").
+  if (anchor.getAttribute("href")?.startsWith("#")) return false;
   if (
     url.pathname === window.location.pathname &&
     url.search === window.location.search &&
@@ -181,8 +208,12 @@ async function runNavigation(
   if (push) {
     history.pushState({ appRouter: true }, "", url);
   }
+  currentPage = pageKey(url);
 
+  // Land on the #section when the link names one (e.g. /works/x#results).
+  const { hash } = new URL(url, window.location.href);
   window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  if (hash) scrollToHash(hash);
 
   document.dispatchEvent(
     new CustomEvent("app:navigated", { detail: { url } }),
@@ -223,6 +254,13 @@ function onClick(event: MouseEvent): void {
 }
 
 function onPopState(): void {
+  // Browsers also fire popstate for in-page #hash links and for stepping
+  // between hash entries. The page is already right, so re-fetching it would
+  // swap the content and snap back to the top; just honor the hash.
+  if (pageKey() === currentPage) {
+    scrollToHash(window.location.hash);
+    return;
+  }
   void navigate(window.location.href, { push: false });
 }
 

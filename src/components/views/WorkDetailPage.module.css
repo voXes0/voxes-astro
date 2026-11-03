@@ -1,0 +1,26 @@
+.shell {
+    max-width: 44rem;
+    margin-inline: auto;
+}
+.back {
+    margin-block-end: 2rem;
+}
+.title {
+    margin-block-end: 1rem;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--soft-foreground);
+}
+.desc {
+    margin-block-end: 2rem;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--soft-foreground);
+}
+.soon {
+    padding: 1rem 1.25rem;
+    border: 1.5px dashed var(--low-opacity-soft-foreground);
+    border-radius: 1rem;
+    color: var(--mid-opacity-soft-foreground);
+}

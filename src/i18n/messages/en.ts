@@ -345,19 +345,19 @@ export default {
         slug: "kazheh",
         title: "Kazheh",
         description:
-          "Placeholder description: a bilingual booking site for a small hotel, built for a real client from first sketch to launch.",
+          "A bilingual website with online booking, tailored for a small hotel, built for a real client from first sketch to launch.",
       },
       {
         slug: "vofluid",
-        title: "vofluid",
+        title: "Vofluid",
         description:
-          "Placeholder description: a particle-based fluid simulation written from scratch, with a longer second sentence here to check how the row behaves when the text runs past two lines on narrow screens.",
+          "A open source particle based fluid simulation library written from scratch in Rust.",
       },
       {
         slug: "voxes",
         title: "Voxes",
         description:
-          "Placeholder description: this very site, built code-first with no builder and no template.",
+          "This very site, made with Astro with a lot of interesting features.",
       },
     ],
   },

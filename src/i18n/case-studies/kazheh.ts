@@ -7,7 +7,7 @@ const en: CaseStudy = {
     { label: "Client", value: "Boutique hotel" },
     { label: "Role", value: "Full-stack developer" },
     { label: "Duration", value: "65 days" },
-    { label: "Languages", value: "English, Persian" },
+    { label: "Languages", value: "Persian, English" },
   ],
   hero: {
     alt: "A screenshot of the intro section of the homepage.",
@@ -134,6 +134,7 @@ const en: CaseStudy = {
               caption: "A visual representation of the reservation state machine.",
               src: "/images/kazheh/state-machine-en.avif",
               ratio: "392 / 571",
+              size: "510px"
             }
         },
         {
