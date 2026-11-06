@@ -56,15 +56,6 @@ export const works: WorkData[] = [
     pattern: 1,
   },
   {
-    slug: "vofluid",
-    kind: "open",
-    status: "wip",
-    date: "2026-06-29",
-    tech: ["Rust", "SPH", "WASM"],
-    repo: "https://github.com/voxes0/vofluid",
-    pattern: 2,
-  },
-  {
     slug: "voxes",
     image: {
       src:"/images/voxes/mockup.avif",
@@ -78,6 +69,15 @@ export const works: WorkData[] = [
     repo: "https://github.com/voxes0/voxes-astro",
     site: "https://voxes.ir",
     pattern: 3,
+  },
+  {
+    slug: "vofluid",
+    kind: "open",
+    status: "wip",
+    date: "2026-06-29",
+    tech: ["Rust", "SPH", "WASM"],
+    repo: "https://github.com/voxes0/vofluid",
+    pattern: 2,
   },
 ];
 

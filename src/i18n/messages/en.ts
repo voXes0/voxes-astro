@@ -299,7 +299,7 @@ export default {
       {
         label: "Shipped",
         status: "Live",
-        title: "Kazheh — a boutique hotel, online",
+        title: "Kazheh",
         description:
           "",
         href: "/works",
@@ -330,7 +330,7 @@ export default {
     readTime: "{n} min read",
     detail: {
       back: "All works",
-      comingSoon: "Placeholder: this project's own page is not built yet.",
+      comingSoon: "This project's page is still in development.",
       imagePlaceholder: "Photo goes here",
       toc: "On this page",
       problem: "The problem",
