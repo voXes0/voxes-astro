@@ -80,7 +80,7 @@ const en: CaseStudy = {
         {
           title: "Writing and launch",
           period: "Last week",
-          body: "The last days were spent polishing up the code and design as well as the writings around the pages, and deploying to cloudflare pages.",
+          body: "The last days were spent polishing up the code and design as well as the writings around the pages, and deploying to github pages.",
         },
       ],
     },
@@ -258,7 +258,7 @@ const fa: CaseStudy = {
         {
           title: "نوشتن و انتشار",
           period: "هفته آخر",
-          body: "روزهای آخر صرف مرتب کردن کد و طراحی، نوشتن متن‌های صفحه‌ها و در نهایت انتشار سایت روی Cloudflare Pages شد.",
+          body: "روزهای آخر صرف مرتب کردن کد و طراحی، نوشتن متن‌های صفحه‌ها و در نهایت انتشار سایت روی Github Pages شد.",
         },
       ],
     },
